@@ -4,34 +4,201 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Book - Pulse Male Revue</title>
+  <meta name="description" content="Book Pulse Male Revue for your bachelorette party, corporate event, or ladies night. Get an instant quote with distance calculation.">
   <link rel="stylesheet" href="assets/css/styles.css">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmIhz0iWcB8R-BBXkFFGi36bCQIm7fgA8&libraries=places&callback=initGoogleMaps" async defer></script>
 </head>
 <body class="page">
-  <nav class="nav-inner">
-    <div class="logo-wrap"><h1 class="brand">PULSE</h1></div>
-    <ul class="nav-links">
-  <li><a href="index.html" class="nav-link">Home</a></li>
-  <li><a href="prices.html" class="nav-link">Prices</a></li>
-  <li><a href="faq.html" class="nav-link">FAQ</a></li>
-  <li><a href="join.html" class="nav-link">Join</a></li>
-  <li><a href="meet-the-guys.html" class="nav-link">Meet The Guys</a></li>
-  <li><a href="book.html" class="btn">Book Now</a></li>
-</ul>
-
-  </nav>
+  <header>
+    <div class="nav-inner">
+      <div class="logo-wrap">
+        <div class="brand">PULSE</div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="prices.html" class="nav-link">Prices</a></li>
+        <li><a href="faq.html" class="nav-link">FAQ</a></li>
+        <li><a href="join.html" class="nav-link">Join</a></li>
+        <li><a href="meet-the-guys.html" class="nav-link">Meet The Guys</a></li>
+        <li><a href="book.html" class="btn">Book Now</a></li>
+      </ul>
+    </div>
+  </header>
 
   <section class="section">
     <div class="block">
       <h2>Book Pulse for Your Event</h2>
-      <p>Fill out the form below with your event details. Our booking form includes a location selector with integrated maps. We'll send you a personalized quote within 24 hours.</p>
+      <p>Fill out the form below with your event details. Our booking form calculates distance automatically and provides a live quote. We'll send you a personalized confirmation within 24 hours.</p>
       
-      <!-- EMBEDDED JOTFORM BOOKING FORM WITH MAPS -->
-<script type="text/javascript" src="https://form.jotform.com/jsform/253636457639571"></script>
+      <form id="booking-form" name="booking" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="booking">
+        <p style="display: none;">
+          <label>Don't fill this out: <input name="bot-field" /></label>
+        </p>
+        
+        <!-- Contact Information -->
+        <h3>Contact Information</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="full-name">Full Name *</label>
+            <input type="text" id="full-name" name="full-name" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone">Phone *</label>
+            <input type="tel" id="phone" name="phone" required>
+          </div>
+          <div class="form-group">
+            <label for="city">City *</label>
+            <input type="text" id="city" name="city" required>
+          </div>
+        </div>
 
-  <footer class="footer-inner">
-    <p>© 2025 Pulse Male Revue - South Africa.</p>
-    <div class="footer-links">
-      <a href="mailto:info@pulsedancers.com">info@pulsedancers.com</a>
+        <!-- Event Details -->
+        <h3>Event Details</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="event-type">Event Type *</label>
+            <select id="event-type" name="event-type" required>
+              <option value="">Select event type</option>
+              <option value="Bachelorette">Bachelorette Party</option>
+              <option value="Birthday">Birthday Party</option>
+              <option value="Girls Night">Girls Night</option>
+              <option value="Corporate">Corporate Event</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="event-date">Event Date *</label>
+            <input type="date" id="event-date" name="event-date" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="event-time">Event Time *</label>
+          <input type="time" id="event-time" name="event-time" required>
+        </div>
+
+        <!-- Guest & Service Information -->
+        <h3>Service Details</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="num-guests">Number of Guests *</label>
+            <select id="num-guests" name="num-guests" required>
+              <option value="">Select guest count</option>
+              <option value="<10">Less than 10</option>
+              <option value="10-20">10-20</option>
+              <option value="20-40">20-40</option>
+              <option value="40+">40+</option>
+            </select>
+            <div id="guest-recommendation" style="color: #FF2D55; margin-top: 0.5rem; font-size: 0.875rem;"></div>
+          </div>
+          <div class="form-group">
+            <label for="service-type">Service Type *</label>
+            <select id="service-type" name="service-type" required>
+              <option value="">Select service</option>
+              <option value="1800">1-Man Xpress (30min) - R1,800</option>
+              <option value="2200">1-Man Show (45min) - R2,200</option>
+              <option value="4000">2-Man Show (45min) - R4,000</option>
+              <option value="6000">3-Man Show (45min) - R6,000</option>
+              <option value="8000">4-Man Show (45min) - R8,000</option>
+              <option value="12000">6-Man Show (45min) - R12,000</option>
+              <option value="750">Topless Waiter (per hour) - R750</option>
+              <option value="950">Bottomless Waiter (per hour) - R950</option>
+              <option value="1600">Naughty Games + Host (30-45min) - R1,600</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="num-performers">Number of Performers *</label>
+          <input type="number" id="num-performers" name="num-performers" min="1" max="10" value="1" required>
+        </div>
+
+        <!-- Location -->
+        <h3>Location</h3>
+        <div class="form-group">
+          <label>Location Type *</label>
+          <div style="display: flex; gap: 2rem; margin-bottom: 1rem;">
+            <label style="display: flex; align-items: center; font-weight: normal;">
+              <input type="radio" id="location-exact" name="location-type" value="exact" checked>
+              <span style="margin-left: 0.5rem;">Exact Address</span>
+            </label>
+            <label style="display: flex; align-items: center; font-weight: normal;">
+              <input type="radio" id="location-area" name="location-type" value="area">
+              <span style="margin-left: 0.5rem;">Area/Suburb Only</span>
+            </label>
+          </div>
+        </div>
+
+        <div id="exact-address-fields">
+          <div class="form-group">
+            <label for="event-address">Event Address *</label>
+            <input type="text" id="event-address" name="event-address" placeholder="Start typing address...">
+            <small style="color: #b0b0b0;">Start typing for autocomplete suggestions</small>
+          </div>
+        </div>
+
+        <div id="area-fields" style="display: none;">
+          <div class="form-group">
+            <label for="event-area">Area/Suburb *</label>
+            <input type="text" id="event-area" name="event-area" placeholder="e.g., Sandton, Pretoria East">
+          </div>
+        </div>
+
+        <input type="hidden" id="calculated-distance" name="calculated-distance" value="0">
+
+        <!-- Live Quote Display -->
+        <div class="quote-display">
+          <h3>Live Quote Estimate</h3>
+          <div class="quote-line">
+            <span>Performance Fee:</span>
+            <span id="quote-performance">R0.00</span>
+          </div>
+          <div class="quote-line">
+            <span>Distance (round trip):</span>
+            <span id="quote-distance">0.0 km</span>
+          </div>
+          <div class="quote-line">
+            <span>Travel Fee (R4/km beyond 50km):</span>
+            <span id="quote-travel">R0.00</span>
+          </div>
+          <div class="quote-line total">
+            <span>Estimated Total:</span>
+            <span id="quote-total">R0.00</span>
+          </div>
+          <p style="margin-top: 1rem; font-size: 0.875rem; color: #b0b0b0;">
+            * Final quote may vary based on specific requirements
+          </p>
+        </div>
+
+        <!-- Additional Notes -->
+        <div class="form-group">
+          <label for="notes">Additional Notes</label>
+          <textarea id="notes" name="notes" placeholder="Any special requests or requirements?"></textarea>
+        </div>
+
+        <button type="submit">Submit Booking Request</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div>© 2025 Pulse Male Revue - South Africa.</div>
+      <div class="footer-links">
+        <a href="mailto:bookings@pulsedancers.com">bookings@pulsedancers.com</a>
+        <span>·</span>
+        <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener">Facebook</a>
+        <span>·</span>
+        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener">Instagram</a>
+      </div>
     </div>
   </footer>
 

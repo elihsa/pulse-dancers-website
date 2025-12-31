@@ -4,36 +4,121 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Join - Pulse Male Revue</title>
+  <meta name="description" content="Join the Pulse Male Revue team. Apply now for exciting opportunities as a dancer, performer, or waiter.">
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body class="page">
-  <nav class="nav-inner">
-    <div class="logo-wrap"><h1 class="brand">PULSE</h1></div>
-    <ul class="nav-links">
-      <li><a href="index.html" class="nav-link">Home</a></li>
-      <li><a href="prices.html" class="nav-link">Prices</a></li>
-      <li><a href="faq.html" class="nav-link">FAQ</a></li>
-      <li><a href="join.html" class="nav-link">Join</a></li>
-      <li><a href="meet-the-guys.html" class="nav-link">Meet The Guys</a></li>
-      <li><a href="book.html" class="btn">Book Now</a></li>
-    </ul>
-  </nav>
+  <header>
+    <div class="nav-inner">
+      <div class="logo-wrap">
+        <div class="brand">PULSE</div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="prices.html" class="nav-link">Prices</a></li>
+        <li><a href="faq.html" class="nav-link">FAQ</a></li>
+        <li><a href="join.html" class="nav-link">Join</a></li>
+        <li><a href="meet-the-guys.html" class="nav-link">Meet The Guys</a></li>
+        <li><a href="book.html" class="btn">Book Now</a></li>
+      </ul>
+    </div>
+  </header>
 
   <section class="section">
     <div class="block">
       <h2>Join the Pulse Team</h2>
-      
-      <p>Pulse Dancers, Africa's most sought-after male revue show, is on the lookout for new talent.</p>
-<script type="text/javascript" src="https://form.jotform.com/jsform/818251255175557"></script>
+      <p>Pulse Dancers, Africa's most sought-after male revue show, is on the lookout for new talent. If you're a professional male dancer, performer or waiter looking for lucrative work, we want to hear from you.</p>
+
+      <form name="join" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="join">
+        <p style="display: none;">
+          <label>Don't fill this out: <input name="bot-field" /></label>
+        </p>
+
+        <h3>Personal Information</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="join-name">Full Name *</label>
+            <input type="text" id="join-name" name="full-name" required>
+          </div>
+          <div class="form-group">
+            <label for="join-email">Email *</label>
+            <input type="email" id="join-email" name="email" required>
+          </div>
         </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="join-phone">Phone *</label>
+            <input type="tel" id="join-phone" name="phone" required>
+          </div>
+          <div class="form-group">
+            <label for="join-age">Age *</label>
+            <input type="number" id="join-age" name="age" min="18" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="join-city">City *</label>
+          <input type="text" id="join-city" name="city" placeholder="e.g., Johannesburg" required>
+        </div>
+
+        <h3>Experience & Availability</h3>
+        <div class="form-group">
+          <label for="join-experience">Experience (optional)</label>
+          <textarea id="join-experience" name="experience" placeholder="Tell us about your dance, performance, or hospitality experience..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="join-instagram">Instagram Handle (optional)</label>
+            <input type="text" id="join-instagram" name="instagram" placeholder="@yourusername">
+          </div>
+          <div class="form-group">
+            <label for="join-travel">Travel Availability *</label>
+            <select id="join-travel" name="travel" required>
+              <option value="">Select availability</option>
+              <option value="Local">Local Only</option>
+              <option value="Regional">Regional (Gauteng)</option>
+              <option value="Nationwide">Nationwide</option>
+            </select>
+          </div>
+        </div>
+
+        <h3>Photos</h3>
+        <p style="color: #b0b0b0; font-size: 0.875rem;">Please upload a profile photo and a full-body photo. Files should be under 5MB each.</p>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="join-profile-photo">Profile Photo *</label>
+            <input type="file" id="join-profile-photo" name="profile-photo" accept="image/*" required>
+          </div>
+          <div class="form-group">
+            <label for="join-fullbody-photo">Full-Body Photo *</label>
+            <input type="file" id="join-fullbody-photo" name="fullbody-photo" accept="image/*" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="join-notes">Additional Notes (optional)</label>
+          <textarea id="join-notes" name="notes" placeholder="Anything else you'd like us to know?"></textarea>
+        </div>
+
+        <button type="submit">Submit Application</button>
+      </form>
+    </div>
   </section>
 
-  <footer class="footer-inner">
-    <p>© 2025 Pulse Male Revue - South Africa.</p>
-    <div class="footer-links">
-      <a href="mailto:info@pulsedancers.com">info@pulsedancers.com</a>
-      <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank">Facebook</a>
-      <a href="https://www.instagram.com/pulsesouthafrica" target="_blank">Instagram</a>
+  <footer>
+    <div class="footer-inner">
+      <div>© 2025 Pulse Male Revue - South Africa.</div>
+      <div class="footer-links">
+        <a href="mailto:info@pulsedancers.com">info@pulsedancers.com</a>
+        <span>·</span>
+        <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener">Facebook</a>
+        <span>·</span>
+        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener">Instagram</a>
+      </div>
     </div>
   </footer>
 

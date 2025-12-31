@@ -1,0 +1,59 @@
+{
+  "items": [
+    {
+      "name": "1-Man Xpress",
+      "duration": "30min",
+      "price": "1800",
+      "notes": ""
+    },
+    {
+      "name": "1-Man Show",
+      "duration": "45min",
+      "price": "2200",
+      "notes": ""
+    },
+    {
+      "name": "2-Man Show",
+      "duration": "45min",
+      "price": "4000",
+      "notes": ""
+    },
+    {
+      "name": "3-Man Show",
+      "duration": "45min",
+      "price": "6000",
+      "notes": ""
+    },
+    {
+      "name": "4-Man Show",
+      "duration": "45min",
+      "price": "8000",
+      "notes": ""
+    },
+    {
+      "name": "6-Man Show",
+      "duration": "45min",
+      "price": "12000",
+      "notes": ""
+    },
+    {
+      "name": "Topless Waiter",
+      "duration": "Per hour",
+      "price": "750",
+      "notes": ""
+    },
+    {
+      "name": "Bottomless Waiter",
+      "duration": "Per hour",
+      "price": "950",
+      "notes": ""
+    },
+    {
+      "name": "Naughty Games + Host",
+      "duration": "30-45min",
+      "price": "1600",
+      "notes": ""
+    }
+  ],
+  "notes": "All prices exclude travel and sustenance. Travel is charged at R4/km outside a 50km radius from Sandton City."
+}

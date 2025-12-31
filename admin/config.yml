@@ -1,0 +1,101 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "assets/images/uploads"
+public_folder: "/assets/images/uploads"
+
+collections:
+  - name: "home"
+    label: "Home Page"
+    files:
+      - label: "Home Content"
+        name: "home"
+        file: "data/home.json"
+        fields:
+          - { label: "Hero Title", name: "heroTitle", widget: "string" }
+          - { label: "Hero Subtitle", name: "heroSubtitle", widget: "text" }
+          - { label: "CTA Button Text", name: "ctaText", widget: "string" }
+          - { label: "CTA Button URL", name: "ctaUrl", widget: "string" }
+          - { label: "About Title", name: "aboutTitle", widget: "string" }
+          - { label: "About Paragraphs", name: "aboutParagraphs", widget: "list", field: { label: "Paragraph", name: "paragraph", widget: "text" } }
+          - { label: "Services", name: "services", widget: "list", field: { label: "Service", name: "service", widget: "string" } }
+          - { label: "Hero Stat Title", name: "heroStat", widget: "string" }
+          - { label: "Hero Stat Description", name: "heroStatDescription", widget: "text" }
+
+  - name: "prices"
+    label: "Pricing"
+    files:
+      - label: "Pricing Table"
+        name: "prices"
+        file: "data/prices.json"
+        fields:
+          - label: "Price Items"
+            name: "items"
+            widget: "list"
+            fields:
+              - { label: "Service Name", name: "name", widget: "string" }
+              - { label: "Duration", name: "duration", widget: "string" }
+              - { label: "Price (Rands)", name: "price", widget: "string" }
+              - { label: "Notes", name: "notes", widget: "string", required: false }
+          - { label: "General Notes", name: "notes", widget: "text" }
+
+  - name: "faq"
+    label: "FAQ"
+    files:
+      - label: "FAQ Content"
+        name: "faq"
+        file: "data/faq.json"
+        fields:
+          - label: "FAQ Groups"
+            name: "groups"
+            widget: "list"
+            fields:
+              - { label: "Group Title", name: "title", widget: "string" }
+              - label: "Questions & Answers"
+                name: "qas"
+                widget: "list"
+                fields:
+                  - { label: "Question", name: "q", widget: "string" }
+                  - { label: "Answer", name: "a", widget: "text" }
+
+  - name: "booking"
+    label: "Booking Settings"
+    files:
+      - label: "Booking Configuration"
+        name: "booking"
+        file: "data/booking.json"
+        fields:
+          - { label: "Base Location Address", name: "baseLocationAddress", widget: "string" }
+          - { label: "Free Kilometers", name: "freeKm", widget: "number" }
+          - { label: "Rand per Kilometer", name: "randPerKm", widget: "number" }
+          - { label: "Currency", name: "currency", widget: "string", default: "ZAR" }
+          - { label: "Dancers per Guests Ratio", name: "dancerPerGuests", widget: "number" }
+
+  - name: "testimonials"
+    label: "Testimonials"
+    files:
+      - label: "Testimonials"
+        name: "testimonials"
+        file: "data/testimonials.json"
+        fields:
+          - label: "Testimonial Items"
+            name: "items"
+            widget: "list"
+            fields:
+              - { label: "Name", name: "name", widget: "string" }
+              - { label: "Rating", name: "rating", widget: "number", min: 1, max: 5 }
+              - { label: "Testimonial Text", name: "text", widget: "text" }
+              - { label: "Location", name: "location", widget: "string" }
+              - { label: "Date", name: "date", widget: "date" }
+
+  - name: "social"
+    label: "Social Media"
+    files:
+      - label: "Social Links"
+        name: "social"
+        file: "data/social.json"
+        fields:
+          - { label: "Facebook Page URL", name: "facebookPageUrl", widget: "string" }
+          - { label: "Instagram Username", name: "instagramUsername", widget: "string" }
+          - { label: "Instagram Post URLs", name: "instagramPosts", widget: "list", field: { label: "Post URL", name: "url", widget: "string" } }
