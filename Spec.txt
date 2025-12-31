@@ -1,0 +1,92 @@
+**Pulse Dancers Website Specification**
+
+This specification consolidates all requirements from the conversation transcripts across five files, creating a complete, standalone document for development. It covers the modern static site for a Johannesburg-based male dance entertainment group, with Netlify CMS for non-technical editing, native forms, social integrations, and future-proofing for payments/merchandise.
+
+## Core Objectives
+Modernize the existing Website X5 site (www.pulsedancers.com) into a fast, mobile-first static site hosted on Netlify (free tier). Match the current layout/content structure but refresh with contemporary design (dark/red theme, card layouts, responsive grids). Enable a non-technical assistant to edit all text/images/pricing/FAQ via browser-based CMS at `/admin`. Replace Afrihost hosting (~R100/month) with free Netlify CDN/SSL. Pre-populate with existing content; make everything editable without code changes.[1][2]
+
+## Site Structure
+| Page | Purpose | CMS-Editable Elements |
+|------|---------|----------------------|
+| `/` (index.html) | Hero banner, about/services, Facebook events embed, Instagram posts (2 latest via CMS URLs), testimonials (pre-populated 3), review submission form | Hero title/subtitle/CTA/image/logo, about paragraphs/services list, testimonials, Instagram post URLs, review form labels |
+| `/prices.html` | Pricing table (seeded from current site: e.g., 1-Man Xpress R1800, Topless Waiter R750/hr) + notes | All rows (service/duration/price), notes text |
+| `/faq.html` | Collapsible accordion (merged from FAQ doc + site content, grouped: Topless Waiters/Exotic Dancers/Bottomless Waiters/General/Games) | Groups/Q&As (add/edit/remove) |
+| `/book.html` | Booking form (native Netlify Forms, live quote w/ Google Maps distance calc from Sandton City) | Form labels, booking settings (base location, free 50km, R4/km) |
+| `/join.html` | New recruit form (native Netlify Forms, photo uploads) | Form labels, fields |
+| `/admin/` | Netlify CMS (Decap CMS v3) dashboard | N/A (login-protected) |
+| `/merch.html` | Placeholder ("Coming Soon") grid (12 sample products) | Product images/descriptions/prices (future e-commerce) |
+
+All outbound links open in new tabs; images optimized (lazy-load, WebP/JPG/PNG).[2][3]
+
+## Design Requirements
+- **Style**: 3 homepage variants (choose 1 for production): Bold Energetic (dark/high-contrast), Elegant Minimal (white space/clean), Urban Expressive (layered visuals). Consistent site-wide: Tailwind CSS utility classes, Inter/system fonts, red accents (#FF2D55), dark bg (#0B0B0F), responsive breakpoints.
+- **Layout**: Sticky nav (logo + links: Prices/FAQ/Join/Book), hero grid (text + image), card sections (about/prices/FAQ), footer (socials: IG @pulsesouthafrica, FB facebook.com/pulseSouthAfrica).
+- **Responsive**: Mobile-first; grids stack to 1-col <900px; tables/accordions collapse.
+- **Performance**: <2s load; no bloat (no heavy libs beyond Tailwind/Decap CMS).[4][1]
+
+## CMS Configuration (Netlify CMS/Decap v3)
+- **Backend**: Git Gateway (main branch), media: `images/uploads`.
+- **Collections** (JSON files in `/data/`):
+  | Collection | File | Fields |
+  |------------|------|--------|
+  | Home | datahome.json | herotitle/subtitle (string), ctatext/url (string), abouttitle/paragraphs (list), services (list), logo/heroimage (image) |
+  | Prices | dataprices.json | items (list: name/duration/price/notes), notes (string) |
+  | FAQ | datafaq.json | groups (list: title/qas list w/ q/a) |
+  | Booking Settings | databooking.json | baselocationaddress (string), freekm/randperkm (number), currency (string), dancerperguests (number) |
+  | Testimonials | datatestimonials.json | items (list: name/rating/text/location/date) |
+  | Social | datasocial.json | facebookpageurl (string), instagramposts (list: url) |
+- **Admin**: `/admin/index.html` + `config.yml`; login via Netlify Identity (invite-only).[3][2]
+
+## Forms Implementation
+### Booking Form (`/book.html`)
+Native Netlify Forms submission to `bookings@pulsedancers.com` (subject: "[Date] - [Event Type] - [Area] - [Name]").
+- **Fields** (compact 2-col grid, stack mobile):
+  | Row | Fields |
+  |-----|--------|
+  | Contact | Full Name/Email/Phone/City (required) |
+  | Event | Event Type (dropdown: Bachelorette/Birthday/Girls Night/Corporate/Other), Date/Time (required) |
+  | Guests | Guests (dropdown: <10/10-20/20-40/40+; auto-suggest performers: 1 if <20, 2+ if ≥20 w/ note "1 per 20 guests"), Service (dropdown matching prices), Performers (number) |
+  | Location | Radio: Exact Address (Google Places autocomplete) / Area (geocode suburb); calc driving distance round-trip from Sandton City |
+  | Details | Notes (textarea) |
+- **Live Quote**: Performance (service × performers from prices.json) + Travel (max(0, km-50) × R4/km; editable via CMS) = Total (updates on change).
+- **Validation/Submit**: Honeypot spam, required fields; post-submit confirmation.[5]
+
+### Join Form (`/join.html`)
+Native Netlify Forms to `info@pulsedancers.com` (subject: "New Recruit - [Name]").
+- **Fields** (2-col grid): Full Name/Email/Phone/Age (required), City (Google autocomplete), Experience (textarea opt), Instagram (opt), Travel (dropdown: Local/Regional/Nationwide), Profile/Full-Body Photo (file upload, client-resize), Notes (textarea).
+- **Validation**: Min age 18, required photos; auto-resize uploads <1.5MB.[5]
+
+## Integrations & Features
+- **Social**: Homepage embeds FB Events (`pulsesouthafrica`, tabs=events), IG 2 latest posts (CMS URLs → embed script).
+- **Google Maps**: API key `AIzaSyDmIhz0iWcB8R-BBXkFFGi36bCQIm7fgA8` (restrict to domains/APIs: JS/Places/Geocoding/Distance Matrix); autocomplete + distance matrix.[2]
+- **SEO**: Title/description OG/Twitter cards, JSON-LD `EntertainmentBusiness` (Johannesburg, SA), sitemap.xml/robots.txt, alt text, canonicals.[2]
+- **Reviews**: Homepage testimonial display (CMS) + submission form (Netlify Forms).[2]
+
+## Tech Stack & Deployment
+| Layer | Tool |
+|-------|------|
+| Frontend | HTML/Tailwind CSS/JS (vanilla) |
+| CMS | Decap CMS v3 (`/admin`) |
+| Forms | Netlify Forms (CSV/email export) |
+| Hosting | Netlify free (account: elihsagmail.com; GitHub opt: elihsa) |
+| Domain | pulsedancers.com (Afrihost DNS → Netlify) |
+
+**Deploy**: Drag ZIP to Netlify → "Deploy manually" → Enable Identity/Git Gateway → Invite `elihsagmail.com` → `/admin`. Test forms (submit once).[1][4]
+
+## Pre-Populated Content
+- **Homepage**: "Fulfill your Fantasies" hero; services (Male Strippers/Topless Waiters/etc.); 3 testimonials (Leanne/Megan/Sam).
+- **Prices**: Seeded table (1-Man Xpress R1800 → 6-Man R12000, waiters R750-950, Naughty Games R1600); notes: "Excl. sustenance/transport".
+- **FAQ**: Groups from doc/site (e.g., "Rates exclude travel? No..."; "Fun Games? 30-45min tasks").[3][2]
+
+## Future-Proofing
+- **Payments**: Structure for Stripe/PayFast (CMS-editable links/buttons).
+- **Merch**: `/merch` scaffold (grid ready for Snipcart).
+- **Blog**: Add markdown posts for SEO (e.g., "Top Gauteng Bachelorette Venues").[1]
+
+This spec enables production without questions; all assets/content/URLs/logic extracted from transcripts.[4][5][3][1][2]
+
+[1](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/67417436/0d98ba8b-5d1c-4663-b52f-5f184f8841bd/new-2.txt)
+[2](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/67417436/6c021de6-bc4a-457e-b2d1-fc54753261e6/new-4.txt)
+[3](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/67417436/c6221f3f-14e5-488a-b617-b43ca5d6f12e/new-5.txt)
+[4](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/67417436/109fc4a6-c95a-4e42-a623-ffdc3e1bb2ca/new-1.txt)
+[5](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/67417436/733885c8-13bd-4060-a446-101dbc409b45/new-3.txt)
