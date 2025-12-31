@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="South Africa's choreographed male revue for bachelorettes, ladies nights and corporate events. Professional, respectful, unforgettable entertainment." />
   <link rel="stylesheet" href="assets/css/styles.css" />
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -146,6 +147,17 @@
 </div>
 
 <script src="assets/js/app.js"></script>
+<script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
+</script>
 </body>
 </html>
 
