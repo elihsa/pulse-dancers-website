@@ -146,9 +146,10 @@
             </label>
           </div>
           <input type="hidden" id="services-hidden" name="service-type" required>
+          <div id="service-error" class="form-error" style="display: none;">Please select at least one service.</div>
         </div>
 
-        <div id="waiter-hours-field" class="form-group" style="display: none;">
+        <div id="waiter-hours-field" class="form-group">
           <label for="waiter-hours">Number of Hours for Waiter Service *</label>
           <input type="number" id="waiter-hours" name="waiter-hours" min="1" max="12" value="2" step="1">
           <small style="color: #b0b0b0;">Specify the duration for waiter services</small>

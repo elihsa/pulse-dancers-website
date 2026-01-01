@@ -430,6 +430,17 @@ input[type="checkbox"] {
   accent-color: #FF2D55;
 }
 
+/* Form Error Messages */
+.form-error {
+  color: #FF2D55;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: rgba(255, 45, 85, 0.1);
+  border-radius: 4px;
+  border-left: 3px solid #FF2D55;
+}
+
 /* Checkbox Labels */
 .checkbox-label {
   display: flex;
@@ -467,6 +478,11 @@ input[type="checkbox"] {
 /* Compact Inputs */
 .input-compact {
   max-width: 200px;
+}
+
+/* Waiter Hours Field */
+#waiter-hours-field {
+  display: none;
 }
 
 @media (max-width: 600px) {

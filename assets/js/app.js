@@ -169,7 +169,7 @@ function updateQuote() {
   const numPerformers = parseInt(performersInput.value) || 1;
   const distance = parseFloat(distanceInput?.value || 0);
 
-  // Calculate performance fee (only multiply by performers if not waiter service)
+  // Calculate performance fee
   const performanceFee = totalServicePrice;
 
   // Calculate travel fee (only beyond free km)
@@ -277,14 +277,33 @@ function initBookingForm() {
   
   // Add form validation for at least one service selected
   const form = document.getElementById('booking-form');
+  const serviceError = document.getElementById('service-error');
+  
   if (form) {
     form.addEventListener('submit', (e) => {
       const checkedServices = document.querySelectorAll('input[name="services"]:checked');
       if (checkedServices.length === 0) {
         e.preventDefault();
-        alert('Please select at least one service.');
+        if (serviceError) {
+          serviceError.style.display = 'block';
+        }
+        // Scroll to error
+        const servicesSection = document.querySelector('.service-checkboxes');
+        if (servicesSection) {
+          servicesSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
         return false;
       }
+    });
+    
+    // Hide error when user selects a service
+    const serviceCheckboxes = document.querySelectorAll('input[name="services"]');
+    serviceCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        if (serviceError && document.querySelectorAll('input[name="services"]:checked').length > 0) {
+          serviceError.style.display = 'none';
+        }
+      });
     });
   }
 }
