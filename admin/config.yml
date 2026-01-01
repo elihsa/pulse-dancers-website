@@ -1,6 +1,11 @@
 backend:
   name: git-gateway
   branch: main
+  auth:
+  base_url: https://github.com/login/oauth/authorize
+  client_id: e55dc4d1fdb098ceaeb5
+  token_endpoint: https://github.com/login/oauth/access_token
+  redirect_url: https://pulsedancers26.netlify.app/admin/
 
 media_folder: "assets/images/uploads"
 public_folder: "/assets/images/uploads"
