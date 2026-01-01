@@ -30,6 +30,9 @@
     <div class="block">
       <h2>Book Pulse for Your Event</h2>
       <p>Fill out the form below with your event details. Our booking form calculates distance automatically and provides a live quote. We'll send you a personalized confirmation within 24 hours.</p>
+      <p style="background-color: rgba(255, 45, 85, 0.1); padding: 1rem; border-radius: 6px; border-left: 4px solid #FF2D55; margin-bottom: 1.5rem;">
+        <strong>📧 Form Submissions:</strong> All booking requests are automatically sent to our team via Netlify Forms. You'll receive a confirmation email, and we'll respond within 24 hours with your personalized quote and availability confirmation.
+      </p>
       
       <form id="booking-form" name="booking" method="POST" data-netlify="true" netlify-honeypot="bot-field">
         <input type="hidden" name="form-name" value="booking">
@@ -63,27 +66,27 @@
 
         <!-- Event Details -->
         <h3>Event Details</h3>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="event-type">Event Type *</label>
-            <select id="event-type" name="event-type" required>
-              <option value="">Select event type</option>
-              <option value="Bachelorette">Bachelorette Party</option>
-              <option value="Birthday">Birthday Party</option>
-              <option value="Girls Night">Girls Night</option>
-              <option value="Corporate">Corporate Event</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="event-date">Event Date *</label>
-            <input type="date" id="event-date" name="event-date" required>
-          </div>
+        <div class="form-group">
+          <label for="event-type">Event Type *</label>
+          <select id="event-type" name="event-type" required>
+            <option value="">Select event type</option>
+            <option value="Bachelorette">Bachelorette Party</option>
+            <option value="Birthday">Birthday Party</option>
+            <option value="Girls Night">Girls Night</option>
+            <option value="Corporate">Corporate Event</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
 
-        <div class="form-group">
-          <label for="event-time">Event Time *</label>
-          <input type="time" id="event-time" name="event-time" required>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="event-date">Event Date *</label>
+            <input type="date" id="event-date" name="event-date" class="input-compact" required>
+          </div>
+          <div class="form-group">
+            <label for="event-time">Event Time *</label>
+            <input type="time" id="event-time" name="event-time" class="input-compact" required>
+          </div>
         </div>
 
         <!-- Guest & Service Information -->
@@ -100,21 +103,55 @@
             </select>
             <div id="guest-recommendation" style="color: #FF2D55; margin-top: 0.5rem; font-size: 0.875rem;"></div>
           </div>
-          <div class="form-group">
-            <label for="service-type">Service Type *</label>
-            <select id="service-type" name="service-type" required>
-              <option value="">Select service</option>
-              <option value="1800">1-Man Xpress (30min) - R1,800</option>
-              <option value="2200">1-Man Show (45min) - R2,200</option>
-              <option value="4000">2-Man Show (45min) - R4,000</option>
-              <option value="6000">3-Man Show (45min) - R6,000</option>
-              <option value="8000">4-Man Show (45min) - R8,000</option>
-              <option value="12000">6-Man Show (45min) - R12,000</option>
-              <option value="750">Topless Waiter (per hour) - R750</option>
-              <option value="950">Bottomless Waiter (per hour) - R950</option>
-              <option value="1600">Naughty Games + Host (30-45min) - R1,600</option>
-            </select>
+        </div>
+
+        <div class="form-group">
+          <label>Service Type * (Select one or more)</label>
+          <div class="service-checkboxes">
+            <label class="checkbox-label">
+              <input type="checkbox" name="services" value="1800" data-name="1-Man Xpress (30min)" data-hourly="false">
+              <span>1-Man Xpress (30min) - R1,800</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="services" value="2200" data-name="1-Man Show (45min)" data-hourly="false">
+              <span>1-Man Show (45min) - R2,200</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="services" value="4000" data-name="2-Man Show (45min)" data-hourly="false">
+              <span>2-Man Show (45min) - R4,000</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="services" value="6000" data-name="3-Man Show (45min)" data-hourly="false">
+              <span>3-Man Show (45min) - R6,000</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="services" value="8000" data-name="4-Man Show (45min)" data-hourly="false">
+              <span>4-Man Show (45min) - R8,000</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="services" value="12000" data-name="6-Man Show (45min)" data-hourly="false">
+              <span>6-Man Show (45min) - R12,000</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="services" value="750" data-name="Topless Waiter" data-hourly="true">
+              <span>Topless Waiter (per hour) - R750</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="services" value="950" data-name="Bottomless Waiter" data-hourly="true">
+              <span>Bottomless Waiter (per hour) - R950</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="services" value="1600" data-name="Naughty Games + Host (30-45min)" data-hourly="false">
+              <span>Naughty Games + Host (30-45min) - R1,600</span>
+            </label>
           </div>
+          <input type="hidden" id="services-hidden" name="service-type" required>
+        </div>
+
+        <div id="waiter-hours-field" class="form-group" style="display: none;">
+          <label for="waiter-hours">Number of Hours for Waiter Service *</label>
+          <input type="number" id="waiter-hours" name="waiter-hours" min="1" max="12" value="2" step="1">
+          <small style="color: #b0b0b0;">Specify the duration for waiter services</small>
         </div>
 
         <div class="form-group">

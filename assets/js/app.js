@@ -121,18 +121,56 @@ function updateQuoteWithDistance(roundTripKm) {
 // ===== LIVE QUOTE CALCULATOR =====
 function updateQuote() {
   // Get form values
-  const serviceSelect = document.getElementById('service-type');
+  const serviceCheckboxes = document.querySelectorAll('input[name="services"]:checked');
   const performersInput = document.getElementById('num-performers');
   const distanceInput = document.getElementById('calculated-distance');
+  const waiterHoursInput = document.getElementById('waiter-hours');
   
-  if (!serviceSelect || !performersInput) return;
+  if (!performersInput) return;
 
-  const servicePrice = parseFloat(serviceSelect.value) || 0;
+  let totalServicePrice = 0;
+  let hasWaiterService = false;
+  const selectedServices = [];
+
+  // Calculate total service price from checked services
+  serviceCheckboxes.forEach(checkbox => {
+    const price = parseFloat(checkbox.value) || 0;
+    const isHourly = checkbox.getAttribute('data-hourly') === 'true';
+    const serviceName = checkbox.getAttribute('data-name');
+    
+    if (isHourly) {
+      hasWaiterService = true;
+      const hours = parseInt(waiterHoursInput?.value || 2);
+      totalServicePrice += price * hours;
+      selectedServices.push(`${serviceName} (${hours}h)`);
+    } else {
+      totalServicePrice += price;
+      selectedServices.push(serviceName);
+    }
+  });
+
+  // Show/hide waiter hours field
+  const waiterHoursField = document.getElementById('waiter-hours-field');
+  if (waiterHoursField) {
+    waiterHoursField.style.display = hasWaiterService ? 'block' : 'none';
+    if (hasWaiterService && waiterHoursInput) {
+      waiterHoursInput.setAttribute('required', 'required');
+    } else if (waiterHoursInput) {
+      waiterHoursInput.removeAttribute('required');
+    }
+  }
+
+  // Update hidden field with selected services for form submission
+  const servicesHidden = document.getElementById('services-hidden');
+  if (servicesHidden) {
+    servicesHidden.value = selectedServices.join(', ');
+  }
+
   const numPerformers = parseInt(performersInput.value) || 1;
   const distance = parseFloat(distanceInput?.value || 0);
 
-  // Calculate performance fee
-  const performanceFee = servicePrice * numPerformers;
+  // Calculate performance fee (only multiply by performers if not waiter service)
+  const performanceFee = totalServicePrice;
 
   // Calculate travel fee (only beyond free km)
   const chargeableKm = Math.max(0, distance - FREE_KM);
@@ -213,13 +251,14 @@ function initLocationToggle() {
 // ===== FORM LISTENERS =====
 function initBookingForm() {
   // Add listeners for quote updates
-  const serviceSelect = document.getElementById('service-type');
+  const serviceCheckboxes = document.querySelectorAll('input[name="services"]');
   const performersInput = document.getElementById('num-performers');
   const guestsSelect = document.getElementById('num-guests');
+  const waiterHoursInput = document.getElementById('waiter-hours');
 
-  if (serviceSelect) {
-    serviceSelect.addEventListener('change', updateQuote);
-  }
+  serviceCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', updateQuote);
+  });
 
   if (performersInput) {
     performersInput.addEventListener('input', updateQuote);
@@ -229,8 +268,25 @@ function initBookingForm() {
     guestsSelect.addEventListener('change', updateGuestRecommendation);
   }
 
+  if (waiterHoursInput) {
+    waiterHoursInput.addEventListener('input', updateQuote);
+  }
+
   // Initialize location toggle
   initLocationToggle();
+  
+  // Add form validation for at least one service selected
+  const form = document.getElementById('booking-form');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      const checkedServices = document.querySelectorAll('input[name="services"]:checked');
+      if (checkedServices.length === 0) {
+        e.preventDefault();
+        alert('Please select at least one service.');
+        return false;
+      }
+    });
+  }
 }
 
 // ===== LOAD CMS DATA =====
