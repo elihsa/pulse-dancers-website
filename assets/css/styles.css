@@ -441,6 +441,15 @@ input[type="checkbox"] {
   border-left: 3px solid #FF2D55;
 }
 
+/* Info Banner */
+.form-info-banner {
+  background-color: rgba(255, 45, 85, 0.1);
+  padding: 1rem;
+  border-radius: 6px;
+  border-left: 4px solid #FF2D55;
+  margin-bottom: 1.5rem;
+}
+
 /* Checkbox Labels */
 .checkbox-label {
   display: flex;

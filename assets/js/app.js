@@ -29,6 +29,7 @@ const GOOGLE_MAPS_API_KEY = 'AIzaSyDmIhz0iWcB8R-BBXkFFGi36bCQIm7fgA8';
 const BASE_LOCATION = 'Sandton City, Johannesburg, South Africa';
 const FREE_KM = 50;
 const RAND_PER_KM = 4;
+const DEFAULT_WAITER_HOURS = 2;
 
 let autocomplete;
 let distanceService;
@@ -140,7 +141,7 @@ function updateQuote() {
     
     if (isHourly) {
       hasWaiterService = true;
-      const hours = parseInt(waiterHoursInput?.value || 2);
+      const hours = parseInt(waiterHoursInput?.value || DEFAULT_WAITER_HOURS);
       totalServicePrice += price * hours;
       selectedServices.push(`${serviceName} (${hours}h)`);
     } else {
@@ -250,12 +251,13 @@ function initLocationToggle() {
 
 // ===== FORM LISTENERS =====
 function initBookingForm() {
-  // Add listeners for quote updates
+  // Get all service checkboxes once
   const serviceCheckboxes = document.querySelectorAll('input[name="services"]');
   const performersInput = document.getElementById('num-performers');
   const guestsSelect = document.getElementById('num-guests');
   const waiterHoursInput = document.getElementById('waiter-hours');
 
+  // Add listeners for quote updates
   serviceCheckboxes.forEach(checkbox => {
     checkbox.addEventListener('change', updateQuote);
   });
@@ -296,8 +298,7 @@ function initBookingForm() {
       }
     });
     
-    // Hide error when user selects a service
-    const serviceCheckboxes = document.querySelectorAll('input[name="services"]');
+    // Hide error when user selects a service (reuse serviceCheckboxes)
     serviceCheckboxes.forEach(checkbox => {
       checkbox.addEventListener('change', () => {
         if (serviceError && document.querySelectorAll('input[name="services"]:checked').length > 0) {
