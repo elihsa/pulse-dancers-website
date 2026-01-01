@@ -1,0 +1,25 @@
+{
+  "items": [
+    {
+      "name": "Leanne",
+      "rating": 5,
+      "text": "The guys were professional, respectful, and absolutely stunning. They made my bachelorette party unforgettable!",
+      "location": "Johannesburg",
+      "date": "2024-11-15"
+    },
+    {
+      "name": "Megan",
+      "rating": 5,
+      "text": "Best entertainment we've ever had at a corporate event. The team was punctual, professional, and incredibly talented.",
+      "location": "Sandton",
+      "date": "2024-10-22"
+    },
+    {
+      "name": "Sam",
+      "rating": 5,
+      "text": "Hired topless waiters for our girls night and it was perfect! They were charming, fun, and made everyone feel comfortable.",
+      "location": "Pretoria",
+      "date": "2024-09-30"
+    }
+  ]
+}
