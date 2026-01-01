@@ -141,7 +141,7 @@ function updateQuote() {
     
     if (isHourly) {
       hasWaiterService = true;
-      const hours = parseInt(waiterHoursInput?.value || DEFAULT_WAITER_HOURS);
+      const hours = parseInt(waiterHoursInput?.value) || DEFAULT_WAITER_HOURS;
       totalServicePrice += price * hours;
       selectedServices.push(`${serviceName} (${hours}h)`);
     } else {
@@ -256,6 +256,12 @@ function initBookingForm() {
   const performersInput = document.getElementById('num-performers');
   const guestsSelect = document.getElementById('num-guests');
   const waiterHoursInput = document.getElementById('waiter-hours');
+  const serviceError = document.getElementById('service-error');
+
+  // Set default waiter hours value
+  if (waiterHoursInput) {
+    waiterHoursInput.value = DEFAULT_WAITER_HOURS;
+  }
 
   // Add listeners for quote updates
   serviceCheckboxes.forEach(checkbox => {
@@ -279,7 +285,6 @@ function initBookingForm() {
   
   // Add form validation for at least one service selected
   const form = document.getElementById('booking-form');
-  const serviceError = document.getElementById('service-error');
   
   if (form) {
     form.addEventListener('submit', (e) => {
@@ -298,10 +303,11 @@ function initBookingForm() {
       }
     });
     
-    // Hide error when user selects a service (reuse serviceCheckboxes)
+    // Hide error when user selects a service (reuse serviceCheckboxes, check length efficiently)
     serviceCheckboxes.forEach(checkbox => {
       checkbox.addEventListener('change', () => {
-        if (serviceError && document.querySelectorAll('input[name="services"]:checked').length > 0) {
+        if (serviceError && checkbox.checked) {
+          // At least one is now checked, hide error
           serviceError.style.display = 'none';
         }
       });
