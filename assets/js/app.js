@@ -648,6 +648,11 @@ function loadInstagramPosts() {
   loadCMSData('social.json', (data) => {
     if (!data || !data.instagramPosts || data.instagramPosts.length < 2) {
       console.warn('Not enough Instagram posts in CMS data');
+      // Hide Instagram section if no posts available
+      const instagramSection = document.querySelector('#instagram-post-1')?.closest('.section');
+      if (instagramSection) {
+        instagramSection.style.display = 'none';
+      }
       return;
     }
     
@@ -665,7 +670,13 @@ function loadInstagramPosts() {
     
     // Reload Instagram embed script to render posts
     if (window.instgrm) {
-      window.instgrm.Embeds.process();
+      try {
+        window.instgrm.Embeds.process();
+      } catch (error) {
+        console.error('Error processing Instagram embeds:', error);
+      }
+    } else {
+      console.warn('Instagram embed script not loaded');
     }
   });
 }
