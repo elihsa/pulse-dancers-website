@@ -332,7 +332,11 @@ function loadPerformers() {
 
   loadCMSData('performers.json', (data) => {
     if (!data || !data.performers || data.performers.length === 0) {
-      performersGrid.innerHTML = '<p style="text-align: center; color: #b0b0b0;">No performers to display yet. Add team members via the CMS.</p>';
+      const message = document.createElement('p');
+      message.style.textAlign = 'center';
+      message.style.color = '#b0b0b0';
+      message.textContent = 'No performers to display yet. Add team members via the CMS.';
+      performersGrid.appendChild(message);
       return;
     }
 
@@ -340,39 +344,82 @@ function loadPerformers() {
     const activePerformers = data.performers.filter(p => p.active === true);
     
     if (activePerformers.length === 0) {
-      performersGrid.innerHTML = '<p style="text-align: center; color: #b0b0b0;">No active performers at this time. Check back soon!</p>';
+      const message = document.createElement('p');
+      message.style.textAlign = 'center';
+      message.style.color = '#b0b0b0';
+      message.textContent = 'No active performers at this time. Check back soon!';
+      performersGrid.appendChild(message);
       return;
     }
 
-    // Create performer cards with sanitized content
-    performersGrid.innerHTML = activePerformers.map(performer => {
-      // Sanitize text content
-      const name = document.createElement('div');
-      name.textContent = performer.name || 'Unknown';
-      const stageName = document.createElement('div');
-      stageName.textContent = performer.stageName || '';
-      const bio = document.createElement('div');
-      bio.textContent = performer.bio || '';
-      const specialties = document.createElement('div');
-      specialties.textContent = performer.specialties || '';
+    // Clear grid
+    performersGrid.innerHTML = '';
+
+    // Create performer cards using DOM methods for security
+    activePerformers.forEach(performer => {
+      const card = document.createElement('div');
+      card.className = 'performer-card';
       
-      // Validate and sanitize photo URL (basic check)
-      const photoUrl = (performer.photo && typeof performer.photo === 'string') 
-        ? performer.photo 
-        : '/assets/images/placeholder-performer.jpg';
+      // Create and validate photo
+      const photo = document.createElement('img');
+      photo.className = 'performer-photo';
+      photo.loading = 'lazy';
+      photo.alt = 'Performer photo';
       
-      return `
-        <div class="performer-card">
-          <img src="${photoUrl}" alt="Performer photo" class="performer-photo" loading="lazy">
-          <div class="performer-info">
-            <div class="performer-name">${name.innerHTML}</div>
-            ${performer.stageName ? `<div class="performer-stage-name">"${stageName.innerHTML}"</div>` : ''}
-            ${performer.bio ? `<div class="performer-bio">${bio.innerHTML}</div>` : ''}
-            ${performer.specialties ? `<div class="performer-specialties">💪 ${specialties.innerHTML}</div>` : ''}
-          </div>
-        </div>
-      `;
-    }).join('');
+      // Validate photo URL - only allow http/https
+      let photoUrl = '/assets/images/placeholder-performer.jpg';
+      if (performer.photo && typeof performer.photo === 'string') {
+        try {
+          const url = new URL(performer.photo, window.location.origin);
+          if (url.protocol === 'http:' || url.protocol === 'https:') {
+            photoUrl = performer.photo;
+          }
+        } catch (e) {
+          console.warn('Invalid performer photo URL:', performer.photo);
+        }
+      }
+      photo.src = photoUrl;
+      
+      // Create info container
+      const info = document.createElement('div');
+      info.className = 'performer-info';
+      
+      // Add name
+      if (performer.name) {
+        const name = document.createElement('div');
+        name.className = 'performer-name';
+        name.textContent = performer.name;
+        info.appendChild(name);
+      }
+      
+      // Add stage name
+      if (performer.stageName) {
+        const stageName = document.createElement('div');
+        stageName.className = 'performer-stage-name';
+        stageName.textContent = `"${performer.stageName}"`;
+        info.appendChild(stageName);
+      }
+      
+      // Add bio
+      if (performer.bio) {
+        const bio = document.createElement('div');
+        bio.className = 'performer-bio';
+        bio.textContent = performer.bio;
+        info.appendChild(bio);
+      }
+      
+      // Add specialties
+      if (performer.specialties) {
+        const specialties = document.createElement('div');
+        specialties.className = 'performer-specialties';
+        specialties.textContent = `💪 ${performer.specialties}`;
+        info.appendChild(specialties);
+      }
+      
+      card.appendChild(photo);
+      card.appendChild(info);
+      performersGrid.appendChild(card);
+    });
   });
 }
 
