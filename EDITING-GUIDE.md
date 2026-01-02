@@ -68,7 +68,8 @@ The forms are standard HTML forms with two special attributes:
 - ✅ Logo image (NEW!)
 - ✅ Hero background image (NEW!)
 - ✅ Pricing table (services, prices, notes)
-- ✅ FAQ questions and answers
+- ✅ FAQ questions and answers (EXPANDED!)
+- ✅ Service descriptions (NEW!)
 - ✅ Testimonials
 - ✅ Performer profiles (photos, bios, specialties)
 - ✅ Social media links
@@ -259,6 +260,83 @@ All service prices are synchronized between:
 6. Save → Publish
 7. Reload homepage - image appears as hero background!
 
+### Task: Edit Service Descriptions (NEW!)
+
+**✅ SERVICE DESCRIPTIONS ARE NOW CMS-MANAGED!**
+
+All service descriptions (Male Strippers, Topless Waiters, Bottomless Waiters, etc.) can now be edited through the CMS.
+
+**To edit a service description:**
+1. Go to `/admin/` → "Services" → "Service Descriptions"
+2. Click on the service you want to edit
+3. Update the "Description" field
+4. Toggle "Active" on/off to show/hide the service
+5. Save → Publish
+
+**To add a new service type:**
+1. Go to `/admin/` → "Services" → "Service Descriptions"
+2. Click "Add Services"
+3. Fill in:
+   - Service Name (e.g., "Birthday Special")
+   - Description (detailed text about the service)
+   - Active (check to make it visible)
+4. Save → Publish
+
+**Note:** Service descriptions are separate from pricing. Use the Pricing section to manage prices.
+
+### Task: Edit FAQ Content (EXPANDED!)
+
+**✅ FAQ IS NOW FULLY CMS-MANAGED!**
+
+The FAQ page now loads all content dynamically from the CMS, including:
+- All questions and answers
+- The "Still have questions?" footer text
+- Group titles (General, Topless Waiters, etc.)
+
+**To add a new FAQ question:**
+1. Go to `/admin/` → "FAQ" → "FAQ Content"
+2. Click on the FAQ group you want to add to (or create new group)
+3. Click "Add Questions & Answers"
+4. Fill in:
+   - Question (the FAQ question)
+   - Answer (can be multiple paragraphs)
+5. Save → Publish
+
+**To edit existing FAQ:**
+1. Go to `/admin/` → "FAQ" → "FAQ Content"
+2. Expand the group, click on the Q&A to edit
+3. Update Question or Answer
+4. Save → Publish
+
+**To edit the FAQ footer text:**
+1. Go to `/admin/` → "FAQ" → "FAQ Content"
+2. Edit "Footer Text" (the heading)
+3. Edit "Footer Description" (the subtitle)
+4. Save → Publish
+
+**Tips for FAQ answers:**
+- Use line breaks for readability (press Enter for new lines)
+- Keep answers concise but informative
+- Use bullet points by starting lines with "- " or numbers
+
+### Task: Add/Edit Performers (UPDATED!)
+
+**✅ PERFORMER PROFILES ARE CMS-MANAGED!**
+
+1. Go to `/admin/`
+2. Click "Performers" → "Team Members"
+3. Click "Add Performers" for new, or click existing to edit
+4. Fill in details:
+   - Name (real name)
+   - Stage Name (performance name - optional)
+   - Photo (upload performer image)
+   - Bio (background info - optional)
+   - Specialties (e.g., "Hip-hop dance, crowd interaction")
+   - Active (toggle on to show on website)
+5. Save → Publish
+
+**Note:** Only performers marked as "Active" will appear on the Meet The Guys page.
+
 ## When to Ask for Help
 
 Ask a developer if you need to:
@@ -269,6 +347,29 @@ Ask a developer if you need to:
 - Modify the booking quote calculation
 - Change the database structure
 - Add user authentication
+
+## Important Notes
+
+### Distance Calculator on Booking Form
+
+**⚠️ The distance calculator requires a live deployment with a valid Google Maps API key to work properly.**
+
+- When testing locally (e.g., `localhost` or `http.server`), the distance calculator will not function
+- The calculator needs to make API calls to Google Maps Distance Matrix API
+- On your live Netlify deployment, the calculator will work if:
+  1. The site is deployed (not just local)
+  2. A valid Google Maps API key is configured in `assets/js/app.js`
+  3. The API key has Distance Matrix API and Places API enabled
+
+**Testing the booking form locally:**
+- You can still test form submissions without the distance calculator
+- The manual "area" input field can be used as a fallback
+- Quote calculations will work with all other features
+
+**If the distance calculator stops working on live site:**
+- Check if the Google Maps API key is still valid
+- Verify the API key has necessary permissions
+- Check the browser console for error messages
 
 ## Quick Reference: File Locations
 
@@ -285,9 +386,12 @@ pulse-dancers-website/
 ├── data/
 │   ├── home.json           → Homepage content (editable via CMS)
 │   ├── prices.json         → Pricing data (editable via CMS)
-│   ├── faq.json            → FAQ data (editable via CMS)
+│   ├── faq.json            → FAQ data (editable via CMS - EXPANDED!)
+│   ├── services.json       → Service descriptions (editable via CMS - NEW!)
 │   ├── performers.json     → Performer profiles (editable via CMS)
-│   └── testimonials.json   → Testimonials (editable via CMS)
+│   ├── testimonials.json   → Testimonials (editable via CMS)
+│   ├── social.json         → Social media links (editable via CMS)
+│   └── booking.json        → Booking settings (editable via CMS)
 ├── assets/
 │   ├── css/
 │   │   └── styles.css      → All website styles
