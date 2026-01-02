@@ -314,12 +314,14 @@ function initBookingForm() {
 async function loadCMSData(dataFile, callback) {
   try {
     const response = await fetch(`/data/${dataFile}`);
-    if (response.ok) {
-      const data = await response.json();
-      callback(data);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    const data = await response.json();
+    callback(data);
   } catch (error) {
     console.error(`Error loading ${dataFile}:`, error);
+    callback(null); // Pass null to callback to handle error gracefully
   }
 }
 
@@ -329,25 +331,48 @@ function loadPerformers() {
   if (!performersGrid) return;
 
   loadCMSData('performers.json', (data) => {
-    if (!data.performers || data.performers.length === 0) {
+    if (!data || !data.performers || data.performers.length === 0) {
       performersGrid.innerHTML = '<p style="text-align: center; color: #b0b0b0;">No performers to display yet. Add team members via the CMS.</p>';
       return;
     }
 
-    // Filter to only active performers
-    const activePerformers = data.performers.filter(p => p.active !== false);
+    // Filter to only explicitly active performers
+    const activePerformers = data.performers.filter(p => p.active === true);
     
-    performersGrid.innerHTML = activePerformers.map(performer => `
-      <div class="performer-card">
-        <img src="${performer.photo}" alt="${performer.name}" class="performer-photo" loading="lazy">
-        <div class="performer-info">
-          <div class="performer-name">${performer.name}</div>
-          ${performer.stageName ? `<div class="performer-stage-name">"${performer.stageName}"</div>` : ''}
-          ${performer.bio ? `<div class="performer-bio">${performer.bio}</div>` : ''}
-          ${performer.specialties ? `<div class="performer-specialties">💪 ${performer.specialties}</div>` : ''}
+    if (activePerformers.length === 0) {
+      performersGrid.innerHTML = '<p style="text-align: center; color: #b0b0b0;">No active performers at this time. Check back soon!</p>';
+      return;
+    }
+
+    // Create performer cards with sanitized content
+    performersGrid.innerHTML = activePerformers.map(performer => {
+      // Sanitize text content
+      const name = document.createElement('div');
+      name.textContent = performer.name || 'Unknown';
+      const stageName = document.createElement('div');
+      stageName.textContent = performer.stageName || '';
+      const bio = document.createElement('div');
+      bio.textContent = performer.bio || '';
+      const specialties = document.createElement('div');
+      specialties.textContent = performer.specialties || '';
+      
+      // Validate and sanitize photo URL (basic check)
+      const photoUrl = (performer.photo && typeof performer.photo === 'string') 
+        ? performer.photo 
+        : '/assets/images/placeholder-performer.jpg';
+      
+      return `
+        <div class="performer-card">
+          <img src="${photoUrl}" alt="Performer photo" class="performer-photo" loading="lazy">
+          <div class="performer-info">
+            <div class="performer-name">${name.innerHTML}</div>
+            ${performer.stageName ? `<div class="performer-stage-name">"${stageName.innerHTML}"</div>` : ''}
+            ${performer.bio ? `<div class="performer-bio">${bio.innerHTML}</div>` : ''}
+            ${performer.specialties ? `<div class="performer-specialties">💪 ${specialties.innerHTML}</div>` : ''}
+          </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   });
 }
 
