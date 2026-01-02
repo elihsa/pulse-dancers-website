@@ -1,0 +1,12 @@
+{
+  "performers": [
+    {
+      "name": "Example Performer",
+      "stageName": "Thunder",
+      "photo": "/assets/images/uploads/placeholder-performer.jpg",
+      "bio": "Professional dancer with 5+ years experience in male revue entertainment.",
+      "specialties": "Contemporary dance, crowd interaction",
+      "active": true
+    }
+  ]
+}
