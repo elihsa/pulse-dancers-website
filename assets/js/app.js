@@ -439,7 +439,35 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('performers-grid')) {
     loadPerformers();
   }
+
+  // Load home page CMS content (logo and hero image)
+  if (document.getElementById('site-logo') || document.getElementById('hero-section')) {
+    loadHomePageImages();
+  }
 });
+
+// ===== LOAD HOME PAGE IMAGES FROM CMS =====
+function loadHomePageImages() {
+  loadCMSData('home.json', (data) => {
+    if (!data) return;
+
+    // Load logo if provided
+    const logoElement = document.getElementById('site-logo');
+    if (logoElement && data.logoImage && data.logoImage.trim() !== '') {
+      // Replace text with image
+      logoElement.innerHTML = `<img src="${data.logoImage}" alt="PULSE" style="height: 40px; width: auto;">`;
+    }
+
+    // Load hero background image if provided
+    const heroSection = document.getElementById('hero-section');
+    if (heroSection && data.heroImage && data.heroImage.trim() !== '') {
+      heroSection.style.backgroundImage = `url('${data.heroImage}')`;
+      heroSection.style.backgroundSize = 'cover';
+      heroSection.style.backgroundPosition = 'center';
+      heroSection.style.backgroundRepeat = 'no-repeat';
+    }
+  });
+}
 
 // Load Google Maps when needed
 window.initGoogleMaps = initGoogleMaps;

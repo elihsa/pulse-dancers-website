@@ -13,6 +13,8 @@ collections:
         name: "home"
         file: "data/home.json"
         fields:
+          - { label: "Logo Image", name: "logoImage", widget: "image", required: false, hint: "Upload your logo (recommended: PNG with transparent background, 200px wide)" }
+          - { label: "Hero Background Image", name: "heroImage", widget: "image", required: false, hint: "Upload hero background image (recommended: 1920x1080px)" }
           - { label: "Hero Title", name: "heroTitle", widget: "string" }
           - { label: "Hero Subtitle", name: "heroSubtitle", widget: "text" }
           - { label: "CTA Button Text", name: "ctaText", widget: "string" }
