@@ -59,31 +59,44 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="join-city">City *</label>
-          <input type="text" id="join-city" name="city" placeholder="e.g., Johannesburg" required>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="join-area">Area *</label>
+            <input type="text" id="join-area" name="area" placeholder="e.g., Sandton, Rosebank" required>
+          </div>
+          <div class="form-group">
+            <label for="join-province">Province *</label>
+            <select id="join-province" name="province" required>
+              <option value="">Select province</option>
+              <option value="Gauteng">Gauteng</option>
+              <option value="Western Cape">Western Cape</option>
+              <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+              <option value="Eastern Cape">Eastern Cape</option>
+              <option value="Free State">Free State</option>
+              <option value="Limpopo">Limpopo</option>
+              <option value="Mpumalanga">Mpumalanga</option>
+              <option value="Northern Cape">Northern Cape</option>
+              <option value="North West">North West</option>
+            </select>
+          </div>
         </div>
 
         <h3>Experience & Availability</h3>
-        <div class="form-group">
-          <label for="join-experience">Experience (optional)</label>
-          <textarea id="join-experience" name="experience" placeholder="Tell us about your dance, performance, or hospitality experience..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="join-instagram">Instagram Handle (optional)</label>
-          <input type="text" id="join-instagram" name="instagram" placeholder="@yourusername">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="join-experience">Experience (optional)</label>
+            <textarea id="join-experience" name="experience" placeholder="Dance, performance, or hospitality experience..." rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="join-skills">Relevant Skills (optional)</label>
+            <textarea id="join-skills" name="skills" placeholder="e.g., DJ, Photographer, MC, Bartending..." rows="3"></textarea>
+          </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="join-travel">Travel Availability *</label>
-            <select id="join-travel" name="travel" required>
-              <option value="">Select availability</option>
-              <option value="Local">Local Only</option>
-              <option value="Regional">Regional (Gauteng)</option>
-              <option value="Nationwide">Nationwide</option>
-            </select>
+            <label for="join-instagram">Instagram Handle (optional)</label>
+            <input type="text" id="join-instagram" name="instagram" placeholder="@yourusername">
           </div>
           <div class="form-group">
             <label for="join-transport">Do you have your own transport? *</label>
@@ -93,6 +106,16 @@
               <option value="Public Transport">No - I use public transport</option>
             </select>
           </div>
+        </div>
+
+        <div class="form-group">
+          <label for="join-travel">Travel Availability *</label>
+          <select id="join-travel" name="travel" required>
+            <option value="">Select availability</option>
+            <option value="Local">Local Only</option>
+            <option value="Regional">Regional (Gauteng)</option>
+            <option value="Nationwide">Nationwide</option>
+          </select>
         </div>
 
         <h3>Photos</h3>
@@ -111,7 +134,7 @@
 
         <div class="form-group">
           <label for="join-notes">Additional Notes (optional)</label>
-          <textarea id="join-notes" name="notes" placeholder="Anything else you'd like us to know?"></textarea>
+          <textarea id="join-notes" name="notes" placeholder="Anything else you'd like us to know?" rows="3"></textarea>
         </div>
 
         <button type="submit">Submit Application</button>

@@ -323,6 +323,34 @@ async function loadCMSData(dataFile, callback) {
   }
 }
 
+// ===== LOAD PERFORMERS =====
+function loadPerformers() {
+  const performersGrid = document.getElementById('performers-grid');
+  if (!performersGrid) return;
+
+  loadCMSData('performers.json', (data) => {
+    if (!data.performers || data.performers.length === 0) {
+      performersGrid.innerHTML = '<p style="text-align: center; color: #b0b0b0;">No performers to display yet. Add team members via the CMS.</p>';
+      return;
+    }
+
+    // Filter to only active performers
+    const activePerformers = data.performers.filter(p => p.active !== false);
+    
+    performersGrid.innerHTML = activePerformers.map(performer => `
+      <div class="performer-card">
+        <img src="${performer.photo}" alt="${performer.name}" class="performer-photo" loading="lazy">
+        <div class="performer-info">
+          <div class="performer-name">${performer.name}</div>
+          ${performer.stageName ? `<div class="performer-stage-name">"${performer.stageName}"</div>` : ''}
+          ${performer.bio ? `<div class="performer-bio">${performer.bio}</div>` : ''}
+          ${performer.specialties ? `<div class="performer-specialties">💪 ${performer.specialties}</div>` : ''}
+        </div>
+      </div>
+    `).join('');
+  });
+}
+
 // ===== INITIALIZE =====
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize accordion if present
@@ -333,6 +361,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize booking form if present
   if (document.getElementById('booking-form')) {
     initBookingForm();
+  }
+
+  // Load performers if on meet-the-guys page
+  if (document.getElementById('performers-grid')) {
+    loadPerformers();
   }
 });
 

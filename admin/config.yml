@@ -99,3 +99,21 @@ collections:
           - { label: "Facebook Page URL", name: "facebookPageUrl", widget: "string" }
           - { label: "Instagram Username", name: "instagramUsername", widget: "string" }
           - { label: "Instagram Post URLs", name: "instagramPosts", widget: "list", field: { label: "Post URL", name: "url", widget: "string" } }
+
+  - name: "performers"
+    label: "Performers"
+    files:
+      - label: "Team Members"
+        name: "performers"
+        file: "data/performers.json"
+        fields:
+          - label: "Performers"
+            name: "performers"
+            widget: "list"
+            fields:
+              - { label: "Name", name: "name", widget: "string" }
+              - { label: "Stage Name", name: "stageName", widget: "string", required: false }
+              - { label: "Photo", name: "photo", widget: "image" }
+              - { label: "Bio", name: "bio", widget: "text", required: false }
+              - { label: "Specialties", name: "specialties", widget: "string", required: false }
+              - { label: "Active", name: "active", widget: "boolean", default: true }
