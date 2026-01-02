@@ -423,10 +423,80 @@ function loadPerformers() {
   });
 }
 
+// ===== LOAD FAQ FROM CMS =====
+function loadFAQ() {
+  const faqContent = document.getElementById('faq-content');
+  const faqFooterTitle = document.getElementById('faq-footer-title');
+  const faqFooterDescription = document.getElementById('faq-footer-description');
+  
+  if (!faqContent) return;
+
+  loadCMSData('faq.json', (data) => {
+    if (!data || !data.groups || data.groups.length === 0) {
+      faqContent.innerHTML = '<p style="text-align: center; color: #b0b0b0;">No FAQ content available.</p>';
+      return;
+    }
+
+    // Clear loading message
+    faqContent.innerHTML = '';
+
+    // Create FAQ groups
+    data.groups.forEach(group => {
+      // Create group heading
+      const heading = document.createElement('h2');
+      heading.style.marginTop = '3rem';
+      heading.textContent = group.title;
+      faqContent.appendChild(heading);
+
+      // Create accordion container
+      const accordion = document.createElement('div');
+      accordion.className = 'accordion';
+
+      // Create accordion items
+      group.qas.forEach(qa => {
+        const item = document.createElement('div');
+        item.className = 'accordion-item';
+
+        const header = document.createElement('button');
+        header.className = 'accordion-header';
+        header.textContent = qa.q;
+
+        const body = document.createElement('div');
+        body.className = 'accordion-body';
+        // Preserve line breaks in answers
+        body.style.whiteSpace = 'pre-line';
+        body.textContent = qa.a;
+
+        item.appendChild(header);
+        item.appendChild(body);
+        accordion.appendChild(item);
+      });
+
+      faqContent.appendChild(accordion);
+    });
+
+    // Update footer text if provided
+    if (faqFooterTitle && data.footerText) {
+      faqFooterTitle.textContent = data.footerText;
+    }
+    if (faqFooterDescription && data.footerDescription) {
+      faqFooterDescription.textContent = data.footerDescription;
+    }
+
+    // Re-initialize accordion after content is loaded
+    initAccordion();
+  });
+}
+
 // ===== INITIALIZE =====
 document.addEventListener('DOMContentLoaded', () => {
-  // Initialize accordion if present
-  if (document.querySelector('.accordion')) {
+  // Load FAQ if on FAQ page
+  if (document.getElementById('faq-content')) {
+    loadFAQ();
+  }
+
+  // Initialize accordion if present (but not on FAQ page since loadFAQ handles it)
+  if (document.querySelector('.accordion') && !document.getElementById('faq-content')) {
     initAccordion();
   }
 

@@ -1,0 +1,39 @@
+{
+  "services": [
+    {
+      "name": "Male Strippers",
+      "description": "Professional choreographed male strip shows for bachelorette parties, ladies nights, and special events. High-energy performances with music, costume changes, and crowd interaction.",
+      "active": true
+    },
+    {
+      "name": "Topless Waiters", 
+      "description": "For good, clean fun when the ladies are a little conservative. The guys will come dressed in black pants and without shirts. They will mingle with the girls, get them drinks, take fun photos, help where they can and create a fun vibe. The guys are all well-mannered and well-groomed.",
+      "active": true
+    },
+    {
+      "name": "Bottomless Waiters",
+      "description": "A slightly naughtier option than the topless waiters, but also for when the ladies are a little too shy for a stripper. The guys will come in a sexy black apron and a g-string. They won't be wearing a shirt nor pants. They will mingle with the girls, get them drinks, take fun photos, help where they can and create a fun vibe. The guys are all well-mannered and well-groomed.",
+      "active": true
+    },
+    {
+      "name": "Naughty Games / MC",
+      "description": "Fun games where we send a guy who makes the girls do some fun tasks. Runs for about 30-45 minutes. The tasks include blowing up balloons and downing drinks to name a few. The games played depend on the guy (each has his own set of games) as well as the setting. Some games are more risqué than others, so it's advisable to tell the booking agent how conservative the girls are.",
+      "active": true
+    },
+    {
+      "name": "Female Strippers",
+      "description": "Professional female exotic dancers available for bachelor parties and special events.",
+      "active": true
+    },
+    {
+      "name": "Hot Promoters",
+      "description": "Attractive promotional models for events and venue activations.",
+      "active": true
+    },
+    {
+      "name": "Fitness Models",
+      "description": "Professional fitness models for events and appearances.",
+      "active": true
+    }
+  ]
+}
