@@ -1,4 +1,6 @@
 {
+  "footerText": "Still have questions?",
+  "footerDescription": "Contact us directly or submit a booking request for a personalized consultation.",
   "groups": [
     {
       "title": "General",
@@ -18,6 +20,22 @@
         {
           "q": "Do you operate outside Gauteng?",
           "a": "Yes. We regularly travel to Cape Town, Durban, Eastern Cape and other regions."
+        },
+        {
+          "q": "Do the rates include travel or accommodation?",
+          "a": "No, all rates exclude travel and accommodation. This will need to be added in a final quote."
+        },
+        {
+          "q": "What do I need for a show?",
+          "a": "Please make sure that you have the following available for the dancer at the venue:\n\n1. A change room or preparation area:\n   - Preferably near to the performance area as the dancer may need to make one change of outfit during the show\n   - At least 4 square meters in size\n   - Enough light to see\n   - A clean and dry floor if it's outside\n\n2. A glass of water (plastic cups are better)\n\n3. A chair to use in the performance:\n   - Low chair (ottoman can work)\n   - NOT a tall bar stool\n   - Chair without arms\n\n4. Performance area:\n   - Make the guests sit in a semi circle around the area, where the dancer will perform\n   - Place the special lady in the centre of the semi circle, on her own chair\n   - The bigger the area, the better\n\n5. Sound system:\n   - The louder the better. If you feel it's not loud enough (louder than girls screaming), we rent out a sound system for R100\n   - Let us know what kind of input the system takes (line in, aux, Bluetooth)\n   - An iPod Docking station or kitchen radio is usually not loud enough\n\n6. Photographs:\n   - Each Dancer has their own preference, so ask them when they arrive, if you can take pictures or film the show\n\n7. Keep the bachelorette / bachelor conscious:\n   - You won't believe how many times the bride/groom is paralytic by the time the dancer arrives\n   - Get them tipsy but keep them there"
+        },
+        {
+          "q": "Timing - how long does a show take?",
+          "a": "If you plan on leaving directly after the show to another venue, allow at least an hour for the show:\n   - It takes about 15 minutes to set up\n   - 20 minutes for the show\n   - 15 minutes to pack up\n   - Usually the dancer will mingle, have a drink and take some photos with the guests afterwards for about 15 minutes"
+        },
+        {
+          "q": "Pets - should they be locked away?",
+          "a": "Please lock away any pets during the performance. Loud noises and fast movements might cause them to behave unpredictably."
         }
       ]
     },

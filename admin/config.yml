@@ -50,6 +50,8 @@ collections:
         name: "faq"
         file: "data/faq.json"
         fields:
+          - { label: "Footer Text", name: "footerText", widget: "string", required: false }
+          - { label: "Footer Description", name: "footerDescription", widget: "text", required: false }
           - label: "FAQ Groups"
             name: "groups"
             widget: "list"
@@ -102,6 +104,21 @@ collections:
           - { label: "Facebook Page URL", name: "facebookPageUrl", widget: "string" }
           - { label: "Instagram Username", name: "instagramUsername", widget: "string" }
           - { label: "Instagram Post URLs", name: "instagramPosts", widget: "list", field: { label: "Post URL", name: "url", widget: "string" } }
+
+  - name: "services"
+    label: "Services"
+    files:
+      - label: "Service Descriptions"
+        name: "services"
+        file: "data/services.json"
+        fields:
+          - label: "Services"
+            name: "services"
+            widget: "list"
+            fields:
+              - { label: "Service Name", name: "name", widget: "string" }
+              - { label: "Description", name: "description", widget: "text" }
+              - { label: "Active", name: "active", widget: "boolean", default: true }
 
   - name: "performers"
     label: "Performers"
