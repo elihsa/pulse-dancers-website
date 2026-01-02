@@ -444,7 +444,103 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('site-logo') || document.getElementById('hero-section')) {
     loadHomePageImages();
   }
+
+  // Load pricing table if on prices page
+  if (document.getElementById('pricing-table-body')) {
+    loadPricingTable();
+  }
+
+  // Load booking form services if on booking page
+  if (document.getElementById('service-checkboxes-container')) {
+    loadBookingServices();
+  }
 });
+
+// ===== LOAD PRICING TABLE FROM CMS =====
+function loadPricingTable() {
+  const tableBody = document.getElementById('pricing-table-body');
+  const notesElement = document.getElementById('pricing-notes');
+  
+  if (!tableBody) return;
+
+  loadCMSData('prices.json', (data) => {
+    if (!data || !data.items || data.items.length === 0) {
+      tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 2rem; color: #b0b0b0;">No pricing data available.</td></tr>';
+      return;
+    }
+
+    // Update notes if provided
+    if (notesElement && data.notes) {
+      notesElement.textContent = data.notes;
+    }
+
+    // Clear loading message
+    tableBody.innerHTML = '';
+
+    // Create table rows
+    data.items.forEach(item => {
+      const row = document.createElement('tr');
+      
+      const nameCell = document.createElement('td');
+      nameCell.textContent = item.name || '';
+      
+      const durationCell = document.createElement('td');
+      durationCell.textContent = item.duration || '';
+      
+      const priceCell = document.createElement('td');
+      const formattedPrice = parseInt(item.price || 0).toLocaleString('en-ZA');
+      priceCell.textContent = `R${formattedPrice}`;
+      
+      row.appendChild(nameCell);
+      row.appendChild(durationCell);
+      row.appendChild(priceCell);
+      tableBody.appendChild(row);
+    });
+  });
+}
+
+// ===== LOAD BOOKING FORM SERVICES FROM CMS =====
+function loadBookingServices() {
+  const container = document.getElementById('service-checkboxes-container');
+  if (!container) return;
+
+  loadCMSData('prices.json', (data) => {
+    if (!data || !data.items || data.items.length === 0) {
+      container.innerHTML = '<p style="color: #b0b0b0; padding: 1rem;">No services available.</p>';
+      return;
+    }
+
+    // Clear loading message
+    container.innerHTML = '';
+
+    // Create checkbox for each service
+    data.items.forEach(item => {
+      const label = document.createElement('label');
+      label.className = 'checkbox-label';
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.name = 'services';
+      checkbox.value = item.price || '0';
+      checkbox.setAttribute('data-name', `${item.name} (${item.duration})`);
+      checkbox.setAttribute('data-hourly', item.isHourly ? 'true' : 'false');
+      
+      const span = document.createElement('span');
+      const formattedPrice = parseInt(item.price || 0).toLocaleString('en-ZA');
+      const priceText = item.isHourly ? ` (per hour) - R${formattedPrice}` : ` (${item.duration}) - R${formattedPrice}`;
+      span.textContent = `${item.name}${priceText}`;
+      
+      label.appendChild(checkbox);
+      label.appendChild(span);
+      container.appendChild(label);
+    });
+
+    // Re-initialize booking form event listeners after services are loaded
+    if (document.getElementById('booking-form')) {
+      initBookingForm();
+    }
+  });
+}
 
 // ===== LOAD HOME PAGE IMAGES FROM CMS =====
 function loadHomePageImages() {

@@ -39,6 +39,7 @@ collections:
               - { label: "Service Name", name: "name", widget: "string" }
               - { label: "Duration", name: "duration", widget: "string" }
               - { label: "Price (Rands)", name: "price", widget: "string" }
+              - { label: "Per Hour Service", name: "isHourly", widget: "boolean", default: false, hint: "Check if this is a per-hour service (like waiters)" }
               - { label: "Notes", name: "notes", widget: "string", required: false }
           - { label: "General Notes", name: "notes", widget: "text" }
 

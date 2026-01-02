@@ -177,26 +177,42 @@ border-color: #FF2D55;  /* Change to: #0066CC */
 
 ## Common Tasks
 
-### Task: Change Booking Form Service Prices
+### Task: Change Service Prices (CMS - Easiest!)
 
-1. Open `book.html`
-2. Find the service checkboxes section (around line 108-147)
-3. Change the `value` attribute (the price in Rands):
-   ```html
-   <!-- Old: -->
-   <input type="checkbox" name="services" value="1800" ...>
-   
-   <!-- New: -->
-   <input type="checkbox" name="services" value="2000" ...>
-   ```
-4. Also update the visible text:
-   ```html
-   <!-- Old: -->
-   <span>1-Man Xpress (30min) - R1,800</span>
-   
-   <!-- New: -->
-   <span>1-Man Xpress (30min) - R2,000</span>
-   ```
+**✅ PRICES ARE NOW CMS-MANAGED!**
+
+All service prices are synchronized between:
+- Pricing page (prices.html)
+- Booking form (book.html)  
+- Quote calculations
+
+**To change prices:**
+1. Go to `/admin/` → "Pricing" → "Pricing Table"
+2. Click on a service to edit
+3. Change the "Price (Rands)" value
+4. For per-hour services, check/uncheck "Per Hour Service"
+5. Click "Save" → "Publish"
+6. **Both the pricing page AND booking form update instantly!**
+
+**To add a new service:**
+1. Go to `/admin/` → "Pricing" → "Pricing Table"
+2. Click "Add Price Items"
+3. Fill in:
+   - Service Name (e.g., "5-Man Show")
+   - Duration (e.g., "45min" or "Per hour")
+   - Price in Rands (numbers only, e.g., "10000")
+   - Check "Per Hour Service" if it's hourly
+4. Save → Publish
+5. New service appears in both pages automatically!
+
+**To remove a service:**
+1. Go to `/admin/` → "Pricing" → "Pricing Table"
+2. Find the service
+3. Click the trash/delete icon
+4. Save → Publish
+
+**Old way (NOT NEEDED ANYMORE):**
+~~You used to have to edit HTML in multiple places. Now everything is CMS-managed!~~
 
 ### Task: Add a New Province to Join Form
 

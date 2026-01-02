@@ -107,43 +107,9 @@
 
         <div class="form-group">
           <label>Service Type * (Select one or more)</label>
-          <div class="service-checkboxes">
-            <label class="checkbox-label">
-              <input type="checkbox" name="services" value="1800" data-name="1-Man Xpress (30min)" data-hourly="false">
-              <span>1-Man Xpress (30min) - R1,800</span>
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="services" value="2200" data-name="1-Man Show (45min)" data-hourly="false">
-              <span>1-Man Show (45min) - R2,200</span>
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="services" value="4000" data-name="2-Man Show (45min)" data-hourly="false">
-              <span>2-Man Show (45min) - R4,000</span>
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="services" value="6000" data-name="3-Man Show (45min)" data-hourly="false">
-              <span>3-Man Show (45min) - R6,000</span>
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="services" value="8000" data-name="4-Man Show (45min)" data-hourly="false">
-              <span>4-Man Show (45min) - R8,000</span>
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="services" value="12000" data-name="6-Man Show (45min)" data-hourly="false">
-              <span>6-Man Show (45min) - R12,000</span>
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="services" value="750" data-name="Topless Waiter" data-hourly="true">
-              <span>Topless Waiter (per hour) - R750</span>
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="services" value="950" data-name="Bottomless Waiter" data-hourly="true">
-              <span>Bottomless Waiter (per hour) - R950</span>
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="services" value="1600" data-name="Naughty Games + Host (30-45min)" data-hourly="false">
-              <span>Naughty Games + Host (30-45min) - R1,600</span>
-            </label>
+          <div class="service-checkboxes" id="service-checkboxes-container">
+            <!-- Services will be loaded dynamically from CMS -->
+            <p style="color: #b0b0b0; padding: 1rem;">Loading services...</p>
           </div>
           <input type="hidden" id="services-hidden" name="service-type">
           <div id="service-error" class="form-error" style="display: none;">Please select at least one service.</div>

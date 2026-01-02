@@ -4,54 +4,63 @@
       "name": "1-Man Xpress",
       "duration": "30min",
       "price": "1800",
+      "isHourly": false,
       "notes": ""
     },
     {
       "name": "1-Man Show",
       "duration": "45min",
       "price": "2200",
+      "isHourly": false,
       "notes": ""
     },
     {
       "name": "2-Man Show",
       "duration": "45min",
       "price": "4000",
+      "isHourly": false,
       "notes": ""
     },
     {
       "name": "3-Man Show",
       "duration": "45min",
       "price": "6000",
+      "isHourly": false,
       "notes": ""
     },
     {
       "name": "4-Man Show",
       "duration": "45min",
       "price": "8000",
+      "isHourly": false,
       "notes": ""
     },
     {
       "name": "6-Man Show",
       "duration": "45min",
       "price": "12000",
+      "isHourly": false,
       "notes": ""
     },
     {
       "name": "Topless Waiter",
       "duration": "Per hour",
       "price": "750",
+      "isHourly": true,
       "notes": ""
     },
     {
       "name": "Bottomless Waiter",
       "duration": "Per hour",
       "price": "950",
+      "isHourly": true,
       "notes": ""
     },
     {
       "name": "Naughty Games + Host",
       "duration": "30-45min",
       "price": "1600",
+      "isHourly": false,
       "notes": ""
     }
   ],
