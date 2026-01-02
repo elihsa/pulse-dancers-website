@@ -524,6 +524,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('service-checkboxes-container')) {
     loadBookingServices();
   }
+
+  // Load Instagram posts if on homepage
+  if (document.getElementById('instagram-post-1')) {
+    loadInstagramPosts();
+  }
 });
 
 // ===== LOAD PRICING TABLE FROM CMS =====
@@ -637,3 +642,30 @@ function loadHomePageImages() {
 
 // Load Google Maps when needed
 window.initGoogleMaps = initGoogleMaps;
+
+// ===== LOAD INSTAGRAM POSTS FROM CMS =====
+function loadInstagramPosts() {
+  loadCMSData('social.json', (data) => {
+    if (!data || !data.instagramPosts || data.instagramPosts.length < 2) {
+      console.warn('Not enough Instagram posts in CMS data');
+      return;
+    }
+    
+    // Load first two Instagram posts
+    const post1 = document.querySelector('#instagram-post-1 .instagram-media');
+    const post2 = document.querySelector('#instagram-post-2 .instagram-media');
+    
+    if (post1 && data.instagramPosts[0] && data.instagramPosts[0].url) {
+      post1.setAttribute('data-instgrm-permalink', data.instagramPosts[0].url);
+    }
+    
+    if (post2 && data.instagramPosts[1] && data.instagramPosts[1].url) {
+      post2.setAttribute('data-instgrm-permalink', data.instagramPosts[1].url);
+    }
+    
+    // Reload Instagram embed script to render posts
+    if (window.instgrm) {
+      window.instgrm.Embeds.process();
+    }
+  });
+}

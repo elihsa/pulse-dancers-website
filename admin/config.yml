@@ -103,7 +103,12 @@ collections:
         fields:
           - { label: "Facebook Page URL", name: "facebookPageUrl", widget: "string" }
           - { label: "Instagram Username", name: "instagramUsername", widget: "string" }
-          - { label: "Instagram Post URLs", name: "instagramPosts", widget: "list", field: { label: "Post URL", name: "url", widget: "string" } }
+          - label: "Instagram Posts"
+            name: "instagramPosts"
+            widget: "list"
+            hint: "Add Instagram post URLs to feature on homepage (first 2 will be shown)"
+            fields:
+              - { label: "Post URL", name: "url", widget: "string", hint: "Full Instagram post URL (e.g., https://www.instagram.com/p/ABC123/)" }
 
   - name: "services"
     label: "Services"
