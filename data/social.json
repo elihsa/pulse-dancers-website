@@ -2,7 +2,11 @@
   "facebookPageUrl": "https://www.facebook.com/pulseSouthAfrica",
   "instagramUsername": "pulsesouthafrica",
   "instagramPosts": [
-    "https://www.instagram.com/p/example1/",
-    "https://www.instagram.com/p/example2/"
+    {
+      "url": "https://www.instagram.com/p/EXAMPLE_POST_1/"
+    },
+    {
+      "url": "https://www.instagram.com/p/EXAMPLE_POST_2/"
+    }
   ]
 }
