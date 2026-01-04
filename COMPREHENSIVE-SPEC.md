@@ -701,11 +701,395 @@ pulse-dancers-website/
 
 ---
 
+## Booking Automation System
+
+### Overview
+The booking automation system streamlines the workflow from form submission to dancer assignment using Netlify Functions and free-tier services.
+
+### Architecture
+
+**Components:**
+1. **Netlify Forms** - Captures booking submissions
+2. **Netlify Functions** - Serverless automation handlers
+3. **Email Notifications** - Formatted booking emails to owner
+4. **Google Calendar Integration** - One-click event creation
+5. **Dancer Brief Generator** - WhatsApp-ready formatted text
+
+### Netlify Functions
+
+#### 1. submission-created.js
+**Purpose:** Main form submission handler
+
+**Trigger:** Netlify form submission event (booking form)
+
+**Functionality:**
+- Intercepts form submission data
+- Generates formatted dancer brief
+- Creates Google Calendar link
+- Sends email to owner with:
+  - All booking details
+  - Live quote calculation
+  - Calendar button
+  - Copy-ready dancer brief
+- Optionally sends customer confirmation
+
+**Location:** `/netlify/functions/submission-created.js`
+
+#### 2. generate-brief.js
+**Purpose:** Format booking details into professional dancer brief
+
+**Method:** POST endpoint
+
+**Input:** Booking form data (JSON)
+
+**Output:**
+- Plain text brief (for WhatsApp)
+- HTML formatted brief (for email)
+
+**Brief Format:**
+```
+🎉 NEW BOOKING - [Event Type]
+
+📅 Date: [Formatted Date]
+⏰ Time: [Formatted Time]
+📍 Location: [Address/Area]
+🚗 Distance: [X km from Sandton City]
+
+👤 Customer: [Name]
+📞 Phone: [Phone]
+✉️ Email: [Email]
+
+💼 Service Details:
+- Services: [Selected Services]
+- Performers Needed: [Number]
+- Guest Count: [Range]
+
+🗒️ Special Requests:
+[Notes or "None"]
+
+💰 Quote:
+- Performance Fee: R[Amount]
+- Travel Fee: R[Amount]
+- Total Estimate: R[Amount]
+
+---
+⚠️ NEXT STEPS:
+1. Confirm availability with customer
+2. Assign performers
+3. Send confirmation email to customer
+4. Share this brief with assigned dancers
+```
+
+**Location:** `/netlify/functions/generate-brief.js`
+
+### Google Calendar Integration
+
+**Current Implementation:** URL-based (Free)
+
+**Calendar Link Format:**
+```
+https://calendar.google.com/calendar/render?action=TEMPLATE
+&text=[Event Type] - [Customer Name]
+&dates=[Start]/[End]
+&details=[Booking Details]
+&location=[Address]
+```
+
+**Features:**
+- Opens Google Calendar in browser
+- Pre-fills all event information
+- One-click save to calendar
+- No API authentication required
+- Works with any Google account
+
+**Future Enhancement:** Direct API Integration
+- Service account for automatic creation
+- No user interaction needed
+- Requires Google Calendar API credentials
+
+### Email System
+
+**Current Implementation:** Netlify Forms Email Notifications
+
+**Owner Email Template:**
+- HTML formatted
+- Professional design matching site branding
+- Sections:
+  - Customer information
+  - Event details
+  - Service requirements
+  - Quote breakdown
+  - Special requests
+  - Quick actions (calendar button)
+  - Dancer brief (copy-ready)
+
+**Customer Confirmation Email:**
+- Thank you message
+- Booking summary
+- Timeline expectations (24-hour response)
+- Contact information
+
+**Future Enhancement:** Custom Email Service
+- SendGrid integration (100 emails/day free)
+- Mailgun integration
+- AWS SES integration
+- Custom templates and tracking
+
+### WhatsApp Integration
+
+**Current Implementation:** Manual Copy/Paste
+
+**Workflow:**
+1. Owner receives booking email
+2. Copies formatted dancer brief from email
+3. Opens WhatsApp group
+4. Pastes brief and sends
+5. **Time:** ~10 seconds
+
+**Brief Formatting:**
+- Plain text with emojis
+- Structured for readability
+- All essential information
+- Copy-paste preserves formatting
+
+**Future Enhancement:** Automatic WhatsApp API
+- Twilio WhatsApp Business API
+- Direct posting to group
+- Automated dancer notifications
+
+### Configuration Files
+
+#### netlify.toml
+```toml
+[build]
+  publish = "."
+  command = ""
+  functions = "netlify/functions"
+
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+```
+
+#### .env.example
+Template for environment variables:
+- Google Calendar credentials (optional)
+- Email service credentials (optional)
+- Owner email address
+- Site configuration
+- Feature flags
+
+**Location:** `/.env.example`
+
+### Environment Variables
+
+**Required (Minimal Setup):**
+```
+OWNER_EMAIL=bookings@pulsedancers.com
+CUSTOMER_CONFIRMATION_EMAIL_ENABLED=true
+SITE_URL=https://your-site.netlify.app
+```
+
+**Optional (Enhanced Features):**
+```
+GOOGLE_CALENDAR_ID=primary
+GOOGLE_SERVICE_ACCOUNT_EMAIL=...
+GOOGLE_PRIVATE_KEY=...
+SENDGRID_API_KEY=...
+```
+
+### Booking Data Flow
+
+```
+Customer Form Submission
+         ↓
+Netlify Forms (stores data)
+         ↓
+Triggers submission-created function
+         ↓
+Function processes data:
+  - Extracts form fields
+  - Calculates quote
+  - Generates brief
+  - Creates calendar link
+         ↓
+Sends formatted email to owner
+         ↓
+Owner receives notification:
+  - Views booking details
+  - Clicks "Add to Calendar"
+  - Copies dancer brief
+         ↓
+Owner posts brief to WhatsApp
+         ↓
+Dancers receive assignment
+         ↓
+Owner confirms with customer
+```
+
+### Form Data Captured
+
+**All Fields:**
+- full-name
+- email
+- phone
+- city
+- event-type
+- event-date
+- event-time
+- event-address OR event-area
+- location-type (exact/area)
+- service-type (comma-separated)
+- num-performers
+- num-guests
+- waiter-hours (if applicable)
+- notes
+- calculated-distance
+
+**Quote Calculation:**
+- Performance Fee = Sum of selected services
+- Travel Fee = (distance - 50km) × R4/km
+- Total = Performance Fee + Travel Fee
+
+### Cost Structure
+
+**Current Setup (100% FREE):**
+- Netlify Hosting: Free tier
+- Netlify Forms: Free (100 submissions/month)
+- Netlify Functions: Free (125K requests/month)
+- Google Calendar Links: Free (URL-based)
+- WhatsApp: Free (manual posting)
+
+**Total Monthly Cost:** R0 🎉
+
+**Optional Enhancements (Paid):**
+- SendGrid: Free (100 emails/day) or paid plans
+- Twilio WhatsApp: ~R0.10/message
+- Google Calendar API: Free (with setup)
+- Additional Netlify form submissions: R19/month for unlimited
+
+### Testing & Validation
+
+**Test Checklist:**
+- [ ] Form submits successfully
+- [ ] Owner receives email
+- [ ] Email contains all booking details
+- [ ] Dancer brief is properly formatted
+- [ ] Calendar link opens and pre-fills
+- [ ] Quote calculations are accurate
+- [ ] Distance calculation works
+- [ ] Customer confirmation sent (if enabled)
+- [ ] Form data visible in Netlify dashboard
+
+**Manual Testing:**
+1. Submit test booking with all fields
+2. Check owner email inbox
+3. Click "Add to Calendar" button
+4. Verify event details
+5. Copy dancer brief
+6. Paste into text editor (verify formatting)
+
+### Monitoring
+
+**Netlify Dashboard:**
+- Forms tab: View all submissions
+- Functions tab: View execution logs
+- Analytics: Track form conversion
+
+**Key Metrics:**
+- Form submissions per month
+- Function execution time
+- Email delivery success rate
+- Calendar link click rate
+
+### Documentation
+
+**Setup Guide:** `AUTOMATION-SETUP-GUIDE.md`
+- Complete setup instructions
+- Google Calendar API setup (optional)
+- Email service integration (optional)
+- Testing procedures
+- Troubleshooting guide
+- Cost breakdown
+
+**Target Audience:**
+- Site owner (non-technical)
+- Future maintainers
+- Developers adding features
+
+### Future Enhancements
+
+**Phase 1: Current (✅ Implemented)**
+- Automated email notifications
+- Formatted dancer brief
+- Google Calendar links
+- Manual WhatsApp posting
+
+**Phase 2: Enhanced Email**
+- SendGrid integration
+- Email tracking and analytics
+- Performer availability in emails
+- Automated follow-ups
+
+**Phase 3: Full Automation**
+- Direct Google Calendar API
+- Automatic WhatsApp messages
+- SMS notifications to dancers
+- Real-time availability checking
+
+**Phase 4: Advanced Features**
+- Payment integration (PayFast)
+- Performer assignment automation
+- Customer booking portal
+- Analytics dashboard
+- Mobile app for dancers
+
+### Security Considerations
+
+**Implemented:**
+- Environment variables for sensitive data
+- Netlify Forms spam protection (honeypot)
+- HTTPS for all communications
+- Input validation in functions
+
+**Best Practices:**
+- Never commit .env files
+- Use Netlify dashboard for secrets
+- Validate all form inputs
+- Rate limit form submissions
+- Regular security updates
+
+### Maintenance Requirements
+
+**Regular Tasks:**
+- Monitor form submissions
+- Check email delivery
+- Review function logs
+- Update CMS content
+
+**Occasional Tasks:**
+- Update environment variables
+- Review and optimize functions
+- Test calendar integration
+- Update documentation
+
+**Skills Required:**
+- Basic: Netlify dashboard navigation
+- Intermediate: Environment variable management
+- Advanced: Function code modifications
+
+---
+
 ## Document Version
-- **Version:** 2.0
-- **Last Updated:** 2026-01-02
+- **Version:** 2.1
+- **Last Updated:** 2026-01-04
 - **Author:** GitHub Copilot
 - **Status:** Active Development
+- **Recent Changes:** Added booking automation system documentation
 
 ---
 
