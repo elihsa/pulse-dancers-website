@@ -11,6 +11,9 @@ node_modules/
 # Netlify
 .netlify/
 
+# Test files (development only)
+test-functions.js
+
 # OS files
 .DS_Store
 Thumbs.db
