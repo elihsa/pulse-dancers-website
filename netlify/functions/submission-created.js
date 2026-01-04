@@ -5,7 +5,20 @@
  * with automation features (calendar links, dancer brief)
  * 
  * Trigger: Netlify form submission event (submission-created)
+ * 
+ * Note: Email sending is currently handled by Netlify's built-in form notifications.
+ * This function prepares the email content and logs it. To send emails programmatically,
+ * integrate an email service (SendGrid, Mailgun, etc.) - see AUTOMATION-SETUP-GUIDE.md
  */
+
+const {
+  calculatePerformanceFee,
+  calculateTravelFee,
+  formatDate,
+  formatTime,
+  formatDateTimeForCalendar,
+  DEFAULT_WAITER_HOURS
+} = require('./utils');
 
 exports.handler = async (event, context) => {
   // This function is triggered by Netlify's form submission event
@@ -204,21 +217,15 @@ function generateGoogleCalendarLink(data) {
 }
 
 /**
- * Format date/time for Google Calendar (YYYYMMDDTHHmmSSZ)
- */
-function formatDateTimeForCalendar(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  
-  return `${year}${month}${day}T${hours}${minutes}${seconds}`;
-}
-
-/**
  * Send email to owner with booking details
+ * 
+ * Note: This function currently logs email content to console.
+ * Email delivery is handled by Netlify's built-in form notifications.
+ * 
+ * To send emails programmatically, integrate an email service:
+ * - SendGrid: https://www.npmjs.com/package/@sendgrid/mail
+ * - Mailgun: https://www.npmjs.com/package/mailgun-js
+ * - AWS SES: https://www.npmjs.com/package/aws-sdk
  */
 async function sendOwnerEmail(formData, brief, calendarUrl) {
   // For Netlify, we'll use fetch to call a mail service
@@ -390,80 +397,4 @@ async function sendCustomerEmail(formData) {
   console.log('Send to:', customerEmail);
   
   return true;
-}
-
-/**
- * Calculate performance fee from services
- */
-function calculatePerformanceFee(servicesStr, waiterHours) {
-  let total = 0;
-  
-  const serviceItems = servicesStr.split(',').map(s => s.trim());
-  
-  serviceItems.forEach(service => {
-    const priceMatch = service.match(/R(\d+)/);
-    if (priceMatch) {
-      let price = parseFloat(priceMatch[1]);
-      
-      if (service.includes('per hour') || service.includes('Waiter')) {
-        const hours = parseInt(waiterHours) || 2;
-        price = price * hours;
-      }
-      
-      total += price;
-    }
-  });
-  
-  return total;
-}
-
-/**
- * Calculate travel fee
- */
-function calculateTravelFee(distanceKm) {
-  const FREE_KM = 50;
-  const RAND_PER_KM = 4;
-  const chargeableKm = Math.max(0, distanceKm - FREE_KM);
-  return chargeableKm * RAND_PER_KM;
-}
-
-/**
- * Format date to readable string
- */
-function formatDate(dateStr) {
-  if (!dateStr || dateStr === 'Not specified') return dateStr;
-  
-  try {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-ZA', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  } catch (e) {
-    return dateStr;
-  }
-}
-
-/**
- * Format time to readable string
- */
-function formatTime(timeStr) {
-  if (!timeStr || timeStr === 'Not specified') return timeStr;
-  
-  try {
-    const [hours, minutes] = timeStr.split(':');
-    const date = new Date();
-    date.setHours(parseInt(hours));
-    date.setMinutes(parseInt(minutes));
-    
-    return date.toLocaleTimeString('en-ZA', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    });
-  } catch (e) {
-    return timeStr;
-  }
 }
