@@ -1,5 +1,5 @@
 backend:
-  name: netlify
+  name: git-gateway
     branch: main
   
 media_folder: "assets/images/uploads"
