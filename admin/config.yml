@@ -1,7 +1,7 @@
 backend:
   name: git-gateway
   branch: main
-  
+
 media_folder: "assets/images/uploads"
 public_folder: "/assets/images/uploads"
 
@@ -24,7 +24,6 @@ collections:
           - { label: "Services", name: "services", widget: "list", field: { label: "Service", name: "service", widget: "string" } }
           - { label: "Hero Stat Title", name: "heroStat", widget: "string" }
           - { label: "Hero Stat Description", name: "heroStatDescription", widget: "text" }
-
   - name: "prices"
     label: "Pricing"
     files:
@@ -42,7 +41,6 @@ collections:
               - { label: "Per Hour Service", name: "isHourly", widget: "boolean", default: false, hint: "Check if this is a per-hour service (like waiters)" }
               - { label: "Notes", name: "notes", widget: "string", required: false }
           - { label: "General Notes", name: "notes", widget: "text" }
-
   - name: "faq"
     label: "FAQ"
     files:
@@ -63,7 +61,6 @@ collections:
                 fields:
                   - { label: "Question", name: "q", widget: "string" }
                   - { label: "Answer", name: "a", widget: "text" }
-
   - name: "booking"
     label: "Booking Settings"
     files:
@@ -76,7 +73,6 @@ collections:
           - { label: "Rand per Kilometer", name: "randPerKm", widget: "number" }
           - { label: "Currency", name: "currency", widget: "string", default: "ZAR" }
           - { label: "Dancers per Guests Ratio", name: "dancerPerGuests", widget: "number" }
-
   - name: "testimonials"
     label: "Testimonials"
     files:
@@ -93,7 +89,6 @@ collections:
               - { label: "Testimonial Text", name: "text", widget: "text" }
               - { label: "Location", name: "location", widget: "string" }
               - { label: "Date", name: "date", widget: "date" }
-
   - name: "social"
     label: "Social Media"
     files:
@@ -109,7 +104,6 @@ collections:
             hint: "Add Instagram post URLs to feature on homepage (first 2 will be shown)"
             fields:
               - { label: "Post URL", name: "url", widget: "string", hint: "Full Instagram post URL (e.g., https://www.instagram.com/p/ABC123/)" }
-
   - name: "services"
     label: "Services"
     files:
@@ -124,7 +118,6 @@ collections:
               - { label: "Service Name", name: "name", widget: "string" }
               - { label: "Description", name: "description", widget: "text" }
               - { label: "Active", name: "active", widget: "boolean", default: true }
-
   - name: "performers"
     label: "Performers"
     files:
