@@ -6,7 +6,7 @@ This specification consolidates ALL requirements, changes, and features for the 
 ## Project Overview
 - **Site Name:** Pulse Male Revue / Pulse Dancers
 - **Purpose:** Professional male entertainment booking website for South Africa
-- **Technology:** Static HTML/CSS/JS with Netlify CMS, hosted on Netlify
+- **Technology:** Static HTML/CSS/JS with Google Sheets CMS, hosted on Vercel
 - **Target Audience:** Bachelorette parties, ladies nights, corporate events, venue owners
 - **Geographic Focus:** Johannesburg-based, serving all of South Africa
 
@@ -21,7 +21,6 @@ This specification consolidates ALL requirements, changes, and features for the 
 4. **meet-the-guys.html** - Performer profiles
 5. **join.html** - Recruitment application form
 6. **book.html** - Booking form with distance calculator
-7. **/admin/** - Netlify CMS dashboard (login-protected)
 
 ### Navigation Order (ALL pages must have consistent nav)
 ```
@@ -139,7 +138,7 @@ Home | Prices | FAQ | Meet The Guys | Join | Book Now
 - Submit button
 
 **Technical Implementation:**
-- Native Netlify Forms
+- Web3Forms (free form handling service)
 - Google Maps API: Distance Matrix + Places Autocomplete
 - API Key: AIzaSyDmIhz0iWcB8R-BBXkFFGi36bCQIm7fgA8
 - Base Location: Sandton City, Johannesburg
@@ -147,6 +146,7 @@ Home | Prices | FAQ | Meet The Guys | Join | Book Now
 - Rate: R4/km (round trip)
 
 **Form Submission:**
+- Form handler: Web3Forms API
 - Destination: bookings@pulsedancers.com
 - Subject: "[Date] - [Event Type] - [Area] - [Name]"
 - Submitter receives confirmation email
@@ -178,8 +178,9 @@ Home | Prices | FAQ | Meet The Guys | Join | Book Now
 - Submit button
 
 **Form Submission:**
+- Form handler: Web3Forms API
 - Destination: info@pulsedancers.com
-- Native Netlify Forms with file upload support
+- Web3Forms with file upload support
 
 ---
 
@@ -301,7 +302,37 @@ Home | Prices | FAQ | Meet The Guys | Join | Book Now
 
 ---
 
-## CMS Configuration (Netlify CMS / Decap v3)
+## CMS Configuration (Google Sheets)
+
+**Google Sheets CMS Overview:**
+- Content managed via Google Sheets
+- Real-time updates without redeployment
+- Sheet ID: `12zPYBbpdDLhqTPylP0oUgPqimy5fXIfg`
+- Access via Google Sheets API with API Key
+
+**Sheet Structure:**
+
+1. **Prices Sheet**
+   - Columns: ID | Service Name | Price | Duration | Description
+   - Used by: prices.html, booking form
+
+2. **Dancers Sheet**
+   - Columns: ID | Name | Initial | Genres | Experience | Bio | Image URL
+   - Used by: meet-the-guys.html
+
+3. **Services Sheet**
+   - Columns: ID | Service Name | Short Description | Icon
+   - Used by: booking form service checkboxes
+
+**JavaScript Integration:**
+- File: `/assets/js/sheets-cms.js`
+- Fetches data from Google Sheets API
+- Renders content dynamically on page load
+- Error handling with fallback messages
+
+**API Configuration:**
+- API Key: `AIzaSyDmIhz0iWcB8R-BBXkFFGi36bCQIm7fgA8`
+- Endpoint: `https://sheets.googleapis.com/v4/spreadsheets/{SHEET_ID}/values/{RANGE}?key={API_KEY}`
 
 ### Backend
 - **Type:** Git Gateway
@@ -407,14 +438,13 @@ Home | Prices | FAQ | Meet The Guys | Join | Book Now
 
 ## Forms Implementation
 
-### Netlify Forms Configuration
-Both forms use native Netlify Forms with these attributes:
+### Web3Forms Configuration
+Both booking and join forms use Web3Forms with these attributes:
 ```html
-<form name="form-name" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-  <input type="hidden" name="form-name" value="form-name">
-  <p style="display:none;">
-    <label>Don't fill this out: <input name="bot-field" /></label>
-  </p>
+<form action="https://api.web3forms.com/submit" method="POST">
+  <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+  <input type="hidden" name="subject" value="Form Subject">
+  <input type="text" name="honeypot" style="display: none;">
   <!-- form fields -->
 </form>
 ```
@@ -424,10 +454,10 @@ Both forms use native Netlify Forms with these attributes:
 - **Join Form:** info@pulsedancers.com
 
 ### Accessing Submissions
-- Netlify Dashboard → Site → Forms tab
-- Email notifications configured in Netlify
-- CSV export available
-- Free tier: 100 submissions/month
+- Web3Forms dashboard at https://web3forms.com
+- Email notifications automatically sent
+- Free tier: 250 submissions/month
+- Spam filtering included
 
 ---
 
@@ -543,64 +573,74 @@ Both forms use native Netlify Forms with these attributes:
 
 ```
 pulse-dancers-website/
-├── index.html
-├── book.html
-├── join.html
+│
+├── index.html (homepage)
 ├── prices.html
 ├── faq.html
 ├── meet-the-guys.html
-│
-├── admin/
-│   ├── index.html (Netlify CMS interface)
-│   └── config.yml (CMS configuration)
+├── join.html
+├── book.html
 │
 ├── assets/
 │   ├── css/
 │   │   └── styles.css (all site styles)
 │   ├── js/
-│   │   └── app.js (all JavaScript)
+│   │   ├── app.js (main JavaScript)
+│   │   └── sheets-cms.js (Google Sheets integration)
 │   └── images/
-│       └── uploads/ (CMS-uploaded images)
+│       ├── bg.jpg (background image)
+│       └── uploads/ (uploaded images)
 │
-├── data/
-│   ├── home.json
-│   ├── prices.json
-│   ├── faq.json
-│   ├── services.json
-│   ├── performers.json
-│   ├── testimonials.json
-│   ├── social.json
-│   └── booking.json
-│
-├── public_html/ (old Website X5 site - reference only)
-│
-├── CMS-SETUP.md
-├── CMS-GUIDE.md
-├── EDITING-GUIDE.md
-├── IMPLEMENTATION-SUMMARY.txt
+├── vercel.json (caching configuration)
+├── Pulse CMS.xlsx (Google Sheets reference)
 ├── README.md
-└── COMPREHENSIVE-SPEC.md (this file)
+├── COMPREHENSIVE-SPEC.md (this file)
+└── VERCEL-DEPLOYMENT-GUIDE.md
 ```
 
 ---
 
 ## Deployment & Hosting
 
-### Netlify Configuration
-- **Hosting:** Netlify (free tier)
+### Vercel Configuration
+- **Hosting:** Vercel (free tier)
+- **Deployment:** Automatic on git push to main branch
 - **Build Command:** None (static site)
-- **Publish Directory:** / (root)
+- **Output Directory:** `.` (root directory)
 - **Branch:** main
+- **Domain:** pulse-dancers-website.vercel.app
 
-### Required Netlify Settings
-1. **Netlify Identity:** Enabled (invite-only)
-2. **Git Gateway:** Enabled
-3. **Forms:** Active (test by submitting once)
-4. **Environment Variables:** None required (API keys in frontend)
+### Performance Optimization
+**Caching (vercel.json):**
+```json
+{
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [{"key": "Cache-Control", "value": "public, max-age=31536000, immutable"}]
+    },
+    {
+      "source": "/(.*).html",
+      "headers": [{"key": "Cache-Control", "value": "public, max-age=3600, must-revalidate"}]
+    }
+  ]
+}
+```
+
+### SEO Configuration
+All pages include:
+- Meta descriptions and keywords
+- Open Graph tags (Facebook/Social)
+- Twitter Card tags
+- Structured data (JSON-LD on homepage)
+- Canonical URLs
+- Resource preloading for critical assets
+- Deferred JavaScript loading
 
 ### DNS/Domain
-- Custom domain configuration in Netlify
-- SSL automatically provided by Netlify
+- Custom domain can be configured in Vercel dashboard
+- SSL automatically provided by Vercel
+- Configure DNS records as directed by Vercel
 
 ---
 
