@@ -5,20 +5,44 @@
   <title>Pulse Male Revue - South Africa's Premier Male Entertainment</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="South Africa's choreographed male revue for bachelorettes, ladies nights and corporate events. Professional, respectful, unforgettable entertainment." />
+  <meta name="keywords" content="male strippers south africa, male dancers johannesburg, bachelorette party entertainment, topless waiters, pulse dancers, male revue, ladies night entertainment" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://pulse-dancers-website.vercel.app/" />
+  
+  <!-- Open Graph (Facebook/Social) -->
+  <meta property="og:title" content="Pulse Male Revue - Professional Male Entertainment" />
+  <meta property="og:description" content="South Africa's premier male entertainment service. Book professional dancers for your event." />
+  <meta property="og:url" content="https://pulse-dancers-website.vercel.app/" />
+  <meta property="og:type" content="website" />
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Pulse Male Revue" />
+  <meta name="twitter:description" content="Professional male entertainment across South Africa" />
+  
   <link rel="stylesheet" href="assets/css/styles.css" />
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  
+  <!-- Preload critical assets -->
+  <link rel="preload" href="assets/css/styles.css" as="style" />
+  <link rel="preload" href="assets/js/app.js" as="script" />
+  
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "EntertainmentBusiness",
     "name": "Pulse Male Revue",
-    "url": "https://pulsedancers.com",
+    "description": "Professional male entertainment service",
+    "url": "https://pulse-dancers-website.vercel.app",
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "ZA",
       "addressRegion": "Gauteng",
       "addressLocality": "Johannesburg"
-    }
+    },
+    "sameAs": [
+      "https://www.facebook.com/pulseSouthAfrica",
+      "https://www.instagram.com/pulsesouthafrica"
+    ]
   }
   </script>
 </head>
@@ -212,18 +236,7 @@
   </footer>
 </div>
 
-<script src="assets/js/app.js"></script>
-<script>
-  if (window.netlifyIdentity) {
-    window.netlifyIdentity.on("init", user => {
-      if (!user) {
-        window.netlifyIdentity.on("login", () => {
-          document.location.href = "/admin/";
-        });
-      }
-    });
-  }
-</script>
+<script src="assets/js/app.js" defer></script>
 </body>
 </html>
 

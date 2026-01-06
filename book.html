@@ -5,8 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Book - Pulse Male Revue</title>
   <meta name="description" content="Book Pulse Male Revue for your bachelorette party, corporate event, or ladies night. Get an instant quote with distance calculation.">
+  <meta name="keywords" content="book male strippers, hire male dancers johannesburg, bachelorette party booking, male entertainment south africa">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://pulse-dancers-website.vercel.app/book.html">
+  
+  <!-- Open Graph (Facebook/Social) -->
+  <meta property="og:title" content="Book Pulse Male Revue">
+  <meta property="og:description" content="Book professional male entertainment for your event in South Africa">
+  <meta property="og:url" content="https://pulse-dancers-website.vercel.app/book.html">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Book Pulse Male Revue">
+  <meta name="twitter:description" content="Book professional male entertainment for your event">
+  
   <link rel="stylesheet" href="assets/css/styles.css">
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  
+  <!-- Preload critical assets -->
+  <link rel="preload" href="assets/css/styles.css" as="style">
+  <link rel="preload" href="assets/js/app.js" as="script">
+  
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmIhz0iWcB8R-BBXkFFGi36bCQIm7fgA8&libraries=places&callback=initGoogleMaps" async defer></script>
 </head>
 <body class="page">
@@ -31,14 +50,15 @@
       <h2>Book Pulse for Your Event</h2>
       <p>Fill out the form below with your event details. Our booking form calculates distance automatically and provides a live quote. We'll send you a personalized confirmation within 24 hours.</p>
       <p class="form-info-banner">
-        <strong>📧 Form Submissions:</strong> All booking requests are automatically sent to our team via Netlify Forms. You'll receive a confirmation email, and we'll respond within 24 hours with your personalized quote and availability confirmation.
+        <strong>📧 Form Submissions:</strong> All booking requests are sent to our team via Web3Forms. You'll receive a confirmation email, and we'll respond within 24 hours with your personalized quote and availability confirmation.
       </p>
       
-      <form id="booking-form" name="booking" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-        <input type="hidden" name="form-name" value="booking">
-        <p style="display: none;">
-          <label>Don't fill this out: <input name="bot-field" /></label>
-        </p>
+      <form id="booking-form" name="booking" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+        <input type="hidden" name="subject" value="New Booking Request - Pulse Male Revue">
+        <input type="hidden" name="from_name" value="Pulse Booking Form">
+        <input type="text" name="honeypot" style="display: none;">
+        <input type="hidden" name="redirect" value="https://pulse-dancers-website.vercel.app/book.html?success=true">
         
         <!-- Contact Information -->
         <h3>Contact Information</h3>
@@ -207,6 +227,6 @@
     </div>
   </footer>
 
-  <script src="assets/js/app.js"></script>
+  <script src="assets/js/app.js" defer></script>
 </body>
 </html>
