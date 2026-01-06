@@ -6,8 +6,7 @@
   <title>Meet The Guys - Pulse Male Revue</title>
   <meta name="description" content="Meet the professional performers of Pulse Male Revue. Our talented team of dancers and entertainers.">
   <link rel="stylesheet" href="assets/css/styles.css">
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-   <script src="assets/js/sheets-cms.js"></script>
+  <script src="assets/js/sheets-cms.js"></script>
 </head>
 <body class="page">
   <header>
@@ -33,11 +32,24 @@
 
       <!-- Performers Grid (CMS-managed) -->
       <div id="performers-grid" class="performers-grid">
+        <p id="performers-loading" style="text-align: center; color: #b0b0b0;">Loading performers...</p>
         <!-- Performers will be dynamically loaded here -->
       </div>
       <script>
  document.addEventListener('DOMContentLoaded', () => {
-   PulseSheetsCMS.loadDancers('performers-grid');
+   try {
+     PulseSheetsCMS.loadDancers('performers-grid');
+     setTimeout(() => {
+       const loading = document.getElementById('performers-loading');
+       const grid = document.getElementById('performers-grid');
+       if (grid.children.length === 1 && loading) {
+         loading.textContent = 'Performer profiles coming soon. Check back soon!';
+       }
+     }, 3000);
+   } catch (error) {
+     console.error('Error loading performers:', error);
+     document.getElementById('performers-loading').textContent = 'Unable to load performers. Please contact us for more information.';
+   }
  });
 </script>
 

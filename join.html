@@ -6,7 +6,6 @@
   <title>Join - Pulse Male Revue</title>
   <meta name="description" content="Join the Pulse Male Revue team. Apply now for exciting opportunities as a dancer, performer, or waiter.">
   <link rel="stylesheet" href="assets/css/styles.css" />
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body class="page">
   <header>
@@ -30,11 +29,12 @@
       <h2>Join the Pulse Team</h2>
       <p>Pulse Dancers, Africa's most sought-after male revue show, is on the lookout for new talent. If you're a professional male dancer, performer or waiter looking for lucrative work, we want to hear from you.</p>
 
-      <form name="join" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-        <input type="hidden" name="form-name" value="join">
-        <p style="display: none;">
-          <label>Don't fill this out: <input name="bot-field" /></label>
-        </p>
+      <form name="join" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+        <input type="hidden" name="subject" value="New Application - Pulse Male Revue">
+        <input type="hidden" name="from_name" value="Pulse Join Form">
+        <input type="text" name="honeypot" style="display: none;">
+        <input type="hidden" name="redirect" value="https://pulse-dancers-website.vercel.app/join.html?success=true">
 
         <h3>Personal Information</h3>
         <div class="form-row">
