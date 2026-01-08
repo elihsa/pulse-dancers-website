@@ -141,7 +141,16 @@ const PulseSheetsCMS = {
     if (!container) return;
     const dancers = await this.getDancers();
     if (dancers.length === 0) return;
-    container.innerHTML = dancers.map(d => `<div class="dancer-card"><h3>${d.name}</h3><p>${d.genres}</p><p>${d.bio}</p></div>`).join('');
+    container.innerHTML = dancers.map(d => `
+      <div class="dancer-card" style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
+        ${d.image && d.image !== 'placeholder.jpg' ? `<img src="assets/images/performers/${d.image}" alt="${d.name}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;" onerror="this.style.display='none'">` : ''}
+        <h3 style="color: #FF2D55; margin-bottom: 0.5rem;">${d.name}</h3>
+        ${d.initial ? `<p style="color: #E5E5E5; margin-bottom: 0.5rem;"><strong>Initial:</strong> ${d.initial}</p>` : ''}
+        ${d.genres ? `<p style="color: #b0b0b0; margin-bottom: 0.5rem;"><strong>Genres:</strong> ${d.genres}</p>` : ''}
+        ${d.experience ? `<p style="color: #b0b0b0; margin-bottom: 0.5rem;"><strong>Experience:</strong> ${d.experience}</p>` : ''}
+        ${d.bio ? `<p style="color: #b0b0b0; line-height: 1.6;">${d.bio}</p>` : ''}
+      </div>
+    `).join('');
   },
 
   async loadFAQs(containerId) {
