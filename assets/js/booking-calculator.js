@@ -4,6 +4,11 @@
  * Integrates with Google Sheets pricing data
  */
 
+// Global callback for Google Maps API
+function initGoogleMaps() {
+  console.log('Google Maps API loaded');
+}
+
 const BookingForm = {
   distanceCostPerKm: 4, // R4 per km beyond 50km
   freeDistanceKm: 50,
@@ -13,6 +18,16 @@ const BookingForm = {
   async initializeForm() {
     // Load services from Google Sheets
     await PulseSheetsCMS.loadServices('service-checkboxes-container');
+    
+    // Setup event listeners for service checkboxes using event delegation
+    const container = document.getElementById('service-checkboxes-container');
+    if (container) {
+      container.addEventListener('change', (e) => {
+        if (e.target && e.target.name === 'service-type') {
+          this.updateQuote();
+        }
+      });
+    }
     
     // Setup event listeners
     document.getElementById('num-performers')?.addEventListener('change', () => this.updateQuote());
@@ -89,9 +104,50 @@ const BookingForm = {
   }
 };
 
-// Initialize on page load
+// Add form submission handler to collect services properly
+document.addEventListener('DOMContentLoaded', () => {
+  const bookingForm = document.getElementById('booking-form');
+  if (bookingForm) {
+    bookingForm.addEventListener('submit', (e) => {
+      // Collect selected services
+      const selectedServices = Array.from(document.querySelectorAll('input[name="service-type"]:checked'))
+        .map(cb => cb.value);
+      
+      if (selectedServices.length === 0) {
+        e.preventDefault();
+        const errorDiv = document.getElementById('service-error');
+        if (errorDiv) {
+          errorDiv.style.display = 'block';
+          errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return false;
+      }
+      
+      // Hide error if shown
+      const errorDiv = document.getElementById('service-error');
+      if (errorDiv) {
+        errorDiv.style.display = 'none';
+      }
+      
+      // Update hidden field with selected services (comma-separated for email)
+      const hiddenField = document.getElementById('services-hidden');
+      if (hiddenField) {
+        hiddenField.value = selectedServices.join(', ');
+      }
+    });
+  }
+});
+
+// Initialize on page load - prevent double initialization
+let initialized = false;
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => BookingForm.initializeForm());
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!initialized) {
+      initialized = true;
+      BookingForm.initializeForm();
+    }
+  });
 } else {
+  initialized = true;
   BookingForm.initializeForm();
 }

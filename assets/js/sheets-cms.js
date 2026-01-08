@@ -16,6 +16,13 @@ const SHEET_GIDS = {
   SOCIAL: '1025475414'
 };
 
+// Utility function to escape HTML and prevent XSS
+const escapeHtml = (text) => {
+  const div = document.createElement('div');
+  div.textContent = text || '';
+  return div.innerHTML;
+};
+
 const PulseSheetsCMS = {
   async fetchSheet(gid, startRow = 1, endRow = 1000) {
     try {
@@ -125,7 +132,8 @@ const PulseSheetsCMS = {
     if (!container) return;
     const prices = await this.getPrices();
     if (prices.length === 0) { container.innerHTML = '<p>Loading...</p>'; return; }
-    container.innerHTML = prices.map(p => `<div class="price-card"><h3>${p.name}</h3><p>R${p.price}</p><p>${p.duration}</p><p>${p.description}</p></div>`).join('');
+    
+    container.innerHTML = prices.map(p => `<div class="price-card"><h3>${escapeHtml(p.name)}</h3><p>R${escapeHtml(String(p.price))}</p><p>${escapeHtml(p.duration)}</p><p>${escapeHtml(p.description)}</p></div>`).join('');
   },
 
   async loadServices(containerId) {
@@ -133,7 +141,8 @@ const PulseSheetsCMS = {
     if (!container) return;
     const services = await this.getServices();
     if (services.length === 0) return;
-    container.innerHTML = services.map(s => `<label><input type="checkbox" name="service-type" value="${s.name}" data-price="${s.price}" onchange="window.BookingForm?.updateQuote?.()"  data-id="${s.id}"><span>${s.name} (R${s.price})</span></label>`).join('');
+    
+    container.innerHTML = services.map(s => `<label><input type="checkbox" name="service-type" value="${escapeHtml(s.name)}" data-price="${escapeHtml(String(s.price))}" data-id="${escapeHtml(String(s.id))}"><span>${escapeHtml(s.name)} (R${escapeHtml(String(s.price))})</span></label>`).join('');
   },
 
   async loadDancers(containerId) {
@@ -141,7 +150,37 @@ const PulseSheetsCMS = {
     if (!container) return;
     const dancers = await this.getDancers();
     if (dancers.length === 0) return;
-    container.innerHTML = dancers.map(d => `<div class="dancer-card"><h3>${d.name}</h3><p>${d.genres}</p><p>${d.bio}</p></div>`).join('');
+    
+    // Helper function to escape and validate image filename
+    const sanitizeImagePath = (filename) => {
+      if (!filename || filename === 'placeholder.jpg') return null;
+      // Only allow alphanumeric, dots, dashes, underscores
+      return filename.replace(/[^a-zA-Z0-9._-]/g, '');
+    };
+    
+    // Check if event listener already attached to prevent memory leaks
+    if (!container.dataset.hasImageErrorHandler) {
+      container.addEventListener('error', (e) => {
+        if (e.target && e.target.classList.contains('dancer-image')) {
+          e.target.style.display = 'none';
+        }
+      }, true);
+      container.dataset.hasImageErrorHandler = 'true';
+    }
+    
+    container.innerHTML = dancers.map(d => {
+      const imagePath = sanitizeImagePath(d.image);
+      return `
+      <div class="dancer-card" style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
+        ${imagePath ? `<img src="assets/images/performers/${imagePath}" alt="${escapeHtml(d.name)}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;" class="dancer-image">` : ''}
+        <h3 style="color: #FF2D55; margin-bottom: 0.5rem;">${escapeHtml(d.name)}</h3>
+        ${d.initial ? `<p style="color: #E5E5E5; margin-bottom: 0.5rem;"><strong>Initial:</strong> ${escapeHtml(d.initial)}</p>` : ''}
+        ${d.genres ? `<p style="color: #b0b0b0; margin-bottom: 0.5rem;"><strong>Genres:</strong> ${escapeHtml(d.genres)}</p>` : ''}
+        ${d.experience ? `<p style="color: #b0b0b0; margin-bottom: 0.5rem;"><strong>Experience:</strong> ${escapeHtml(d.experience)}</p>` : ''}
+        ${d.bio ? `<p style="color: #b0b0b0; line-height: 1.6;">${escapeHtml(d.bio)}</p>` : ''}
+      </div>
+    `;
+    }).join('');
   },
 
   async loadFAQs(containerId) {
@@ -157,7 +196,8 @@ const PulseSheetsCMS = {
     if (!container) return;
     const testimonials = await this.getTestimonials();
     if (testimonials.length === 0) return;
-    container.innerHTML = testimonials.map(t => `<div class="testimonial-card"><p>${t.text}</p><p><strong>${t.name}</strong> - ${t.location} <span class="rating">${'★'.repeat(t.rating)}</span></p></div>`).join('');
+    
+    container.innerHTML = testimonials.map(t => `<div class="testimonial-card"><p>${escapeHtml(t.text)}</p><p><strong>${escapeHtml(t.name)}</strong> - ${escapeHtml(t.location)} <span class="rating">${'★'.repeat(Math.min(5, Math.max(0, parseInt(t.rating) || 5)))}</span></p></div>`).join('');
   }
 };
 

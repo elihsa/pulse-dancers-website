@@ -52,7 +52,7 @@
     <div class="nav-inner">
       <div class="logo-wrap">
         <a href="index.html">
-          <img src="assets/images/logo.png" alt="Pulse Male Revue International" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <img src="assets/images/logo.png" alt="Pulse Male Revue International" class="logo">
           <div class="brand" id="site-logo" style="display: none;">PULSE</div>
         </a>
       </div>
@@ -195,6 +195,40 @@
 
     <!-- Instagram Embed Script -->
     <script async src="//www.instagram.com/embed.js"></script>
+    <script>
+      // Load Instagram posts from Google Sheets
+      document.addEventListener('DOMContentLoaded', async () => {
+        if (typeof PulseSheetsCMS !== 'undefined') {
+          try {
+            const social = await PulseSheetsCMS.getSocial();
+            
+            // Validate Instagram URL format
+            const isValidInstagramUrl = (url) => {
+              if (!url || typeof url !== 'string') return false;
+              try {
+                const urlObj = new URL(url);
+                return urlObj.hostname === 'www.instagram.com' || urlObj.hostname === 'instagram.com';
+              } catch {
+                return false;
+              }
+            };
+            
+            if (social.instagram_post_1 && isValidInstagramUrl(social.instagram_post_1)) {
+              document.querySelector('#instagram-post-1 .instagram-media').setAttribute('data-instgrm-permalink', social.instagram_post_1);
+            }
+            if (social.instagram_post_2 && isValidInstagramUrl(social.instagram_post_2)) {
+              document.querySelector('#instagram-post-2 .instagram-media').setAttribute('data-instgrm-permalink', social.instagram_post_2);
+            }
+            // Reinitialize Instagram embeds
+            if (window.instgrm) {
+              window.instgrm.Embeds.process();
+            }
+          } catch (error) {
+            console.error('Error loading Instagram posts:', error);
+          }
+        }
+      });
+    </script>
 
     <section class="section twocol">
       <div class="block">
@@ -239,6 +273,7 @@
   </footer>
 </div>
 
+<script src="assets/js/sheets-cms.js"></script>
 <script src="assets/js/app.js" defer></script>
 </body>
 </html>

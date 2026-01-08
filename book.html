@@ -33,7 +33,7 @@
     <div class="nav-inner">
       <div class="logo-wrap">
         <a href="index.html">
-          <img src="assets/images/logo.png" alt="Pulse Male Revue International" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <img src="assets/images/logo.png" alt="Pulse Male Revue International" class="logo">
           <div class="brand" style="display: none;">PULSE</div>
         </a>
       </div>
@@ -135,7 +135,9 @@
             <p style="color: #b0b0b0; padding: 1rem;">Loading services...</p>
           </div>
           <input type="hidden" id="services-hidden" name="service-type">
-          <div id="service-error" class="form-error" style="display: none;">Please select at least one service.</div>
+          <div id="service-error" class="form-error" style="display: none; color: #FF2D55; background-color: rgba(255, 45, 85, 0.1); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.3); margin-top: 1rem;">
+            ⚠️ Please select at least one service.
+          </div>
         </div>
 
         <div id="waiter-hours-field" class="form-group">
@@ -230,6 +232,8 @@
     </div>
   </footer>
 
+  <script src="assets/js/sheets-cms.js"></script>
+  <script src="assets/js/booking-calculator.js"></script>
   <script src="assets/js/app.js" defer></script>
 </body>
 </html>

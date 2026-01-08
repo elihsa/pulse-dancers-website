@@ -32,7 +32,7 @@
     <div class="nav-inner">
       <div class="logo-wrap">
         <a href="index.html">
-          <img src="assets/images/logo.png" alt="Pulse Male Revue International" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <img src="assets/images/logo.png" alt="Pulse Male Revue International" class="logo">
           <div class="brand" style="display: none;">PULSE</div>
         </a>
       </div>
@@ -81,6 +81,72 @@
   </footer>
 </div>
 
+<script src="assets/js/sheets-cms.js"></script>
 <script src="assets/js/app.js" defer></script>
+<script>
+  // Load FAQ content from Google Sheets
+  document.addEventListener('DOMContentLoaded', async () => {
+    const faqContainer = document.getElementById('faq-content');
+    if (!faqContainer) return;
+
+    try {
+      const faqs = await PulseSheetsCMS.getFAQs();
+      
+      if (faqs.length === 0) {
+        faqContainer.innerHTML = '<p style="color: #b0b0b0; padding: 2rem; text-align: center;">FAQs coming soon. Check back soon!</p>';
+        return;
+      }
+
+      // Use the global escapeHtml from sheets-cms.js
+      // Create FAQ items with accordion functionality
+      faqContainer.innerHTML = faqs.map(faq => `
+        <div class="faq-item" style="background-color: #1a1a1f; margin-bottom: 1rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1); overflow: hidden;">
+          <div class="faq-question" style="padding: 1.5rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+            <strong style="color: #E5E5E5;">${escapeHtml(faq.question)}</strong>
+            <span style="color: #FF2D55; font-size: 1.5rem; transition: transform 0.3s;">+</span>
+          </div>
+          <div class="faq-answer" style="display: none; padding: 0 1.5rem 1.5rem 1.5rem; color: #b0b0b0; line-height: 1.6;">${escapeHtml(faq.answer)}</div>
+        </div>
+      `).join('');
+
+      // Add click handlers for accordion
+      document.querySelectorAll('.faq-item').forEach(item => {
+        const question = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
+        const icon = question.querySelector('span');
+        
+        question.addEventListener('click', () => {
+          const isActive = item.classList.contains('active');
+          
+          // Close all other items
+          document.querySelectorAll('.faq-item').forEach(otherItem => {
+            if (otherItem !== item) {
+              otherItem.classList.remove('active');
+              otherItem.querySelector('.faq-answer').style.display = 'none';
+              otherItem.querySelector('.faq-question span').textContent = '+';
+              otherItem.querySelector('.faq-question span').style.transform = 'rotate(0deg)';
+            }
+          });
+          
+          // Toggle current item
+          if (isActive) {
+            item.classList.remove('active');
+            answer.style.display = 'none';
+            icon.textContent = '+';
+            icon.style.transform = 'rotate(0deg)';
+          } else {
+            item.classList.add('active');
+            answer.style.display = 'block';
+            icon.textContent = '−';
+            icon.style.transform = 'rotate(180deg)';
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Error loading FAQs:', error);
+      faqContainer.innerHTML = '<p style="color: #b0b0b0; padding: 2rem; text-align: center;">Unable to load FAQs. Please try again later.</p>';
+    }
+  });
+</script>
 </body>
 </html>
