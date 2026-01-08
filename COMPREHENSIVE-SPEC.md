@@ -310,6 +310,36 @@ Home | Prices | FAQ | Meet The Guys | Join | Book Now
 - Sheet ID: `12zPYBbpdDLhqTPylP0oUgPqimy5fXIfg`
 - Access via Google Sheets API with API Key
 
+### Google Sheets CMS Setup
+
+#### Template File
+See `GOOGLE-SHEETS-TEMPLATE.md` for complete data structure with all content from old site formatted as ready-to-copy tables.
+
+#### Importing Data
+You have two options for importing data into your Google Sheet:
+
+**Option A: Copy/Paste Tables (Easiest)**
+1. Open `GOOGLE-SHEETS-TEMPLATE.md`
+2. Copy each table section
+3. Create corresponding tabs in Google Sheet
+4. Paste data into each tab
+
+**Option B: Import CSV Files (Faster)**
+1. Use CSV files from `/cms-data/` folder
+2. In Google Sheets, go to File > Import
+3. Upload CSV file for each tab
+4. Each CSV corresponds to a tab
+
+#### CSV Files Available
+The following CSV files are ready for import:
+- `/cms-data/HOME.csv` - Homepage hero and about content
+- `/cms-data/PRICES.csv` - Service pricing table
+- `/cms-data/FAQS.csv` - Frequently asked questions
+- `/cms-data/SERVICES.csv` - Service descriptions for booking form
+- `/cms-data/DANCERS.csv` - Performer profiles (template)
+- `/cms-data/TESTIMONIALS.csv` - Customer testimonials
+- `/cms-data/SOCIAL.csv` - Social media links
+
 **Sheet Structure:**
 
 1. **Prices Sheet**
