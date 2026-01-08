@@ -81,6 +81,18 @@ header {
   margin-bottom: 0;
 }
 
+.logo-wrap a {
+  display: block;
+  line-height: 0;
+  text-decoration: none;
+}
+
+.logo {
+  height: 60px;
+  width: auto;
+  display: block;
+}
+
 .brand {
   font-size: 1.75rem;
   font-weight: 900;
