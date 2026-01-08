@@ -1,559 +1,411 @@
-// Pulse Dancers Website - Main JavaScript File
+// ===========================
+// PULSE DANCERS - Main JavaScript
+// ===========================
 
-// ===== FAQ ACCORDION =====
-function initAccordion() {
-  const accordionHeaders = document.querySelectorAll('.accordion-header');
-  
-  accordionHeaders.forEach(header => {
-    header.addEventListener('click', () => {
-      const body = header.nextElementSibling;
-      const isActive = header.classList.contains('active');
-      
-      // Close all accordions
-      accordionHeaders.forEach(h => {
-        h.classList.remove('active');
-        h.nextElementSibling.classList.remove('active');
+// ===== NAVIGATION TOGGLE =====
+const navToggle = document.querySelector('.nav-toggle');
+const navMenu = document.querySelector('.nav-menu');
+
+if (navToggle && navMenu) {
+  navToggle.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+  });
+
+  // Close menu when clicking on a nav link
+  document.querySelectorAll('.nav-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+      navMenu.classList.remove('active');
+    });
+  });
+}
+
+// ===== SMOOTH SCROLLING =====
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    const href = this.getAttribute('href');
+    if (href === '#') return;
+    
+    e.preventDefault();
+    const target = document.querySelector(href);
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
       });
-      
-      // Open clicked accordion if it wasn't active
-      if (!isActive) {
-        header.classList.add('active');
-        body.classList.add('active');
-      }
-    });
-  });
-}
-
-// ===== BOOKING FORM - DISTANCE CALCULATOR =====
-const GOOGLE_MAPS_API_KEY = 'AIzaSyDmIhz0iWcB8R-BBXkFFGi36bCQIm7fgA8';
-const BASE_LOCATION = 'Sandton City, Johannesburg, South Africa';
-const FREE_KM = 50;
-const RAND_PER_KM = 4;
-const DEFAULT_WAITER_HOURS = 2;
-
-let autocomplete;
-let distanceService;
-let geocoder;
-
-function initGoogleMaps() {
-  if (typeof google === 'undefined') {
-    console.log('Google Maps not loaded yet');
-    return;
-  }
-
-  // Initialize autocomplete for address input
-  const addressInput = document.getElementById('event-address');
-  if (addressInput) {
-    autocomplete = new google.maps.places.Autocomplete(addressInput, {
-      componentRestrictions: { country: 'za' },
-      fields: ['formatted_address', 'geometry', 'name']
-    });
-    
-    autocomplete.addListener('place_changed', calculateDistance);
-  }
-
-  // Initialize distance service
-  distanceService = new google.maps.DistanceMatrixService();
-  geocoder = new google.maps.Geocoder();
-
-  // Also listen to the area input for geocoding
-  const areaInput = document.getElementById('event-area');
-  if (areaInput) {
-    areaInput.addEventListener('blur', () => {
-      if (areaInput.value) {
-        geocodeArea(areaInput.value);
-      }
-    });
-  }
-}
-
-function geocodeArea(area) {
-  if (!geocoder) return;
-  
-  geocoder.geocode({ 
-    address: area + ', Gauteng, South Africa' 
-  }, (results, status) => {
-    if (status === 'OK' && results[0]) {
-      calculateDistanceFromCoords(results[0].geometry.location);
     }
   });
-}
+});
 
-function calculateDistance() {
-  const place = autocomplete.getPlace();
-  if (!place || !place.geometry) {
-    return;
-  }
-  
-  calculateDistanceFromCoords(place.geometry.location);
-}
-
-function calculateDistanceFromCoords(destination) {
-  if (!distanceService) return;
-
-  distanceService.getDistanceMatrix({
-    origins: [BASE_LOCATION],
-    destinations: [destination],
-    travelMode: 'DRIVING',
-    unitSystem: google.maps.UnitSystem.METRIC
-  }, (response, status) => {
-    if (status === 'OK') {
-      const result = response.rows[0].elements[0];
-      if (result.status === 'OK') {
-        const distanceKm = result.distance.value / 1000; // Convert meters to km
-        const roundTripKm = distanceKm * 2; // Round trip
-        updateQuoteWithDistance(roundTripKm);
-      }
-    }
-  });
-}
-
-function updateQuoteWithDistance(roundTripKm) {
-  // Store distance for quote calculation
-  const distanceInput = document.getElementById('calculated-distance');
-  if (distanceInput) {
-    distanceInput.value = roundTripKm.toFixed(2);
-  }
-  
-  // Trigger quote update
-  updateQuote();
-}
-
-// ===== LIVE QUOTE CALCULATOR =====
-function updateQuote() {
-  // Get form values
-  const serviceCheckboxes = document.querySelectorAll('input[name="services"]:checked');
-  const performersInput = document.getElementById('num-performers');
-  const distanceInput = document.getElementById('calculated-distance');
-  const waiterHoursInput = document.getElementById('waiter-hours');
-  
-  if (!performersInput) return;
-
-  let totalServicePrice = 0;
-  let hasWaiterService = false;
-  const selectedServices = [];
-
-  // Calculate total service price from checked services
-  serviceCheckboxes.forEach(checkbox => {
-    const price = parseFloat(checkbox.value) || 0;
-    const isHourly = checkbox.getAttribute('data-hourly') === 'true';
-    const serviceName = checkbox.getAttribute('data-name');
-    
-    if (isHourly) {
-      hasWaiterService = true;
-      const hours = parseInt(waiterHoursInput?.value) || DEFAULT_WAITER_HOURS;
-      totalServicePrice += price * hours;
-      selectedServices.push(`${serviceName} (${hours}h)`);
-    } else {
-      totalServicePrice += price;
-      selectedServices.push(serviceName);
-    }
-  });
-
-  // Show/hide waiter hours field
-  const waiterHoursField = document.getElementById('waiter-hours-field');
-  if (waiterHoursField) {
-    waiterHoursField.style.display = hasWaiterService ? 'block' : 'none';
-    if (hasWaiterService && waiterHoursInput) {
-      waiterHoursInput.setAttribute('required', 'required');
-    } else if (waiterHoursInput) {
-      waiterHoursInput.removeAttribute('required');
-    }
-  }
-
-  // Update hidden field with selected services for form submission
-  const servicesHidden = document.getElementById('services-hidden');
-  if (servicesHidden) {
-    servicesHidden.value = selectedServices.join(', ');
-  }
-
-  const numPerformers = parseInt(performersInput.value) || 1;
-  const distance = parseFloat(distanceInput?.value || 0);
-
-  // Calculate performance fee
-  const performanceFee = totalServicePrice;
-
-  // Calculate travel fee (only beyond free km)
-  const chargeableKm = Math.max(0, distance - FREE_KM);
-  const travelFee = chargeableKm * RAND_PER_KM;
-
-  // Total
-  const total = performanceFee + travelFee;
-
-  // Update display
-  const performanceDisplay = document.getElementById('quote-performance');
-  const travelDisplay = document.getElementById('quote-travel');
-  const distanceDisplay = document.getElementById('quote-distance');
-  const totalDisplay = document.getElementById('quote-total');
-
-  if (performanceDisplay) {
-    performanceDisplay.textContent = `R${performanceFee.toFixed(2)}`;
-  }
-  
-  if (distanceDisplay) {
-    distanceDisplay.textContent = `${distance.toFixed(1)} km`;
-  }
-
-  if (travelDisplay) {
-    travelDisplay.textContent = `R${travelFee.toFixed(2)}`;
-  }
-
-  if (totalDisplay) {
-    totalDisplay.textContent = `R${total.toFixed(2)}`;
-  }
-}
-
-// ===== GUEST RECOMMENDATION =====
-function updateGuestRecommendation() {
-  const guestsSelect = document.getElementById('num-guests');
-  const performersInput = document.getElementById('num-performers');
-  const recommendationDiv = document.getElementById('guest-recommendation');
-  
-  if (!guestsSelect || !performersInput || !recommendationDiv) return;
-
-  const guestRange = guestsSelect.value;
-  let recommendation = '';
-
-  if (guestRange === '<10' || guestRange === '10-20') {
-    recommendation = 'Recommended: 1 performer';
-    performersInput.value = 1;
-  } else if (guestRange === '20-40') {
-    recommendation = 'Recommended: 2 performers (1 per 20 guests)';
-    performersInput.value = 2;
-  } else if (guestRange === '40+') {
-    recommendation = 'Recommended: 2+ performers (1 per 20 guests)';
-    performersInput.value = 2;
-  }
-
-  recommendationDiv.textContent = recommendation;
-  updateQuote();
-}
-
-// ===== LOCATION TYPE TOGGLE =====
-function initLocationToggle() {
-  const exactRadio = document.getElementById('location-exact');
-  const areaRadio = document.getElementById('location-area');
-  const exactFields = document.getElementById('exact-address-fields');
-  const areaFields = document.getElementById('area-fields');
-
-  if (exactRadio && areaRadio && exactFields && areaFields) {
-    exactRadio.addEventListener('change', () => {
-      exactFields.style.display = 'block';
-      areaFields.style.display = 'none';
-    });
-
-    areaRadio.addEventListener('change', () => {
-      exactFields.style.display = 'none';
-      areaFields.style.display = 'block';
-    });
-  }
-}
-
-// ===== FORM LISTENERS =====
-function initBookingForm() {
-  // Get all service checkboxes once
-  const serviceCheckboxes = document.querySelectorAll('input[name="services"]');
-  const performersInput = document.getElementById('num-performers');
-  const guestsSelect = document.getElementById('num-guests');
-  const waiterHoursInput = document.getElementById('waiter-hours');
-  const serviceError = document.getElementById('service-error');
-
-  // Add listeners for quote updates
-  serviceCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', updateQuote);
-  });
-
-  if (performersInput) {
-    performersInput.addEventListener('input', updateQuote);
-  }
-
-  if (guestsSelect) {
-    guestsSelect.addEventListener('change', updateGuestRecommendation);
-  }
-
-  if (waiterHoursInput) {
-    waiterHoursInput.addEventListener('input', updateQuote);
-  }
-
-  // Initialize location toggle
-  initLocationToggle();
-  
-  // Add form validation for at least one service selected
-  const form = document.getElementById('booking-form');
-  
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      const checkedServices = document.querySelectorAll('input[name="services"]:checked');
-      if (checkedServices.length === 0) {
-        e.preventDefault();
-        if (serviceError) {
-          serviceError.style.display = 'block';
-        }
-        // Scroll to error
-        const servicesSection = document.querySelector('.service-checkboxes');
-        if (servicesSection) {
-          servicesSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-        return false;
-      }
-    });
-    
-    // Hide/show error when user changes service selection
-    serviceCheckboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', () => {
-        if (serviceError) {
-          const anyChecked = document.querySelectorAll('input[name="services"]:checked').length > 0;
-          serviceError.style.display = anyChecked ? 'none' : 'block';
-        }
-      });
-    });
-  }
-}
-
-// ===== LOAD CMS DATA =====
-async function loadCMSData(dataFile, callback) {
-  try {
-    const response = await fetch(`/data/${dataFile}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    callback(data);
-  } catch (error) {
-    console.error(`Error loading ${dataFile}:`, error);
-    callback(null); // Pass null to callback to handle error gracefully
-  }
-}
-
-// ===== LOAD PERFORMERS =====
-function loadPerformers() {
-  const performersGrid = document.getElementById('performers-grid');
-  if (!performersGrid) return;
-
-  loadCMSData('performers.json', (data) => {
-    if (!data || !data.performers || data.performers.length === 0) {
-      const message = document.createElement('p');
-      message.style.textAlign = 'center';
-      message.style.color = '#b0b0b0';
-      message.textContent = 'No performers to display yet. Add team members via the CMS.';
-      performersGrid.appendChild(message);
-      return;
-    }
-
-    // Filter to only explicitly active performers
-    const activePerformers = data.performers.filter(p => p.active === true);
-    
-    if (activePerformers.length === 0) {
-      const message = document.createElement('p');
-      message.style.textAlign = 'center';
-      message.style.color = '#b0b0b0';
-      message.textContent = 'No active performers at this time. Check back soon!';
-      performersGrid.appendChild(message);
-      return;
-    }
-
-    // Clear grid
-    performersGrid.innerHTML = '';
-
-    // Create performer cards using DOM methods for security
-    activePerformers.forEach(performer => {
-      const card = document.createElement('div');
-      card.className = 'performer-card';
-      
-      // Create and validate photo
-      const photo = document.createElement('img');
-      photo.className = 'performer-photo';
-      photo.loading = 'lazy';
-      photo.alt = 'Performer photo';
-      
-      // Validate photo URL - only allow http/https
-      let photoUrl = '/assets/images/placeholder-performer.jpg';
-      if (performer.photo && typeof performer.photo === 'string') {
-        try {
-          const url = new URL(performer.photo, window.location.origin);
-          if (url.protocol === 'http:' || url.protocol === 'https:') {
-            photoUrl = performer.photo;
-          }
-        } catch (e) {
-          console.warn('Invalid performer photo URL:', performer.photo);
-        }
-      }
-      photo.src = photoUrl;
-      
-      // Create info container
-      const info = document.createElement('div');
-      info.className = 'performer-info';
-      
-      // Add name
-      if (performer.name) {
-        const name = document.createElement('div');
-        name.className = 'performer-name';
-        name.textContent = performer.name;
-        info.appendChild(name);
-      }
-      
-      // Add stage name
-      if (performer.stageName) {
-        const stageName = document.createElement('div');
-        stageName.className = 'performer-stage-name';
-        stageName.textContent = `"${performer.stageName}"`;
-        info.appendChild(stageName);
-      }
-      
-      // Add bio
-      if (performer.bio) {
-        const bio = document.createElement('div');
-        bio.className = 'performer-bio';
-        bio.textContent = performer.bio;
-        info.appendChild(bio);
-      }
-      
-      // Add specialties
-      if (performer.specialties) {
-        const specialties = document.createElement('div');
-        specialties.className = 'performer-specialties';
-        specialties.textContent = `💪 ${performer.specialties}`;
-        info.appendChild(specialties);
-      }
-      
-      card.appendChild(photo);
-      card.appendChild(info);
-      performersGrid.appendChild(card);
-    });
-  });
-}
-
-// ===== LOAD FAQ FROM CMS =====
-function loadFAQ() {
-  const faqContent = document.getElementById('faq-content');
-  const faqFooterTitle = document.getElementById('faq-footer-title');
-  const faqFooterDescription = document.getElementById('faq-footer-description');
-  
-  if (!faqContent) return;
-
-  loadCMSData('faq.json', (data) => {
-    if (!data || !data.groups || data.groups.length === 0) {
-      faqContent.innerHTML = '<p style="text-align: center; color: #b0b0b0;">No FAQ content available.</p>';
-      return;
-    }
-
-    // Clear loading message
-    faqContent.innerHTML = '';
-
-    // Create FAQ groups
-    data.groups.forEach(group => {
-      // Create group heading
-      const heading = document.createElement('h2');
-      heading.style.marginTop = '3rem';
-      heading.textContent = group.title;
-      faqContent.appendChild(heading);
-
-      // Create accordion container
-      const accordion = document.createElement('div');
-      accordion.className = 'accordion';
-
-      // Create accordion items
-      group.qas.forEach(qa => {
-        const item = document.createElement('div');
-        item.className = 'accordion-item';
-
-        const header = document.createElement('button');
-        header.className = 'accordion-header';
-        header.textContent = qa.q;
-
-        const body = document.createElement('div');
-        body.className = 'accordion-body';
-        // Preserve line breaks in answers
-        body.style.whiteSpace = 'pre-line';
-        body.textContent = qa.a;
-
-        item.appendChild(header);
-        item.appendChild(body);
-        accordion.appendChild(item);
-      });
-
-      faqContent.appendChild(accordion);
-    });
-
-    // Update footer text if provided
-    if (faqFooterTitle && data.footerText) {
-      faqFooterTitle.textContent = data.footerText;
-    }
-    if (faqFooterDescription && data.footerDescription) {
-      faqFooterDescription.textContent = data.footerDescription;
-    }
-
-    // Re-initialize accordion after content is loaded
-    initAccordion();
-  });
-}
-
-// ===== INITIALIZE =====
-document.addEventListener('DOMContentLoaded', () => {
-  // Load FAQ if on FAQ page
-  if (document.getElementById('faq-content')) {
-    loadFAQ();
-  }
-
-  // Initialize accordion if present (but not on FAQ page since loadFAQ handles it)
-  if (document.querySelector('.accordion') && !document.getElementById('faq-content')) {
-    initAccordion();
-  }
-
-  // Initialize booking form if present
-  if (document.getElementById('booking-form')) {
-    initBookingForm();
-  }
-
-  // Load performers if on meet-the-guys page
-  if (document.getElementById('performers-grid')) {
-    loadPerformers();
-  }
-
-  // Load home page CMS content (logo and hero image)
-  if (document.getElementById('site-logo') || document.getElementById('hero-section')) {
-    loadHomePageImages();
-  }
-
-  // Load pricing table if on prices page
-  if (document.getElementById('pricing-table-body')) {
-    loadPricingTable();
-  }
-
-  // Load booking form services if on booking page
-  if (document.getElementById('service-checkboxes-container')) {
-    loadBookingServices();
-  }
-
-  // Load Instagram posts if on homepage
-  if (document.getElementById('instagram-post-1')) {
-    loadInstagramPosts();
+// ===== LOADING OVERLAY =====
+window.addEventListener('load', () => {
+  const loadingOverlay = document.getElementById('loading-overlay');
+  if (loadingOverlay) {
+    loadingOverlay.style.opacity = '0';
+    setTimeout(() => {
+      loadingOverlay.style.display = 'none';
+    }, 300);
   }
 });
 
+// ===== HERO PARALLAX EFFECT =====
+window.addEventListener('scroll', () => {
+  const scrolled = window.pageYOffset;
+  const heroContent = document.querySelector('.hero-content');
+  
+  if (heroContent) {
+    heroContent.style.transform = `translateY(${scrolled * 0.5}px)`;
+    heroContent.style.opacity = 1 - (scrolled / 500);
+  }
+});
+
+// ===== INTERSECTION OBSERVER FOR FADE-IN =====
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('fade-in');
+      observer.unobserve(entry.target);
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll('.service-card, .gallery-item, .about-content, .contact-info').forEach(el => {
+  observer.observe(el);
+});
+
+// ===== GALLERY LIGHTBOX =====
+const galleryItems = document.querySelectorAll('.gallery-item');
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const closeBtn = document.querySelector('.close-lightbox');
+const prevBtn = document.querySelector('.prev-btn');
+const nextBtn = document.querySelector('.next-btn');
+
+let currentImageIndex = 0;
+const images = Array.from(galleryItems).map(item => item.querySelector('img').src);
+
+galleryItems.forEach((item, index) => {
+  item.addEventListener('click', () => {
+    currentImageIndex = index;
+    openLightbox(images[currentImageIndex]);
+  });
+});
+
+function openLightbox(src) {
+  if (lightbox && lightboxImg) {
+    lightboxImg.src = src;
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeLightbox() {
+  if (lightbox) {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+}
+
+function showPrevImage() {
+  currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+  lightboxImg.src = images[currentImageIndex];
+}
+
+function showNextImage() {
+  currentImageIndex = (currentImageIndex + 1) % images.length;
+  lightboxImg.src = images[currentImageIndex];
+}
+
+if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+if (prevBtn) prevBtn.addEventListener('click', showPrevImage);
+if (nextBtn) nextBtn.addEventListener('click', showNextImage);
+
+if (lightbox) {
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+}
+
+// Keyboard navigation for lightbox
+document.addEventListener('keydown', (e) => {
+  if (!lightbox || !lightbox.classList.contains('active')) return;
+  
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') showPrevImage();
+  if (e.key === 'ArrowRight') showNextImage();
+});
+
+// ===== CONTACT FORM HANDLING =====
+const contactForm = document.getElementById('contact-form');
+const formStatus = document.getElementById('form-status');
+
+if (contactForm) {
+  contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(contactForm);
+    const data = Object.fromEntries(formData);
+    
+    // Show loading state
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
+    
+    try {
+      // Replace with your actual form submission endpoint
+      const response = await fetch('YOUR_FORM_ENDPOINT', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (response.ok) {
+        showFormStatus('Message sent successfully! We\'ll get back to you soon.', 'success');
+        contactForm.reset();
+      } else {
+        throw new Error('Form submission failed');
+      }
+    } catch (error) {
+      showFormStatus('Oops! Something went wrong. Please try again.', 'error');
+      console.error('Form submission error:', error);
+    } finally {
+      submitBtn.textContent = originalBtnText;
+      submitBtn.disabled = false;
+    }
+  });
+}
+
+function showFormStatus(message, type) {
+  if (formStatus) {
+    formStatus.textContent = message;
+    formStatus.className = `form-status ${type}`;
+    formStatus.style.display = 'block';
+    
+    setTimeout(() => {
+      formStatus.style.display = 'none';
+    }, 5000);
+  }
+}
+
+// ===== BOOKING FORM HANDLING =====
+const bookingForm = document.getElementById('booking-form');
+const bookingStatus = document.getElementById('booking-status');
+const totalCostElement = document.getElementById('total-cost');
+
+if (bookingForm) {
+  // Update total cost when services are selected
+  const serviceCheckboxes = bookingForm.querySelectorAll('input[name="services"]');
+  serviceCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', updateTotalCost);
+  });
+  
+  bookingForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(bookingForm);
+    const services = Array.from(formData.getAll('services'));
+    
+    if (services.length === 0) {
+      showBookingStatus('Please select at least one service.', 'error');
+      return;
+    }
+    
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      phone: formData.get('phone'),
+      date: formData.get('date'),
+      time: formData.get('time'),
+      services: services,
+      message: formData.get('message')
+    };
+    
+    const submitBtn = bookingForm.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
+    
+    try {
+      // Replace with your actual booking endpoint
+      const response = await fetch('YOUR_BOOKING_ENDPOINT', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (response.ok) {
+        showBookingStatus('Booking request sent! We\'ll confirm your booking soon.', 'success');
+        bookingForm.reset();
+        updateTotalCost();
+      } else {
+        throw new Error('Booking submission failed');
+      }
+    } catch (error) {
+      showBookingStatus('Oops! Something went wrong. Please try again.', 'error');
+      console.error('Booking submission error:', error);
+    } finally {
+      submitBtn.textContent = originalBtnText;
+      submitBtn.disabled = false;
+    }
+  });
+}
+
+function updateTotalCost() {
+  const serviceCheckboxes = document.querySelectorAll('input[name="services"]:checked');
+  let total = 0;
+  
+  serviceCheckboxes.forEach(checkbox => {
+    total += parseFloat(checkbox.value) || 0;
+  });
+  
+  if (totalCostElement) {
+    totalCostElement.textContent = `R${total.toLocaleString('en-ZA')}`;
+  }
+}
+
+function showBookingStatus(message, type) {
+  if (bookingStatus) {
+    bookingStatus.textContent = message;
+    bookingStatus.className = `form-status ${type}`;
+    bookingStatus.style.display = 'block';
+    
+    setTimeout(() => {
+      bookingStatus.style.display = 'none';
+    }, 5000);
+  }
+}
+
+// ===== TESTIMONIALS SLIDER =====
+const testimonials = document.querySelectorAll('.testimonial-card');
+let currentTestimonial = 0;
+
+function showTestimonial(index) {
+  testimonials.forEach((testimonial, i) => {
+    testimonial.style.display = i === index ? 'block' : 'none';
+  });
+}
+
+function nextTestimonial() {
+  currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+  showTestimonial(currentTestimonial);
+}
+
+if (testimonials.length > 0) {
+  showTestimonial(currentTestimonial);
+  setInterval(nextTestimonial, 5000); // Change testimonial every 5 seconds
+}
+
+// ===== VIDEO PLAYER =====
+const videoThumbnails = document.querySelectorAll('.video-thumbnail');
+
+videoThumbnails.forEach(thumbnail => {
+  thumbnail.addEventListener('click', function() {
+    const videoId = this.dataset.videoId;
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.border = 'none';
+    
+    this.innerHTML = '';
+    this.appendChild(iframe);
+  });
+});
+
+// ===== SOCIAL MEDIA FEED =====
+async function loadInstagramFeed() {
+  const feedContainer = document.getElementById('instagram-feed');
+  if (!feedContainer) return;
+  
+  try {
+    // Replace with your Instagram API endpoint
+    const response = await fetch('YOUR_INSTAGRAM_API_ENDPOINT');
+    const data = await response.json();
+    
+    feedContainer.innerHTML = data.posts.map(post => `
+      <div class="instagram-post">
+        <img src="${post.image}" alt="${post.caption}">
+        <div class="post-overlay">
+          <span class="likes">❤️ ${post.likes}</span>
+        </div>
+      </div>
+    `).join('');
+  } catch (error) {
+    console.error('Error loading Instagram feed:', error);
+    feedContainer.innerHTML = '<p>Unable to load Instagram feed.</p>';
+  }
+}
+
+// ===== NEWSLETTER SIGNUP =====
+const newsletterForm = document.getElementById('newsletter-form');
+
+if (newsletterForm) {
+  newsletterForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = newsletterForm.querySelector('input[type="email"]').value;
+    const submitBtn = newsletterForm.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.textContent;
+    
+    submitBtn.textContent = 'Subscribing...';
+    submitBtn.disabled = true;
+    
+    try {
+      // Replace with your newsletter API endpoint
+      const response = await fetch('YOUR_NEWSLETTER_ENDPOINT', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email })
+      });
+      
+      if (response.ok) {
+        alert('Thanks for subscribing to our newsletter!');
+        newsletterForm.reset();
+      } else {
+        throw new Error('Subscription failed');
+      }
+    } catch (error) {
+      alert('Oops! Something went wrong. Please try again.');
+      console.error('Newsletter subscription error:', error);
+    } finally {
+      submitBtn.textContent = originalBtnText;
+      submitBtn.disabled = false;
+    }
+  });
+}
+
 // ===== LOAD PRICING TABLE FROM CMS =====
-function loadPricingTable() {
+async function loadPricingTable() {
   const tableBody = document.getElementById('pricing-table-body');
   const notesElement = document.getElementById('pricing-notes');
   
   if (!tableBody) return;
 
-  loadCMSData('prices.json', (data) => {
-    if (!data || !data.items || data.items.length === 0) {
+  try {
+    const prices = await PulseSheetsCMS.getPrices();
+    
+    if (prices.length === 0) {
       tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 2rem; color: #b0b0b0;">No pricing data available.</td></tr>';
       return;
-    }
-
-    // Update notes if provided
-    if (notesElement && data.notes) {
-      notesElement.textContent = data.notes;
     }
 
     // Clear loading message
     tableBody.innerHTML = '';
 
     // Create table rows
-    data.items.forEach(item => {
+    prices.forEach(item => {
       const row = document.createElement('tr');
       
       const nameCell = document.createElement('td');
@@ -571,16 +423,21 @@ function loadPricingTable() {
       row.appendChild(priceCell);
       tableBody.appendChild(row);
     });
-  });
+  } catch (error) {
+    console.error('Error loading prices:', error);
+    tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 2rem; color: #b0b0b0;">Error loading pricing data.</td></tr>';
+  }
 }
 
 // ===== LOAD BOOKING FORM SERVICES FROM CMS =====
-function loadBookingServices() {
+async function loadBookingServices() {
   const container = document.getElementById('service-checkboxes-container');
   if (!container) return;
 
-  loadCMSData('prices.json', (data) => {
-    if (!data || !data.items || data.items.length === 0) {
+  try {
+    const prices = await PulseSheetsCMS.getPrices();
+    
+    if (prices.length === 0) {
       container.innerHTML = '<p style="color: #b0b0b0; padding: 1rem;">No services available.</p>';
       return;
     }
@@ -589,7 +446,7 @@ function loadBookingServices() {
     container.innerHTML = '';
 
     // Create checkbox for each service
-    data.items.forEach(item => {
+    prices.forEach(item => {
       const label = document.createElement('label');
       label.className = 'checkbox-label';
       
@@ -598,85 +455,103 @@ function loadBookingServices() {
       checkbox.name = 'services';
       checkbox.value = item.price || '0';
       checkbox.setAttribute('data-name', `${item.name} (${item.duration})`);
-      checkbox.setAttribute('data-hourly', item.isHourly ? 'true' : 'false');
+      checkbox.setAttribute('data-hourly', item.duration && item.duration.toLowerCase().includes('hour') ? 'true' : 'false');
       
       const span = document.createElement('span');
       const formattedPrice = parseInt(item.price || 0).toLocaleString('en-ZA');
-      const priceText = item.isHourly ? ` (per hour) - R${formattedPrice}` : ` (${item.duration}) - R${formattedPrice}`;
-      span.textContent = `${item.name}${priceText}`;
+      span.textContent = `${item.name} (${item.duration}) - R${formattedPrice}`;
       
       label.appendChild(checkbox);
       label.appendChild(span);
       container.appendChild(label);
     });
-
-    // Re-initialize booking form event listeners after services are loaded
-    if (document.getElementById('booking-form')) {
-      initBookingForm();
-    }
-  });
+  } catch (error) {
+    console.error('Error loading services:', error);
+    container.innerHTML = '<p style="color: #b0b0b0; padding: 1rem;">Error loading services.</p>';
+  }
 }
 
-// ===== LOAD HOME PAGE IMAGES FROM CMS =====
-function loadHomePageImages() {
-  loadCMSData('home.json', (data) => {
-    if (!data) return;
+// ===== INITIALIZE CMS CONTENT ON PAGE LOAD =====
+document.addEventListener('DOMContentLoaded', () => {
+  loadPricingTable();
+  loadBookingServices();
+  // loadInstagramFeed(); // Uncomment when Instagram API is set up
+});
 
-    // Load logo if provided
-    const logoElement = document.getElementById('site-logo');
-    if (logoElement && data.logoImage && data.logoImage.trim() !== '') {
-      // Replace text with image
-      logoElement.innerHTML = `<img src="${data.logoImage}" alt="PULSE" style="height: 40px; width: auto;">`;
-    }
+// ===== SCROLL TO TOP BUTTON =====
+const scrollTopBtn = document.getElementById('scroll-top');
 
-    // Load hero background image if provided
-    const heroSection = document.getElementById('hero-section');
-    if (heroSection && data.heroImage && data.heroImage.trim() !== '') {
-      heroSection.style.backgroundImage = `url('${data.heroImage}')`;
-      heroSection.style.backgroundSize = 'cover';
-      heroSection.style.backgroundPosition = 'center';
-      heroSection.style.backgroundRepeat = 'no-repeat';
-    }
-  });
-}
-
-// Load Google Maps when needed
-window.initGoogleMaps = initGoogleMaps;
-
-// ===== LOAD INSTAGRAM POSTS FROM CMS =====
-function loadInstagramPosts() {
-  loadCMSData('social.json', (data) => {
-    if (!data || !data.instagramPosts || data.instagramPosts.length < 2) {
-      console.warn('Not enough Instagram posts in CMS data');
-      // Hide Instagram section if no posts available
-      const instagramSection = document.querySelector('#instagram-post-1')?.closest('.section');
-      if (instagramSection) {
-        instagramSection.style.display = 'none';
-      }
-      return;
-    }
-    
-    // Load first two Instagram posts
-    const post1 = document.querySelector('#instagram-post-1 .instagram-media');
-    const post2 = document.querySelector('#instagram-post-2 .instagram-media');
-    
-    if (post1 && data.instagramPosts[0] && data.instagramPosts[0].url) {
-      post1.setAttribute('data-instgrm-permalink', data.instagramPosts[0].url);
-    }
-    
-    if (post2 && data.instagramPosts[1] && data.instagramPosts[1].url) {
-      post2.setAttribute('data-instgrm-permalink', data.instagramPosts[1].url);
-    }
-    
-    // Reload Instagram embed script to render posts
-    if (window.instgrm) {
-      try {
-        window.instgrm.Embeds.process();
-      } catch (error) {
-        console.error('Error processing Instagram embeds:', error);
-      }
+if (scrollTopBtn) {
+  window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 300) {
+      scrollTopBtn.classList.add('visible');
     } else {
-      console.warn('Instagram embed script not loaded');
+      scrollTopBtn.classList.remove('visible');
     }
+  });
+  
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+}
+
+// ===== PERFORMANCE OPTIMIZATION =====
+// Lazy load images
+if ('loading' in HTMLImageElement.prototype) {
+  const images = document.querySelectorAll('img[loading="lazy"]');
+  images.forEach(img => {
+    img.src = img.dataset.src;
+  });
+} else {
+  // Fallback for browsers that don't support lazy loading
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js';
+  document.body.appendChild(script);
+}
+
+// ===== ACCESSIBILITY ENHANCEMENTS =====
+// Add skip to main content link functionality
+const skipLink = document.querySelector('.skip-to-content');
+if (skipLink) {
+  skipLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    const mainContent = document.querySelector('main');
+    if (mainContent) {
+      mainContent.setAttribute('tabindex', '-1');
+      mainContent.focus();
+    }
+  });
+}
+
+// ===== ANALYTICS TRACKING =====
+function trackEvent(category, action, label) {
+  if (typeof gtag !== 'undefined') {
+    gtag('event', action, {
+      'event_category': category,
+      'event_label': label
+    });
+  }
+}
+
+// Track button clicks
+document.querySelectorAll('.cta-button, .btn').forEach(button => {
+  button.addEventListener('click', function() {
+    trackEvent('Button', 'Click', this.textContent.trim());
+  });
+});
+
+// Track form submissions
+if (contactForm) {
+  contactForm.addEventListener('submit', () => {
+    trackEvent('Form', 'Submit', 'Contact Form');
+  });
+}
+
+if (bookingForm) {
+  bookingForm.addEventListener('submit', () => {
+    trackEvent('Form', 'Submit', 'Booking Form');
   });
 }
