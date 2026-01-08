@@ -2,27 +2,49 @@
  * Pulse Dancers CMS - Google Sheets Integration
  * Sheet ID: 12zPYBbpdDLhqTPylP0oUgPqimy5fXIfg
  */
-
 const SHEET_ID = '12zPYBbpdDLhqTPylP0oUgPqimy5fXIfg';
 const API_KEY = 'AIzaSyDmIhz0iWcB8R-BBXkFFGi36bCQIm7fgA8';
 
+// Sheet GIDs - Update these after getting them from the Google Sheet URLs
+const SHEET_GIDS = {
+  HOME: '664000307',
+  PRICES: '2117273325',
+  FAQS: '568464878',
+  DANCERS: '116112300',
+  SERVICES: '1118530609',
+  TESTIMONIALS: '735891537',
+  SOCIAL: '1025475414'
+};
+
 const PulseSheetsCMS = {
-  async fetchSheet(sheetName, startRow = 1, endRow = 1000) {
+  async fetchSheet(gid, startRow = 1, endRow = 1000) {
     try {
-      const range = encodeURIComponent(`${sheetName}!A${startRow}:Z${endRow}`);
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
+      const range = encodeURIComponent(`${startRow}:${endRow}`);
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values?ranges=${gid}!A${startRow}:Z${endRow}&key=${API_KEY}`;
       const response = await fetch(url);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      return data.values || [];
+      return (data.valueRanges && data.valueRanges[0] && data.valueRanges[0].values) || [];
     } catch (error) {
-      console.error(`Error fetching sheet ${sheetName}:`, error);
+      console.error(`Error fetching sheet with GID ${gid}:`, error);
       return [];
     }
   },
 
+  async getHome() {
+    const rows = await this.fetchSheet(SHEET_GIDS.HOME, 1, 10);
+    if (rows.length === 0) return {};
+    const result = {};
+    rows.forEach(row => {
+      if (row[0] && row[1]) {
+        result[row[0]] = row[1];
+      }
+    });
+    return result;
+  },
+
   async getPrices() {
-    const rows = await this.fetchSheet('Prices', 1, 10);
+    const rows = await this.fetchSheet(SHEET_GIDS.PRICES, 1, 20);
     if (rows.length === 0) return [];
     const startIdx = rows[0][0] === 'ID' || rows[0][0]?.toLowerCase().includes('service') ? 1 : 0;
     return rows.slice(startIdx).map(row => ({
@@ -35,7 +57,7 @@ const PulseSheetsCMS = {
   },
 
   async getDancers() {
-    const rows = await this.fetchSheet('Dancers', 1, 20);
+    const rows = await this.fetchSheet(SHEET_GIDS.DANCERS, 1, 30);
     if (rows.length === 0) return [];
     const startIdx = rows[0][0] === 'ID' ? 1 : 0;
     return rows.slice(startIdx).map(row => ({
@@ -49,10 +71,23 @@ const PulseSheetsCMS = {
     })).filter(d => d.name);
   },
 
-  async getFAQs() {
-    const rows = await this.fetchSheet('FAQs', 1, 20);
+  async getServices() {
+    const rows = await this.fetchSheet(SHEET_GIDS.SERVICES, 1, 20);
     if (rows.length === 0) return [];
     const startIdx = rows[0][0] === 'ID' ? 1 : 0;
+    return rows.slice(startIdx).map(row => ({
+      id: row[0],
+      name: row[1],
+      duration: row[2],
+      price: row[3],
+      notes: row[4] || ''
+    })).filter(s => s.name);
+  },
+
+  async getFAQs() {
+    const rows = await this.fetchSheet(SHEET_GIDS.FAQS, 1, 50);
+    if (rows.length === 0) return [];
+    const startIdx = rows[0][0] === 'ID' || rows[0][0]?.toLowerCase().includes('question') ? 1 : 0;
     return rows.slice(startIdx).map(row => ({
       id: row[0],
       question: row[1],
@@ -60,20 +95,45 @@ const PulseSheetsCMS = {
     })).filter(f => f.question);
   },
 
+  async getTestimonials() {
+    const rows = await this.fetchSheet(SHEET_GIDS.TESTIMONIALS, 1, 20);
+    if (rows.length === 0) return [];
+    const startIdx = rows[0][0] === 'ID' ? 1 : 0;
+    return rows.slice(startIdx).map(row => ({
+      id: row[0],
+      name: row[1],
+      rating: parseInt(row[2]) || 5,
+      text: row[3],
+      location: row[4] || ''
+    })).filter(t => t.name);
+  },
+
+  async getSocial() {
+    const rows = await this.fetchSheet(SHEET_GIDS.SOCIAL, 1, 10);
+    if (rows.length === 0) return {};
+    const result = {};
+    rows.forEach(row => {
+      if (row[0] && row[1]) {
+        result[row[0]] = row[1];
+      }
+    });
+    return result;
+  },
+
   async loadPrices(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
     const prices = await this.getPrices();
     if (prices.length === 0) { container.innerHTML = '<p>Loading...</p>'; return; }
-    container.innerHTML = prices.map(p => `<div class="price-card"><h3>${p.name}</h3><p>R${p.price}</p><p>${p.duration}</p></div>`).join('');
+    container.innerHTML = prices.map(p => `<div class="price-card"><h3>${p.name}</h3><p>R${p.price}</p><p>${p.duration}</p><p>${p.description}</p></div>`).join('');
   },
 
   async loadServices(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
-    const prices = await this.getPrices();
-    if (prices.length === 0) return;
-    container.innerHTML = prices.map(p => `<label><input type="checkbox" name="service-type" value="${p.name}" data-price="${p.price}" onchange="window.BookingForm?.updateQuote?.()"><span>${p.name} (R${p.price})</span></label>`).join('');
+    const services = await this.getServices();
+    if (services.length === 0) return;
+    container.innerHTML = services.map(s => `<label><input type="checkbox" name="service-type" value="${s.name}" data-price="${s.price}" onchange="window.BookingForm?.updateQuote?.()"  data-id="${s.id}"><span>${s.name} (R${s.price})</span></label>`).join('');
   },
 
   async loadDancers(containerId) {
@@ -90,7 +150,17 @@ const PulseSheetsCMS = {
     const faqs = await this.getFAQs();
     if (faqs.length === 0) return;
     container.innerHTML = faqs.map(faq => `<div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('active')"><strong>${faq.question}</strong><span>+</span></div><div class="faq-a" style="display:none;">${faq.answer}</div></div>`).join('');
+  },
+
+  async loadTestimonials(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const testimonials = await this.getTestimonials();
+    if (testimonials.length === 0) return;
+    container.innerHTML = testimonials.map(t => `<div class="testimonial-card"><p>${t.text}</p><p><strong>${t.name}</strong> - ${t.location} <span class="rating">${'★'.repeat(t.rating)}</span></p></div>`).join('');
   }
 };
 
-if (typeof module !== 'undefined' && module.exports) { module.exports = PulseSheetsCMS; }
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = PulseSheetsCMS;
+}
