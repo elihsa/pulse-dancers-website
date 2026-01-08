@@ -97,13 +97,7 @@
         return;
       }
 
-      // Helper function to escape HTML to prevent XSS
-      const escapeHtml = (text) => {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-      };
-
+      // Use the global escapeHtml from sheets-cms.js
       // Create FAQ items with accordion functionality
       faqContainer.innerHTML = faqs.map(faq => `
         <div class="faq-item" style="background-color: #1a1a1f; margin-bottom: 1rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1); overflow: hidden;">

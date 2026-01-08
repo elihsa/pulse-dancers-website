@@ -138,9 +138,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Initialize on page load
+// Initialize on page load - prevent double initialization
+let initialized = false;
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => BookingForm.initializeForm());
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!initialized) {
+      initialized = true;
+      BookingForm.initializeForm();
+    }
+  });
 } else {
+  initialized = true;
   BookingForm.initializeForm();
 }
