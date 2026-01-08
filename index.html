@@ -201,10 +201,22 @@
         if (typeof PulseSheetsCMS !== 'undefined') {
           try {
             const social = await PulseSheetsCMS.getSocial();
-            if (social.instagram_post_1) {
+            
+            // Validate Instagram URL format
+            const isValidInstagramUrl = (url) => {
+              if (!url || typeof url !== 'string') return false;
+              try {
+                const urlObj = new URL(url);
+                return urlObj.hostname === 'www.instagram.com' || urlObj.hostname === 'instagram.com';
+              } catch {
+                return false;
+              }
+            };
+            
+            if (social.instagram_post_1 && isValidInstagramUrl(social.instagram_post_1)) {
               document.querySelector('#instagram-post-1 .instagram-media').setAttribute('data-instgrm-permalink', social.instagram_post_1);
             }
-            if (social.instagram_post_2) {
+            if (social.instagram_post_2 && isValidInstagramUrl(social.instagram_post_2)) {
               document.querySelector('#instagram-post-2 .instagram-media').setAttribute('data-instgrm-permalink', social.instagram_post_2);
             }
             // Reinitialize Instagram embeds

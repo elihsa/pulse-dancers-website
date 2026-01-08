@@ -125,7 +125,15 @@ const PulseSheetsCMS = {
     if (!container) return;
     const prices = await this.getPrices();
     if (prices.length === 0) { container.innerHTML = '<p>Loading...</p>'; return; }
-    container.innerHTML = prices.map(p => `<div class="price-card"><h3>${p.name}</h3><p>R${p.price}</p><p>${p.duration}</p><p>${p.description}</p></div>`).join('');
+    
+    // Helper function to escape HTML
+    const escapeHtml = (text) => {
+      const div = document.createElement('div');
+      div.textContent = text || '';
+      return div.innerHTML;
+    };
+    
+    container.innerHTML = prices.map(p => `<div class="price-card"><h3>${escapeHtml(p.name)}</h3><p>R${escapeHtml(String(p.price))}</p><p>${escapeHtml(p.duration)}</p><p>${escapeHtml(p.description)}</p></div>`).join('');
   },
 
   async loadServices(containerId) {
@@ -133,7 +141,15 @@ const PulseSheetsCMS = {
     if (!container) return;
     const services = await this.getServices();
     if (services.length === 0) return;
-    container.innerHTML = services.map(s => `<label><input type="checkbox" name="service-type" value="${s.name}" data-price="${s.price}" onchange="window.BookingForm?.updateQuote?.()"  data-id="${s.id}"><span>${s.name} (R${s.price})</span></label>`).join('');
+    
+    // Helper function to escape HTML
+    const escapeHtml = (text) => {
+      const div = document.createElement('div');
+      div.textContent = text || '';
+      return div.innerHTML;
+    };
+    
+    container.innerHTML = services.map(s => `<label><input type="checkbox" name="service-type" value="${escapeHtml(s.name)}" data-price="${escapeHtml(String(s.price))}" data-id="${escapeHtml(String(s.id))}"><span>${escapeHtml(s.name)} (R${escapeHtml(String(s.price))})</span></label>`).join('');
   },
 
   async loadDancers(containerId) {
@@ -141,16 +157,41 @@ const PulseSheetsCMS = {
     if (!container) return;
     const dancers = await this.getDancers();
     if (dancers.length === 0) return;
-    container.innerHTML = dancers.map(d => `
+    
+    // Helper function to escape HTML
+    const escapeHtml = (text) => {
+      const div = document.createElement('div');
+      div.textContent = text || '';
+      return div.innerHTML;
+    };
+    
+    // Helper function to escape and validate image filename
+    const sanitizeImagePath = (filename) => {
+      if (!filename || filename === 'placeholder.jpg') return null;
+      // Only allow alphanumeric, dots, dashes, underscores
+      return filename.replace(/[^a-zA-Z0-9._-]/g, '');
+    };
+    
+    container.innerHTML = dancers.map(d => {
+      const imagePath = sanitizeImagePath(d.image);
+      return `
       <div class="dancer-card" style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
-        ${d.image && d.image !== 'placeholder.jpg' ? `<img src="assets/images/performers/${d.image}" alt="${d.name}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;" onerror="this.style.display='none'">` : ''}
-        <h3 style="color: #FF2D55; margin-bottom: 0.5rem;">${d.name}</h3>
-        ${d.initial ? `<p style="color: #E5E5E5; margin-bottom: 0.5rem;"><strong>Initial:</strong> ${d.initial}</p>` : ''}
-        ${d.genres ? `<p style="color: #b0b0b0; margin-bottom: 0.5rem;"><strong>Genres:</strong> ${d.genres}</p>` : ''}
-        ${d.experience ? `<p style="color: #b0b0b0; margin-bottom: 0.5rem;"><strong>Experience:</strong> ${d.experience}</p>` : ''}
-        ${d.bio ? `<p style="color: #b0b0b0; line-height: 1.6;">${d.bio}</p>` : ''}
+        ${imagePath ? `<img src="assets/images/performers/${imagePath}" alt="${escapeHtml(d.name)}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;" class="dancer-image">` : ''}
+        <h3 style="color: #FF2D55; margin-bottom: 0.5rem;">${escapeHtml(d.name)}</h3>
+        ${d.initial ? `<p style="color: #E5E5E5; margin-bottom: 0.5rem;"><strong>Initial:</strong> ${escapeHtml(d.initial)}</p>` : ''}
+        ${d.genres ? `<p style="color: #b0b0b0; margin-bottom: 0.5rem;"><strong>Genres:</strong> ${escapeHtml(d.genres)}</p>` : ''}
+        ${d.experience ? `<p style="color: #b0b0b0; margin-bottom: 0.5rem;"><strong>Experience:</strong> ${escapeHtml(d.experience)}</p>` : ''}
+        ${d.bio ? `<p style="color: #b0b0b0; line-height: 1.6;">${escapeHtml(d.bio)}</p>` : ''}
       </div>
-    `).join('');
+    `;
+    }).join('');
+    
+    // Add error handling for images using event delegation
+    container.addEventListener('error', (e) => {
+      if (e.target && e.target.classList.contains('dancer-image')) {
+        e.target.style.display = 'none';
+      }
+    }, true);
   },
 
   async loadFAQs(containerId) {
@@ -166,7 +207,15 @@ const PulseSheetsCMS = {
     if (!container) return;
     const testimonials = await this.getTestimonials();
     if (testimonials.length === 0) return;
-    container.innerHTML = testimonials.map(t => `<div class="testimonial-card"><p>${t.text}</p><p><strong>${t.name}</strong> - ${t.location} <span class="rating">${'★'.repeat(t.rating)}</span></p></div>`).join('');
+    
+    // Helper function to escape HTML
+    const escapeHtml = (text) => {
+      const div = document.createElement('div');
+      div.textContent = text || '';
+      return div.innerHTML;
+    };
+    
+    container.innerHTML = testimonials.map(t => `<div class="testimonial-card"><p>${escapeHtml(t.text)}</p><p><strong>${escapeHtml(t.name)}</strong> - ${escapeHtml(t.location)} <span class="rating">${'★'.repeat(Math.min(5, Math.max(0, parseInt(t.rating) || 5)))}</span></p></div>`).join('');
   }
 };
 
