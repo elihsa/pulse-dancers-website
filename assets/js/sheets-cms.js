@@ -16,6 +16,13 @@ const SHEET_GIDS = {
   SOCIAL: '1025475414'
 };
 
+// Utility function to escape HTML and prevent XSS
+const escapeHtml = (text) => {
+  const div = document.createElement('div');
+  div.textContent = text || '';
+  return div.innerHTML;
+};
+
 const PulseSheetsCMS = {
   async fetchSheet(gid, startRow = 1, endRow = 1000) {
     try {
@@ -126,13 +133,6 @@ const PulseSheetsCMS = {
     const prices = await this.getPrices();
     if (prices.length === 0) { container.innerHTML = '<p>Loading...</p>'; return; }
     
-    // Helper function to escape HTML
-    const escapeHtml = (text) => {
-      const div = document.createElement('div');
-      div.textContent = text || '';
-      return div.innerHTML;
-    };
-    
     container.innerHTML = prices.map(p => `<div class="price-card"><h3>${escapeHtml(p.name)}</h3><p>R${escapeHtml(String(p.price))}</p><p>${escapeHtml(p.duration)}</p><p>${escapeHtml(p.description)}</p></div>`).join('');
   },
 
@@ -141,13 +141,6 @@ const PulseSheetsCMS = {
     if (!container) return;
     const services = await this.getServices();
     if (services.length === 0) return;
-    
-    // Helper function to escape HTML
-    const escapeHtml = (text) => {
-      const div = document.createElement('div');
-      div.textContent = text || '';
-      return div.innerHTML;
-    };
     
     container.innerHTML = services.map(s => `<label><input type="checkbox" name="service-type" value="${escapeHtml(s.name)}" data-price="${escapeHtml(String(s.price))}" data-id="${escapeHtml(String(s.id))}"><span>${escapeHtml(s.name)} (R${escapeHtml(String(s.price))})</span></label>`).join('');
   },
@@ -158,19 +151,22 @@ const PulseSheetsCMS = {
     const dancers = await this.getDancers();
     if (dancers.length === 0) return;
     
-    // Helper function to escape HTML
-    const escapeHtml = (text) => {
-      const div = document.createElement('div');
-      div.textContent = text || '';
-      return div.innerHTML;
-    };
-    
     // Helper function to escape and validate image filename
     const sanitizeImagePath = (filename) => {
       if (!filename || filename === 'placeholder.jpg') return null;
       // Only allow alphanumeric, dots, dashes, underscores
       return filename.replace(/[^a-zA-Z0-9._-]/g, '');
     };
+    
+    // Check if event listener already attached to prevent memory leaks
+    if (!container.dataset.hasImageErrorHandler) {
+      container.addEventListener('error', (e) => {
+        if (e.target && e.target.classList.contains('dancer-image')) {
+          e.target.style.display = 'none';
+        }
+      }, true);
+      container.dataset.hasImageErrorHandler = 'true';
+    }
     
     container.innerHTML = dancers.map(d => {
       const imagePath = sanitizeImagePath(d.image);
@@ -185,13 +181,6 @@ const PulseSheetsCMS = {
       </div>
     `;
     }).join('');
-    
-    // Add error handling for images using event delegation
-    container.addEventListener('error', (e) => {
-      if (e.target && e.target.classList.contains('dancer-image')) {
-        e.target.style.display = 'none';
-      }
-    }, true);
   },
 
   async loadFAQs(containerId) {
@@ -207,13 +196,6 @@ const PulseSheetsCMS = {
     if (!container) return;
     const testimonials = await this.getTestimonials();
     if (testimonials.length === 0) return;
-    
-    // Helper function to escape HTML
-    const escapeHtml = (text) => {
-      const div = document.createElement('div');
-      div.textContent = text || '';
-      return div.innerHTML;
-    };
     
     container.innerHTML = testimonials.map(t => `<div class="testimonial-card"><p>${escapeHtml(t.text)}</p><p><strong>${escapeHtml(t.name)}</strong> - ${escapeHtml(t.location)} <span class="rating">${'★'.repeat(Math.min(5, Math.max(0, parseInt(t.rating) || 5)))}</span></p></div>`).join('');
   }

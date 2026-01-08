@@ -19,6 +19,18 @@ if (navToggle && navMenu) {
   });
 }
 
+// ===== LOGO ERROR HANDLING =====
+const logoImg = document.querySelector('.logo');
+if (logoImg) {
+  logoImg.addEventListener('error', function() {
+    this.style.display = 'none';
+    const brandText = this.nextElementSibling;
+    if (brandText && brandText.classList.contains('brand')) {
+      brandText.style.display = 'block';
+    }
+  });
+}
+
 // ===== SMOOTH SCROLLING =====
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
