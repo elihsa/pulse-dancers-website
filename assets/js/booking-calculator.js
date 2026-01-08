@@ -4,6 +4,11 @@
  * Integrates with Google Sheets pricing data
  */
 
+// Global callback for Google Maps API
+function initGoogleMaps() {
+  console.log('Google Maps API loaded');
+}
+
 const BookingForm = {
   distanceCostPerKm: 4, // R4 per km beyond 50km
   freeDistanceKm: 50,
@@ -13,6 +18,14 @@ const BookingForm = {
   async initializeForm() {
     // Load services from Google Sheets
     await PulseSheetsCMS.loadServices('service-checkboxes-container');
+    
+    // Wait a moment for DOM to update
+    setTimeout(() => {
+      // Setup event listeners for service checkboxes
+      document.querySelectorAll('input[name="service-type"]').forEach(checkbox => {
+        checkbox.addEventListener('change', () => this.updateQuote());
+      });
+    }, 100);
     
     // Setup event listeners
     document.getElementById('num-performers')?.addEventListener('change', () => this.updateQuote());
@@ -88,6 +101,40 @@ const BookingForm = {
     }
   }
 };
+
+// Add form submission handler to collect services properly
+document.addEventListener('DOMContentLoaded', () => {
+  const bookingForm = document.getElementById('booking-form');
+  if (bookingForm) {
+    bookingForm.addEventListener('submit', (e) => {
+      // Collect selected services
+      const selectedServices = Array.from(document.querySelectorAll('input[name="service-type"]:checked'))
+        .map(cb => cb.value);
+      
+      if (selectedServices.length === 0) {
+        e.preventDefault();
+        const errorDiv = document.getElementById('service-error');
+        if (errorDiv) {
+          errorDiv.style.display = 'block';
+        }
+        alert('Please select at least one service.');
+        return false;
+      }
+      
+      // Hide error if shown
+      const errorDiv = document.getElementById('service-error');
+      if (errorDiv) {
+        errorDiv.style.display = 'none';
+      }
+      
+      // Update hidden field with selected services (comma-separated for email)
+      const hiddenField = document.getElementById('services-hidden');
+      if (hiddenField) {
+        hiddenField.value = selectedServices.join(', ');
+      }
+    });
+  }
+});
 
 // Initialize on page load
 if (document.readyState === 'loading') {
