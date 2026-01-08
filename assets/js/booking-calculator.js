@@ -19,13 +19,15 @@ const BookingForm = {
     // Load services from Google Sheets
     await PulseSheetsCMS.loadServices('service-checkboxes-container');
     
-    // Wait a moment for DOM to update
-    setTimeout(() => {
-      // Setup event listeners for service checkboxes
-      document.querySelectorAll('input[name="service-type"]').forEach(checkbox => {
-        checkbox.addEventListener('change', () => this.updateQuote());
+    // Setup event listeners for service checkboxes using event delegation
+    const container = document.getElementById('service-checkboxes-container');
+    if (container) {
+      container.addEventListener('change', (e) => {
+        if (e.target && e.target.name === 'service-type') {
+          this.updateQuote();
+        }
       });
-    }, 100);
+    }
     
     // Setup event listeners
     document.getElementById('num-performers')?.addEventListener('change', () => this.updateQuote());
@@ -116,8 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const errorDiv = document.getElementById('service-error');
         if (errorDiv) {
           errorDiv.style.display = 'block';
+          errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-        alert('Please select at least one service.');
         return false;
       }
       
