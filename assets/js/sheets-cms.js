@@ -1,6 +1,12 @@
 /**
  * Pulse Dancers CMS - Google Sheets Integration
  * Sheet ID: 12zPYBbpdDLhqTPylP0oUgPqimy5fXIfg
+ * 
+ * SECURITY NOTE: The API key below is designed for client-side use with Google Sheets API.
+ * It should have the following restrictions configured in Google Cloud Console:
+ * - Application restrictions: HTTP referrers (set to your domain)
+ * - API restrictions: Restrict to Google Sheets API only
+ * This is the standard approach for public read-only spreadsheet data.
  */
 const SHEET_ID = '12zPYBbpdDLhqTPylP0oUgPqimy5fXIfg';
 const API_KEY = 'AIzaSyDmIhz0iWcB8R-BBXkFFGi36bCQIm7fgA8';
@@ -211,28 +217,32 @@ const PulseSheetsCMS = {
   }
 };
 
-// Add to sheets-cms.js for debugging
-window.testGoogleSheetsAPI = async function() {
-  console.log('🧪 Testing Google Sheets API...');
-  
-  // Test 1: Fetch PRICES
-  const prices = await PulseSheetsCMS.getPrices();
-  console.log('Prices:', prices);
-  
-  // Test 2: Fetch FAQs
-  const faqs = await PulseSheetsCMS.getFAQs();
-  console.log('FAQs:', faqs);
-  
-  // Test 3: Fetch DANCERS
-  const dancers = await PulseSheetsCMS.getDancers();
-  console.log('Dancers:', dancers);
-  
-  // Test 4: Fetch SERVICES
-  const services = await PulseSheetsCMS.getServices();
-  console.log('Services:', services);
-  
-  return { prices, faqs, dancers, services };
-};
+// Debug function for testing Google Sheets API (only in development)
+// To use: Open browser console and run: testGoogleSheetsAPI()
+// This helps diagnose issues with data loading from Google Sheets
+if (typeof window !== 'undefined') {
+  window.testGoogleSheetsAPI = async function() {
+    console.log('🧪 Testing Google Sheets API...');
+    
+    // Test 1: Fetch PRICES
+    const prices = await PulseSheetsCMS.getPrices();
+    console.log('Prices:', prices);
+    
+    // Test 2: Fetch FAQs
+    const faqs = await PulseSheetsCMS.getFAQs();
+    console.log('FAQs:', faqs);
+    
+    // Test 3: Fetch DANCERS
+    const dancers = await PulseSheetsCMS.getDancers();
+    console.log('Dancers:', dancers);
+    
+    // Test 4: Fetch SERVICES
+    const services = await PulseSheetsCMS.getServices();
+    console.log('Services:', services);
+    
+    return { prices, faqs, dancers, services };
+  };
+}
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = PulseSheetsCMS;
