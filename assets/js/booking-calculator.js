@@ -31,12 +31,6 @@ const BookingForm = {
     
     // Setup event listeners
     document.getElementById('num-performers')?.addEventListener('change', () => this.updateQuote());
-    document.getElementById('num-guests')?.addEventListener('change', () => this.updateQuote());
-    
-    // Setup location type toggle
-    document.querySelectorAll('input[name="location-type"]').forEach(radio => {
-      radio.addEventListener('change', () => this.updateLocationFields());
-    });
     
     // Setup address autocomplete
     const addressInput = document.getElementById('event-address');
@@ -46,12 +40,6 @@ const BookingForm = {
     }
     
     this.updateQuote();
-  },
-
-  updateLocationFields() {
-    const locationType = document.querySelector('input[name="location-type"]:checked')?.value;
-    document.getElementById('exact-address-fields').style.display = locationType === 'exact' ? 'block' : 'none';
-    document.getElementById('area-fields').style.display = locationType === 'area' ? 'block' : 'none';
   },
 
   onPlaceSelected(autocomplete) {
@@ -103,40 +91,6 @@ const BookingForm = {
     }
   }
 };
-
-// Add form submission handler to collect services properly
-document.addEventListener('DOMContentLoaded', () => {
-  const bookingForm = document.getElementById('booking-form');
-  if (bookingForm) {
-    bookingForm.addEventListener('submit', (e) => {
-      // Collect selected services
-      const selectedServices = Array.from(document.querySelectorAll('input[name="service-type"]:checked'))
-        .map(cb => cb.value);
-      
-      if (selectedServices.length === 0) {
-        e.preventDefault();
-        const errorDiv = document.getElementById('service-error');
-        if (errorDiv) {
-          errorDiv.style.display = 'block';
-          errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-        return false;
-      }
-      
-      // Hide error if shown
-      const errorDiv = document.getElementById('service-error');
-      if (errorDiv) {
-        errorDiv.style.display = 'none';
-      }
-      
-      // Update hidden field with selected services (comma-separated for email)
-      const hiddenField = document.getElementById('services-hidden');
-      if (hiddenField) {
-        hiddenField.value = selectedServices.join(', ');
-      }
-    });
-  }
-});
 
 // Initialize on page load - prevent double initialization
 let initialized = false;
