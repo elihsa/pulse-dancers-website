@@ -5,15 +5,15 @@
 const SHEET_ID = '12zPYBbpdDLhqTPylP0oUgPqimy5fXIfg';
 const API_KEY = 'AIzaSyDmIhz0iWcB8R-BBXkFFGi36bCQIm7fgA8';
 
-// Sheet GIDs - Update these after getting them from the Google Sheet URLs
-const SHEET_GIDS = {
-  HOME: '664000307',
-  PRICES: '2117273325',
-  FAQS: '568464878',
-  DANCERS: '116112300',
-  SERVICES: '1118530609',
-  TESTIMONIALS: '735891537',
-  SOCIAL: '1025475414'
+// Sheet Names - These are the tab names in the Google Sheet
+const SHEET_NAMES = {
+  HOME: 'HOME',
+  PRICES: 'PRICES',
+  FAQS: 'FAQS',
+  DANCERS: 'DANCERS',
+  SERVICES: 'SERVICES',
+  TESTIMONIALS: 'TESTIMONIALS',
+  SOCIAL: 'SOCIAL'
 };
 
 // Utility function to escape HTML and prevent XSS
@@ -24,10 +24,10 @@ const escapeHtml = (text) => {
 };
 
 const PulseSheetsCMS = {
-  async fetchSheet(gid, startRow = 1, endRow = 1000) {
+  async fetchSheet(sheetName, startRow = 1, endRow = 1000) {
     try {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${gid}!A${startRow}:Z${endRow}?key=${API_KEY}`;
-      console.log('📊 Fetching Google Sheet:', { gid, url });
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${sheetName}!A${startRow}:Z${endRow}?key=${API_KEY}`;
+      console.log('📊 Fetching Google Sheet:', { sheetName, url });
       
       const response = await fetch(url);
       console.log('📥 Response status:', response.status);
@@ -43,13 +43,13 @@ const PulseSheetsCMS = {
       
       return data.values || [];
     } catch (error) {
-      console.error(`❌ Error fetching sheet with GID ${gid}:`, error);
+      console.error(`❌ Error fetching sheet ${sheetName}:`, error);
       return [];
     }
   },
 
   async getHome() {
-    const rows = await this.fetchSheet(SHEET_GIDS.HOME, 1, 10);
+    const rows = await this.fetchSheet(SHEET_NAMES.HOME, 1, 10);
     if (rows.length === 0) return {};
     const result = {};
     rows.forEach(row => {
@@ -61,7 +61,7 @@ const PulseSheetsCMS = {
   },
 
   async getPrices() {
-    const rows = await this.fetchSheet(SHEET_GIDS.PRICES, 1, 20);
+    const rows = await this.fetchSheet(SHEET_NAMES.PRICES, 1, 20);
     if (rows.length === 0) return [];
     const startIdx = rows[0][0] === 'ID' || rows[0][0]?.toLowerCase().includes('service') ? 1 : 0;
     return rows.slice(startIdx).map(row => ({
@@ -74,7 +74,7 @@ const PulseSheetsCMS = {
   },
 
   async getDancers() {
-    const rows = await this.fetchSheet(SHEET_GIDS.DANCERS, 1, 30);
+    const rows = await this.fetchSheet(SHEET_NAMES.DANCERS, 1, 30);
     if (rows.length === 0) return [];
     const startIdx = rows[0][0] === 'ID' ? 1 : 0;
     return rows.slice(startIdx).map(row => ({
@@ -89,7 +89,7 @@ const PulseSheetsCMS = {
   },
 
   async getServices() {
-    const rows = await this.fetchSheet(SHEET_GIDS.SERVICES, 1, 20);
+    const rows = await this.fetchSheet(SHEET_NAMES.SERVICES, 1, 20);
     if (rows.length === 0) return [];
     const startIdx = rows[0][0] === 'ID' ? 1 : 0;
     return rows.slice(startIdx).map(row => ({
@@ -102,7 +102,7 @@ const PulseSheetsCMS = {
   },
 
   async getFAQs() {
-    const rows = await this.fetchSheet(SHEET_GIDS.FAQS, 1, 50);
+    const rows = await this.fetchSheet(SHEET_NAMES.FAQS, 1, 50);
     if (rows.length === 0) return [];
     const startIdx = rows[0][0] === 'ID' || rows[0][0]?.toLowerCase().includes('question') ? 1 : 0;
     return rows.slice(startIdx).map(row => ({
@@ -113,7 +113,7 @@ const PulseSheetsCMS = {
   },
 
   async getTestimonials() {
-    const rows = await this.fetchSheet(SHEET_GIDS.TESTIMONIALS, 1, 20);
+    const rows = await this.fetchSheet(SHEET_NAMES.TESTIMONIALS, 1, 20);
     if (rows.length === 0) return [];
     const startIdx = rows[0][0] === 'ID' ? 1 : 0;
     return rows.slice(startIdx).map(row => ({
@@ -126,7 +126,7 @@ const PulseSheetsCMS = {
   },
 
   async getSocial() {
-    const rows = await this.fetchSheet(SHEET_GIDS.SOCIAL, 1, 10);
+    const rows = await this.fetchSheet(SHEET_NAMES.SOCIAL, 1, 10);
     if (rows.length === 0) return {};
     const result = {};
     rows.forEach(row => {
