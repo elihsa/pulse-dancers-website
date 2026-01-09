@@ -716,6 +716,27 @@ form textarea {
   resize: vertical;
 }
 
+/* ===== JOTFORM EMBED STYLING ===== */
+.jotform-embed {
+  margin: 2rem 0;
+  background: #1a1a1f;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 45, 85, 0.1);
+}
+
+.jotform-embed iframe {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+}
+
+/* Quote Calculator Above Form */
+.booking-page .quote-display {
+  margin-bottom: 3rem;
+}
+
 @media (max-width: 900px) {
   .performers-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -724,5 +745,9 @@ form textarea {
   
   .performer-photo {
     height: 250px;
+  }
+  
+  .jotform-embed {
+    padding: 1rem;
   }
 }

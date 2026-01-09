@@ -1,19 +1,25 @@
 /**
  * Pulse Dancers CMS - Google Sheets Integration
  * Sheet ID: 12zPYBbpdDLhqTPylP0oUgPqimy5fXIfg
+ * 
+ * SECURITY NOTE: The API key below is designed for client-side use with Google Sheets API.
+ * It should have the following restrictions configured in Google Cloud Console:
+ * - Application restrictions: HTTP referrers (set to your domain)
+ * - API restrictions: Restrict to Google Sheets API only
+ * This is the standard approach for public read-only spreadsheet data.
  */
 const SHEET_ID = '12zPYBbpdDLhqTPylP0oUgPqimy5fXIfg';
 const API_KEY = 'AIzaSyDmIhz0iWcB8R-BBXkFFGi36bCQIm7fgA8';
 
-// Sheet GIDs - Update these after getting them from the Google Sheet URLs
-const SHEET_GIDS = {
-  HOME: '664000307',
-  PRICES: '2117273325',
-  FAQS: '568464878',
-  DANCERS: '116112300',
-  SERVICES: '1118530609',
-  TESTIMONIALS: '735891537',
-  SOCIAL: '1025475414'
+// Sheet Names - These are the tab names in the Google Sheet
+const SHEET_NAMES = {
+  HOME: 'HOME',
+  PRICES: 'PRICES',
+  FAQS: 'FAQS',
+  DANCERS: 'DANCERS',
+  SERVICES: 'SERVICES',
+  TESTIMONIALS: 'TESTIMONIALS',
+  SOCIAL: 'SOCIAL'
 };
 
 // Utility function to escape HTML and prevent XSS
@@ -24,22 +30,32 @@ const escapeHtml = (text) => {
 };
 
 const PulseSheetsCMS = {
-  async fetchSheet(gid, startRow = 1, endRow = 1000) {
+  async fetchSheet(sheetName, startRow = 1, endRow = 1000) {
     try {
-      const range = encodeURIComponent(`${startRow}:${endRow}`);
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values?ranges=${gid}!A${startRow}:Z${endRow}&key=${API_KEY}`;
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${sheetName}!A${startRow}:Z${endRow}?key=${API_KEY}`;
+      console.log('📊 Fetching Google Sheet:', { sheetName, url });
+      
       const response = await fetch(url);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      console.log('📥 Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API Error:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+      
       const data = await response.json();
-      return (data.valueRanges && data.valueRanges[0] && data.valueRanges[0].values) || [];
+      console.log('✅ Data received:', data);
+      
+      return data.values || [];
     } catch (error) {
-      console.error(`Error fetching sheet with GID ${gid}:`, error);
+      console.error(`❌ Error fetching sheet ${sheetName}:`, error);
       return [];
     }
   },
 
   async getHome() {
-    const rows = await this.fetchSheet(SHEET_GIDS.HOME, 1, 10);
+    const rows = await this.fetchSheet(SHEET_NAMES.HOME, 1, 10);
     if (rows.length === 0) return {};
     const result = {};
     rows.forEach(row => {
@@ -51,7 +67,7 @@ const PulseSheetsCMS = {
   },
 
   async getPrices() {
-    const rows = await this.fetchSheet(SHEET_GIDS.PRICES, 1, 20);
+    const rows = await this.fetchSheet(SHEET_NAMES.PRICES, 1, 20);
     if (rows.length === 0) return [];
     const startIdx = rows[0][0] === 'ID' || rows[0][0]?.toLowerCase().includes('service') ? 1 : 0;
     return rows.slice(startIdx).map(row => ({
@@ -64,7 +80,7 @@ const PulseSheetsCMS = {
   },
 
   async getDancers() {
-    const rows = await this.fetchSheet(SHEET_GIDS.DANCERS, 1, 30);
+    const rows = await this.fetchSheet(SHEET_NAMES.DANCERS, 1, 30);
     if (rows.length === 0) return [];
     const startIdx = rows[0][0] === 'ID' ? 1 : 0;
     return rows.slice(startIdx).map(row => ({
@@ -79,7 +95,7 @@ const PulseSheetsCMS = {
   },
 
   async getServices() {
-    const rows = await this.fetchSheet(SHEET_GIDS.SERVICES, 1, 20);
+    const rows = await this.fetchSheet(SHEET_NAMES.SERVICES, 1, 20);
     if (rows.length === 0) return [];
     const startIdx = rows[0][0] === 'ID' ? 1 : 0;
     return rows.slice(startIdx).map(row => ({
@@ -92,7 +108,7 @@ const PulseSheetsCMS = {
   },
 
   async getFAQs() {
-    const rows = await this.fetchSheet(SHEET_GIDS.FAQS, 1, 50);
+    const rows = await this.fetchSheet(SHEET_NAMES.FAQS, 1, 50);
     if (rows.length === 0) return [];
     const startIdx = rows[0][0] === 'ID' || rows[0][0]?.toLowerCase().includes('question') ? 1 : 0;
     return rows.slice(startIdx).map(row => ({
@@ -103,7 +119,7 @@ const PulseSheetsCMS = {
   },
 
   async getTestimonials() {
-    const rows = await this.fetchSheet(SHEET_GIDS.TESTIMONIALS, 1, 20);
+    const rows = await this.fetchSheet(SHEET_NAMES.TESTIMONIALS, 1, 20);
     if (rows.length === 0) return [];
     const startIdx = rows[0][0] === 'ID' ? 1 : 0;
     return rows.slice(startIdx).map(row => ({
@@ -116,7 +132,7 @@ const PulseSheetsCMS = {
   },
 
   async getSocial() {
-    const rows = await this.fetchSheet(SHEET_GIDS.SOCIAL, 1, 10);
+    const rows = await this.fetchSheet(SHEET_NAMES.SOCIAL, 1, 10);
     if (rows.length === 0) return {};
     const result = {};
     rows.forEach(row => {
@@ -200,6 +216,33 @@ const PulseSheetsCMS = {
     container.innerHTML = testimonials.map(t => `<div class="testimonial-card"><p>${escapeHtml(t.text)}</p><p><strong>${escapeHtml(t.name)}</strong> - ${escapeHtml(t.location)} <span class="rating">${'★'.repeat(Math.min(5, Math.max(0, parseInt(t.rating) || 5)))}</span></p></div>`).join('');
   }
 };
+
+// Debug function for testing Google Sheets API (only in development)
+// To use: Open browser console and run: testGoogleSheetsAPI()
+// This helps diagnose issues with data loading from Google Sheets
+if (typeof window !== 'undefined') {
+  window.testGoogleSheetsAPI = async function() {
+    console.log('🧪 Testing Google Sheets API...');
+    
+    // Test 1: Fetch PRICES
+    const prices = await PulseSheetsCMS.getPrices();
+    console.log('Prices:', prices);
+    
+    // Test 2: Fetch FAQs
+    const faqs = await PulseSheetsCMS.getFAQs();
+    console.log('FAQs:', faqs);
+    
+    // Test 3: Fetch DANCERS
+    const dancers = await PulseSheetsCMS.getDancers();
+    console.log('Dancers:', dancers);
+    
+    // Test 4: Fetch SERVICES
+    const services = await PulseSheetsCMS.getServices();
+    console.log('Services:', services);
+    
+    return { prices, faqs, dancers, services };
+  };
+}
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = PulseSheetsCMS;

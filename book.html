@@ -52,170 +52,77 @@
     <div class="block">
       <h2>Book Pulse for Your Event</h2>
       <p>Fill out the form below with your event details. Our booking form calculates distance automatically and provides a live quote. We'll send you a personalized confirmation within 24 hours.</p>
-      <p class="form-info-banner">
-        <strong>📧 Form Submissions:</strong> All booking requests are sent to our team via Web3Forms. You'll receive a confirmation email, and we'll respond within 24 hours with your personalized quote and availability confirmation.
-      </p>
-      
-      <form id="booking-form" name="booking" action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
-        <input type="hidden" name="subject" value="New Booking Request - Pulse Male Revue">
-        <input type="hidden" name="from_name" value="Pulse Booking Form">
-        <input type="text" name="honeypot" style="display: none;">
-        <input type="hidden" name="redirect" value="https://pulse-dancers-website.vercel.app/book.html?success=true">
+      <!-- Live Quote Calculator -->
+      <div class="quote-display booking-page">
+        <h3>Live Quote Estimate</h3>
+        <p style="color: #b0b0b0; font-size: 0.875rem; margin-bottom: 1.5rem;">
+          Use this calculator to get an instant estimate before submitting your booking request.
+        </p>
         
-        <!-- Contact Information -->
-        <h3>Contact Information</h3>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="full-name">Full Name *</label>
-            <input type="text" id="full-name" name="full-name" required>
-          </div>
-          <div class="form-group">
-            <label for="email">Email *</label>
-            <input type="email" id="email" name="email" required>
-          </div>
-        </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="phone">Phone *</label>
-            <input type="tel" id="phone" name="phone" required>
-          </div>
-          <div class="form-group">
-            <label for="city">City *</label>
-            <input type="text" id="city" name="city" required>
-          </div>
-        </div>
-
-        <!-- Event Details -->
-        <h3>Event Details</h3>
-        <div class="form-group">
-          <label for="event-type">Event Type *</label>
-          <select id="event-type" name="event-type" required>
-            <option value="">Select event type</option>
-            <option value="Bachelorette">Bachelorette Party</option>
-            <option value="Birthday">Birthday Party</option>
-            <option value="Girls Night">Girls Night</option>
-            <option value="Corporate">Corporate Event</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="event-date">Event Date *</label>
-            <input type="date" id="event-date" name="event-date" class="input-compact" required>
-          </div>
-          <div class="form-group">
-            <label for="event-time">Event Time *</label>
-            <input type="time" id="event-time" name="event-time" class="input-compact" required>
-          </div>
-        </div>
-
-        <!-- Guest & Service Information -->
-        <h3>Service Details</h3>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="num-guests">Number of Guests</label>
-            <select id="num-guests" name="num-guests">
-              <option value="">Select guest count</option>
-              <option value="<10">Less than 10</option>
-              <option value="10-20">10-20</option>
-              <option value="20-40">20-40</option>
-              <option value="40+">40+</option>
-            </select>
-            <div id="guest-recommendation" style="color: #FF2D55; margin-top: 0.5rem; font-size: 0.875rem;"></div>
-          </div>
-        </div>
-
         <div class="form-group">
           <label>Service Type * (Select one or more)</label>
           <div class="service-checkboxes" id="service-checkboxes-container">
             <!-- Services will be loaded dynamically from CMS -->
             <p style="color: #b0b0b0; padding: 1rem;">Loading services...</p>
           </div>
-          <input type="hidden" id="services-hidden" name="service-type">
-          <div id="service-error" class="form-error" style="display: none; color: #FF2D55; background-color: rgba(255, 45, 85, 0.1); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.3); margin-top: 1rem;">
-            ⚠️ Please select at least one service.
-          </div>
         </div>
 
-        <div id="waiter-hours-field" class="form-group">
-          <label for="waiter-hours">Number of Hours for Waiter Service *</label>
-          <input type="number" id="waiter-hours" name="waiter-hours" min="1" max="12" value="2" step="1">
-          <small style="color: #b0b0b0;">Specify the duration for waiter services</small>
-        </div>
-
-        <div class="form-group">
-          <label for="num-performers">Number of Performers *</label>
-          <input type="number" id="num-performers" name="num-performers" min="1" max="10" value="1" required>
-        </div>
-
-        <!-- Location -->
-        <h3>Location</h3>
-        <div class="form-group">
-          <label>Location Type *</label>
-          <div style="display: flex; gap: 2rem; margin-bottom: 1rem;">
-            <label style="display: flex; align-items: center; font-weight: normal;">
-              <input type="radio" id="location-exact" name="location-type" value="exact" checked>
-              <span style="margin-left: 0.5rem;">Exact Address</span>
-            </label>
-            <label style="display: flex; align-items: center; font-weight: normal;">
-              <input type="radio" id="location-area" name="location-type" value="area">
-              <span style="margin-left: 0.5rem;">Area/Suburb Only</span>
-            </label>
-          </div>
-        </div>
-
-        <div id="exact-address-fields">
+        <div class="form-row">
           <div class="form-group">
-            <label for="event-address">Event Address *</label>
-            <input type="text" id="event-address" name="event-address" placeholder="Start typing address...">
-            <small style="color: #b0b0b0;">Start typing for autocomplete suggestions</small>
+            <label for="num-performers">Number of Performers</label>
+            <input type="number" id="num-performers" name="num-performers" min="1" max="10" value="1">
           </div>
-        </div>
-
-        <div id="area-fields" style="display: none;">
           <div class="form-group">
-            <label for="event-area">Area/Suburb *</label>
-            <input type="text" id="event-area" name="event-area" placeholder="e.g., Sandton, Pretoria East">
+            <label for="event-address">Event Address (for distance)</label>
+            <input type="text" id="event-address" placeholder="Start typing address...">
+            <small style="color: #b0b0b0;">Optional: for travel cost calculation</small>
           </div>
         </div>
 
-        <input type="hidden" id="calculated-distance" name="calculated-distance" value="0">
-
-        <!-- Live Quote Display -->
-        <div class="quote-display">
-          <h3>Live Quote Estimate</h3>
-          <div class="quote-line">
-            <span>Performance Fee:</span>
-            <span id="quote-performance">R0.00</span>
-          </div>
-          <div class="quote-line">
-            <span>Distance (round trip):</span>
-            <span id="quote-distance">0.0 km</span>
-          </div>
-          <div class="quote-line">
-            <span>Travel Fee (R4/km beyond 50km):</span>
-            <span id="quote-travel">R0.00</span>
-          </div>
-          <div class="quote-line total">
-            <span>Estimated Total:</span>
-            <span id="quote-total">R0.00</span>
-          </div>
-          <p style="margin-top: 1rem; font-size: 0.875rem; color: #b0b0b0;">
-            * Final quote may vary based on specific requirements
-          </p>
+        <input type="hidden" id="calculated-distance" value="0">
+        
+        <div class="quote-line">
+          <span>Performance Fee:</span>
+          <span id="quote-performance">R0.00</span>
         </div>
-
-        <!-- Additional Notes -->
-        <div class="form-group">
-          <label for="notes">Additional Notes</label>
-          <textarea id="notes" name="notes" placeholder="Any special requests or requirements?"></textarea>
+        <div class="quote-line">
+          <span>Distance (round trip):</span>
+          <span id="quote-distance">0.0 km</span>
         </div>
+        <div class="quote-line">
+          <span>Travel Fee (R4/km beyond 50km):</span>
+          <span id="quote-travel">R0.00</span>
+        </div>
+        <div class="quote-line total">
+          <span>Estimated Total:</span>
+          <span id="quote-total">R0.00</span>
+        </div>
+        <p style="margin-top: 1rem; font-size: 0.875rem; color: #b0b0b0;">
+          * Final quote may vary based on specific requirements
+        </p>
+      </div>
 
-        <button type="submit">Submit Booking Request</button>
-      </form>
+      <p class="form-info-banner">
+        <strong>📧 Booking Form:</strong> Fill out the form below to submit your booking request. All submissions go directly to our team and we'll respond within 24 hours with your personalized quote and availability confirmation.
+      </p>
+
+      <!-- JotForm Embed -->
+      <div class="jotform-embed">
+        <iframe
+          id="JotFormIFrame-253636457639571"
+          title="Pulse Booking Form"
+          onload="window.parent.scrollTo(0,0)"
+          allowtransparency="true"
+          allow="geolocation; microphone; camera; autoplay; encrypted-media"
+          src="https://form.jotform.com/253636457639571"
+          frameborder="0"
+          style="min-width:100%;max-width:100%;height:539px;border:none;"
+          scrolling="no"
+        >
+        </iframe>
+        <script src='https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js'></script>
+        <script>window.jotformEmbedHandler("iframe[id='JotFormIFrame-253636457639571']", "https://form.jotform.com/")</script>
+      </div>
     </div>
   </section>
 

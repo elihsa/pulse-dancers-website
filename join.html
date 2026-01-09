@@ -51,116 +51,28 @@
       <h2>Join the Pulse Team</h2>
       <p>Pulse Dancers, Africa's most sought-after male revue show, is on the lookout for new talent. If you're a professional male dancer, performer or waiter looking for lucrative work, we want to hear from you.</p>
 
-      <form name="join" action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
-        <input type="hidden" name="subject" value="New Application - Pulse Male Revue">
-        <input type="hidden" name="from_name" value="Pulse Join Form">
-        <input type="text" name="honeypot" style="display: none;">
-        <input type="hidden" name="redirect" value="https://pulse-dancers-website.vercel.app/join.html?success=true">
+      <p class="form-info-banner" style="background-color: rgba(255, 45, 85, 0.1); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.2); margin: 2rem 0;">
+        <strong>📧 Application Form:</strong> Fill out the form below to apply to join the Pulse team. All applications are reviewed carefully and we'll contact you within 5 business days.
+      </p>
 
-        <h3>Personal Information</h3>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="join-name">Full Name *</label>
-            <input type="text" id="join-name" name="full-name" required>
-          </div>
-          <div class="form-group">
-            <label for="join-email">Email *</label>
-            <input type="email" id="join-email" name="email" required>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="join-phone">Phone *</label>
-            <input type="tel" id="join-phone" name="phone" required>
-          </div>
-          <div class="form-group">
-            <label for="join-age">Age *</label>
-            <input type="number" id="join-age" name="age" min="18" required>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="join-area">Area *</label>
-            <input type="text" id="join-area" name="area" placeholder="e.g., Sandton, Rosebank" required>
-          </div>
-          <div class="form-group">
-            <label for="join-province">Province *</label>
-            <select id="join-province" name="province" required>
-              <option value="">Select province</option>
-              <option value="Gauteng">Gauteng</option>
-              <option value="Western Cape">Western Cape</option>
-              <option value="KwaZulu-Natal">KwaZulu-Natal</option>
-              <option value="Eastern Cape">Eastern Cape</option>
-              <option value="Free State">Free State</option>
-              <option value="Limpopo">Limpopo</option>
-              <option value="Mpumalanga">Mpumalanga</option>
-              <option value="Northern Cape">Northern Cape</option>
-              <option value="North West">North West</option>
-            </select>
-          </div>
-        </div>
-
-        <h3>Experience & Availability</h3>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="join-experience">Experience (optional)</label>
-            <textarea id="join-experience" name="experience" placeholder="Dance, performance, or hospitality experience..." rows="3"></textarea>
-          </div>
-          <div class="form-group">
-            <label for="join-skills">Relevant Skills (optional)</label>
-            <textarea id="join-skills" name="skills" placeholder="e.g., DJ, Photographer, MC, Bartending..." rows="3"></textarea>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="join-instagram">Instagram Handle (optional)</label>
-            <input type="text" id="join-instagram" name="instagram" placeholder="@yourusername">
-          </div>
-          <div class="form-group">
-            <label for="join-transport">Do you have your own transport? *</label>
-            <select id="join-transport" name="transport" required>
-              <option value="">Select option</option>
-              <option value="Own Transport">Yes - I have my own transport</option>
-              <option value="Public Transport">No - I use public transport</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="join-travel">Travel Availability *</label>
-          <select id="join-travel" name="travel" required>
-            <option value="">Select availability</option>
-            <option value="Local">Local Only</option>
-            <option value="Regional">Regional (Gauteng)</option>
-            <option value="Nationwide">Nationwide</option>
-          </select>
-        </div>
-
-        <h3>Photos</h3>
-        <p style="color: #b0b0b0; font-size: 0.875rem;">Please upload a profile photo and a full-body photo. Files should be under 5MB each.</p>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="join-profile-photo">Profile Photo *</label>
-            <input type="file" id="join-profile-photo" name="profile-photo" accept="image/*" required>
-          </div>
-          <div class="form-group">
-            <label for="join-fullbody-photo">Full-Body Photo *</label>
-            <input type="file" id="join-fullbody-photo" name="fullbody-photo" accept="image/*" required>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="join-notes">Additional Notes (optional)</label>
-          <textarea id="join-notes" name="notes" placeholder="Anything else you'd like us to know?" rows="3"></textarea>
-        </div>
-
-        <button type="submit">Submit Application</button>
-      </form>
+      <!-- JotForm Embed -->
+      <!-- Note: This uses the existing JotForm URL (Buns_info/NewGuy) provided by the client -->
+      <div class="jotform-embed">
+        <iframe
+          id="JotFormIFrame-join"
+          title="Pulse New Performer Application"
+          onload="window.parent.scrollTo(0,0)"
+          allowtransparency="true"
+          allow="geolocation; microphone; camera; autoplay; encrypted-media"
+          src="https://www.jotform.com/form/Buns_info/NewGuy"
+          frameborder="0"
+          style="min-width:100%;max-width:100%;height:800px;border:none;"
+          scrolling="no"
+        >
+        </iframe>
+        <script src='https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js'></script>
+        <script>window.jotformEmbedHandler("iframe[id='JotFormIFrame-join']", "https://form.jotform.com/")</script>
+      </div>
     </div>
   </section>
 
