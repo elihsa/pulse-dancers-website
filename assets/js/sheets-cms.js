@@ -26,14 +26,24 @@ const escapeHtml = (text) => {
 const PulseSheetsCMS = {
   async fetchSheet(gid, startRow = 1, endRow = 1000) {
     try {
-      const range = encodeURIComponent(`${startRow}:${endRow}`);
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values?ranges=${gid}!A${startRow}:Z${endRow}&key=${API_KEY}`;
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${gid}!A${startRow}:Z${endRow}?key=${API_KEY}`;
+      console.log('📊 Fetching Google Sheet:', { gid, url });
+      
       const response = await fetch(url);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      console.log('📥 Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API Error:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+      
       const data = await response.json();
-      return (data.valueRanges && data.valueRanges[0] && data.valueRanges[0].values) || [];
+      console.log('✅ Data received:', data);
+      
+      return data.values || [];
     } catch (error) {
-      console.error(`Error fetching sheet with GID ${gid}:`, error);
+      console.error(`❌ Error fetching sheet with GID ${gid}:`, error);
       return [];
     }
   },
@@ -199,6 +209,29 @@ const PulseSheetsCMS = {
     
     container.innerHTML = testimonials.map(t => `<div class="testimonial-card"><p>${escapeHtml(t.text)}</p><p><strong>${escapeHtml(t.name)}</strong> - ${escapeHtml(t.location)} <span class="rating">${'★'.repeat(Math.min(5, Math.max(0, parseInt(t.rating) || 5)))}</span></p></div>`).join('');
   }
+};
+
+// Add to sheets-cms.js for debugging
+window.testGoogleSheetsAPI = async function() {
+  console.log('🧪 Testing Google Sheets API...');
+  
+  // Test 1: Fetch PRICES
+  const prices = await PulseSheetsCMS.getPrices();
+  console.log('Prices:', prices);
+  
+  // Test 2: Fetch FAQs
+  const faqs = await PulseSheetsCMS.getFAQs();
+  console.log('FAQs:', faqs);
+  
+  // Test 3: Fetch DANCERS
+  const dancers = await PulseSheetsCMS.getDancers();
+  console.log('Dancers:', dancers);
+  
+  // Test 4: Fetch SERVICES
+  const services = await PulseSheetsCMS.getServices();
+  console.log('Services:', services);
+  
+  return { prices, faqs, dancers, services };
 };
 
 if (typeof module !== 'undefined' && module.exports) {
