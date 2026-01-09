@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Book - Pulse Male Revue</title>
-  <meta name="description" content="Book Pulse Male Revue for your bachelorette party, corporate event, or ladies night. Get an instant quote with distance calculation.">
+  <meta name="description" content="Book Pulse Male Revue for your bachelorette party, corporate event, or ladies night.">
   <meta name="keywords" content="book male strippers, hire male dancers johannesburg, bachelorette party booking, male entertainment south africa">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://pulse-dancers-website.vercel.app/book.html">
@@ -25,8 +25,6 @@
   <!-- Preload critical assets -->
   <link rel="preload" href="assets/css/styles.css" as="style">
   <link rel="preload" href="assets/js/app.js" as="script">
-  
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmIhz0iWcB8R-BBXkFFGi36bCQIm7fgA8&libraries=places&callback=initGoogleMaps" async defer></script>
 </head>
 <body class="page">
   <header>
@@ -51,60 +49,7 @@
   <section class="section">
     <div class="block">
       <h2>Book Pulse for Your Event</h2>
-      <p>Fill out the form below with your event details. Our booking form calculates distance automatically and provides a live quote. We'll send you a personalized confirmation within 24 hours.</p>
-      <!-- Live Quote Calculator -->
-      <div class="quote-display booking-page">
-        <h3>Live Quote Estimate</h3>
-        <p style="color: #b0b0b0; font-size: 0.875rem; margin-bottom: 1.5rem;">
-          Use this calculator to get an instant estimate before submitting your booking request.
-        </p>
-        
-        <div class="form-group">
-          <label>Service Type * (Select one or more)</label>
-          <div class="service-checkboxes" id="service-checkboxes-container">
-            <!-- Services will be loaded dynamically from CMS -->
-            <p style="color: #b0b0b0; padding: 1rem;">Loading services...</p>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="num-performers">Number of Performers</label>
-            <input type="number" id="num-performers" name="num-performers" min="1" max="10" value="1">
-          </div>
-          <div class="form-group">
-            <label for="event-address">Event Address (for distance)</label>
-            <input type="text" id="event-address" placeholder="Start typing address...">
-            <small style="color: #b0b0b0;">Optional: for travel cost calculation</small>
-          </div>
-        </div>
-
-        <input type="hidden" id="calculated-distance" value="0">
-        
-        <div class="quote-line">
-          <span>Performance Fee:</span>
-          <span id="quote-performance">R0.00</span>
-        </div>
-        <div class="quote-line">
-          <span>Distance (round trip):</span>
-          <span id="quote-distance">0.0 km</span>
-        </div>
-        <div class="quote-line">
-          <span>Travel Fee (R4/km beyond 50km):</span>
-          <span id="quote-travel">R0.00</span>
-        </div>
-        <div class="quote-line total">
-          <span>Estimated Total:</span>
-          <span id="quote-total">R0.00</span>
-        </div>
-        <p style="margin-top: 1rem; font-size: 0.875rem; color: #b0b0b0;">
-          * Final quote may vary based on specific requirements
-        </p>
-      </div>
-
-      <p class="form-info-banner">
-        <strong>📧 Booking Form:</strong> Fill out the form below to submit your booking request. All submissions go directly to our team and we'll respond within 24 hours with your personalized quote and availability confirmation.
-      </p>
+      <p>Fill out the form below with your event details. We'll respond within 24 hours with a personalized quote.</p>
 
       <!-- JotForm Embed -->
       <div class="jotform-embed">
@@ -116,7 +61,7 @@
           allow="geolocation; microphone; camera; autoplay; encrypted-media"
           src="https://form.jotform.com/253636457639571"
           frameborder="0"
-          style="min-width:100%;max-width:100%;height:539px;border:none;"
+          style="min-width:100%;max-width:100%;height:1200px;border:none;"
           scrolling="no"
         >
         </iframe>
@@ -140,7 +85,6 @@
   </footer>
 
   <script src="assets/js/sheets-cms.js"></script>
-  <script src="assets/js/booking-calculator.js"></script>
   <script src="assets/js/app.js" defer></script>
 </body>
 </html>
