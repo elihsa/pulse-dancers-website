@@ -483,10 +483,135 @@ async function loadBookingServices() {
   }
 }
 
+// ===== LOAD FAQs FROM CMS =====
+async function loadFAQs() {
+  const faqContainer = document.getElementById('faq-content');
+  if (!faqContainer) return;
+  try {
+    const faqs = await PulseSheetsCMS.getFAQs();
+    
+    if (faqs.length === 0) {
+      faqContainer.innerHTML = '<p style="color: #b0b0b0; padding: 2rem; text-align: center;">No FAQ data available.</p>';
+      return;
+    }
+    
+    // Clear loading message
+    faqContainer.innerHTML = '';
+    
+    // Create accordion for FAQs
+    const faqList = document.createElement('div');
+    faqList.className = 'faq-list';
+    
+    faqs.forEach((faq, index) => {
+      const faqItem = document.createElement('div');
+      faqItem.className = 'faq-item';
+      
+      const question = document.createElement('button');
+      question.className = 'faq-question';
+      question.type = 'button';
+      question.textContent = faq.question || '';
+      question.setAttribute('aria-expanded', 'false');
+      
+      const answer = document.createElement('div');
+      answer.className = 'faq-answer';
+      answer.textContent = faq.answer || '';
+      answer.style.display = 'none';
+      
+      // Toggle answer visibility
+      question.addEventListener('click', () => {
+        const isExpanded = question.getAttribute('aria-expanded') === 'true';
+        question.setAttribute('aria-expanded', !isExpanded);
+        answer.style.display = isExpanded ? 'none' : 'block';
+      });
+      
+      faqItem.appendChild(question);
+      faqItem.appendChild(answer);
+      faqList.appendChild(faqItem);
+    });
+    
+    faqContainer.appendChild(faqList);
+  } catch (error) {
+    console.error('Error loading FAQs:', error);
+    faqContainer.innerHTML = '<p style="color: #b0b0b0; padding: 2rem; text-align: center;">Error loading FAQ data.</p>';
+  }
+}
+
+// ===== LOAD DANCERS FROM CMS =====
+async function loadDancers() {
+  const dancersContainer = document.getElementById('dancers-container');
+  if (!dancersContainer) return;
+  
+  try {
+    const dancers = await PulseSheetsCMS.getDancers();
+    
+    if (dancers.length === 0) {
+      dancersContainer.innerHTML = '<p style="color: #b0b0b0; padding: 2rem; text-align: center;">Unable to load performers. Please contact us for more information.</p>';
+      return;
+    }
+    
+    // Clear loading message
+    dancersContainer.innerHTML = '';
+    
+    // Create dancer cards
+    dancers.forEach(dancer => {
+      const card = document.createElement('div');
+      card.className = 'dancer-card';
+      
+      const imageUrl = dancer.image ? `assets/images/performers/${dancer.image}` : 'assets/images/performers/placeholder.jpg';
+      
+      const imgElement = document.createElement('img');
+      imgElement.src = imageUrl;
+      imgElement.alt = dancer.name || 'Dancer';
+      imgElement.style.width = '100%';
+      imgElement.style.height = 'auto';
+      imgElement.onerror = function() {
+        this.src = 'assets/images/performers/placeholder.jpg';
+      };
+      
+      const content = document.createElement('div');
+      content.className = 'dancer-info';
+      
+      const nameEl = document.createElement('h3');
+      nameEl.textContent = dancer.name || '';
+      
+      const initialEl = document.createElement('p');
+      initialEl.className = 'dancer-initial';
+      initialEl.textContent = dancer.initial || '';
+      
+      const genresEl = document.createElement('p');
+      genresEl.className = 'dancer-genres';
+      genresEl.textContent = dancer.genres || '';
+      
+      const experienceEl = document.createElement('p');
+      experienceEl.className = 'dancer-experience';
+      experienceEl.textContent = `${dancer.experience || ''}`;
+      
+      const bioEl = document.createElement('p');
+      bioEl.className = 'dancer-bio';
+      bioEl.textContent = dancer.bio || '';
+      
+      content.appendChild(nameEl);
+      content.appendChild(initialEl);
+      content.appendChild(genresEl);
+      content.appendChild(experienceEl);
+      content.appendChild(bioEl);
+      
+      card.appendChild(imgElement);
+      card.appendChild(content);
+      dancersContainer.appendChild(card);
+    });
+  } catch (error) {
+    console.error('Error loading dancers:', error);
+    dancersContainer.innerHTML = '<p style="color: #b0b0b0; padding: 2rem; text-align: center;">Unable to load performers. Please contact us for more information.</p>';
+  }
+}
+
 // ===== INITIALIZE CMS CONTENT ON PAGE LOAD =====
 document.addEventListener('DOMContentLoaded', () => {
   loadPricingTable();
   loadBookingServices();
+    loadFAQs();
+  loadDancers();
   // loadInstagramFeed(); // Uncomment when Instagram API is set up
 });
 
