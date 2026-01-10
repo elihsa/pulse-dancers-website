@@ -8,7 +8,7 @@
  * - API restrictions:  Restrict to Google Sheets API only
  * This is the standard approach for public read-only spreadsheet data. 
  */
-const SHEET_ID = '1ekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
+const SHEET_ID = '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
   
 const API_KEY = 'AIzaSyADhHAHqBn8cmg-pDxV2sCnEnRTDrk3IXs';
 
