@@ -35,6 +35,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 h1 { font-size: 2.5rem; }
@@ -46,6 +47,7 @@ p {
   line-height: 1.6;
   color: #E5E5E5;
   margin-bottom: 1rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 a {
@@ -60,7 +62,9 @@ a:hover {
 
 /* ===== HEADER & NAVIGATION ===== */
 header {
-  background-color: #1a1a1f;
+  background-color: rgba(26, 26, 31, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-bottom: 2px solid #FF2D55;
   position: sticky;
   top: 0;
@@ -184,15 +188,27 @@ button:hover {
 .block {
   max-width: 1100px;
   margin: 0 auto;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 3rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .hero {
-  background: linear-gradient(135deg, #0B0B0F 0%, #1a1a1f 100%);
+  background: linear-gradient(135deg, rgba(11, 11, 15, 0.9) 0%, rgba(26, 26, 31, 0.9) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 4rem 2rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
   align-items: center;
+  border-radius: 16px;
+  margin: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .hero-kicker {
@@ -217,12 +233,14 @@ button:hover {
   font-size: 3rem;
   margin-bottom: 1rem;
   color: #fff;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
 }
 
 .hero-sub {
   font-size: 1.125rem;
-  color: #b0b0b0;
+  color: #E5E5E5;
   margin-bottom: 2rem;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
 }
 
 .hero-actions {
@@ -232,10 +250,12 @@ button:hover {
 }
 
 .hero-side {
-  background-color: rgba(255, 45, 85, 0.05);
+  background-color: rgba(255, 45, 85, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 2rem;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 45, 85, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 45, 85, 0.3);
 }
 
 .hero-stat {
@@ -251,7 +271,7 @@ button:hover {
 }
 
 .hero-tagline {
-  color: #b0b0b0;
+  color: #E5E5E5;
   font-size: 0.9375rem;
 }
 
@@ -291,7 +311,9 @@ button:hover {
   width: 100%;
   border-collapse: collapse;
   margin: 2rem 0;
-  background-color: #1a1a1f;
+  background-color: rgba(26, 26, 31, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -314,7 +336,7 @@ button:hover {
 }
 
 .pricing-table tbody tr:hover {
-  background-color: rgba(255, 45, 85, 0.05);
+  background-color: rgba(255, 45, 85, 0.1);
 }
 
 .pricing-table tbody tr:last-child td {
@@ -327,11 +349,13 @@ button:hover {
 }
 
 .accordion-item {
-  background-color: #1a1a1f;
+  background-color: rgba(26, 26, 31, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   margin-bottom: 1rem;
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid rgba(255, 45, 85, 0.1);
+  border: 1px solid rgba(255, 45, 85, 0.2);
 }
 
 .accordion-header {
@@ -371,7 +395,7 @@ button:hover {
   max-height: 0;
   overflow: hidden;
   transition: all 0.3s ease;
-  color: #b0b0b0;
+  color: #E5E5E5;
 }
 
 .accordion-body.active {
@@ -383,9 +407,11 @@ button:hover {
 form {
   margin-top: 2rem;
   padding: 2rem;
-  background-color: #1a1a1f;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 45, 85, 0.1);
+  background-color: rgba(26, 26, 31, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 45, 85, 0.2);
 }
 
 .form-row {
@@ -413,7 +439,7 @@ textarea,
 select {
   width: 100%;
   padding: 0.75rem;
-  background-color: #0B0B0F;
+  background-color: rgba(11, 11, 15, 0.9);
   color: #E5E5E5;
   border: 1px solid rgba(255, 45, 85, 0.3);
   border-radius: 6px;
@@ -427,7 +453,7 @@ textarea:focus,
 select:focus {
   outline: none;
   border-color: #FF2D55;
-  box-shadow: 0 0 0 3px rgba(255, 45, 85, 0.1);
+  box-shadow: 0 0 0 3px rgba(255, 45, 85, 0.2);
 }
 
 input::placeholder,
@@ -453,18 +479,21 @@ input[type="checkbox"] {
   font-size: 0.875rem;
   margin-top: 0.5rem;
   padding: 0.5rem;
-  background-color: rgba(255, 45, 85, 0.1);
+  background-color: rgba(255, 45, 85, 0.2);
   border-radius: 4px;
   border-left: 3px solid #FF2D55;
 }
 
 /* Info Banner */
 .form-info-banner {
-  background-color: rgba(255, 45, 85, 0.1);
-  padding: 1rem;
-  border-radius: 6px;
-  border-left: 4px solid #FF2D55;
+  background-color: rgba(255, 45, 85, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 45, 85, 0.4);
   margin-bottom: 1.5rem;
+  color: #E5E5E5;
 }
 
 /* Checkbox Labels */
@@ -473,7 +502,7 @@ input[type="checkbox"] {
   align-items: center;
   padding: 0.75rem;
   margin-bottom: 0.5rem;
-  background-color: #0B0B0F;
+  background-color: rgba(11, 11, 15, 0.9);
   border: 1px solid rgba(255, 45, 85, 0.3);
   border-radius: 6px;
   cursor: pointer;
@@ -482,7 +511,7 @@ input[type="checkbox"] {
 }
 
 .checkbox-label:hover {
-  background-color: rgba(255, 45, 85, 0.05);
+  background-color: rgba(255, 45, 85, 0.1);
   border-color: #FF2D55;
 }
 
@@ -519,9 +548,11 @@ input[type="checkbox"] {
 
 /* Quote Display */
 .quote-display {
-  background-color: rgba(255, 45, 85, 0.1);
-  border: 2px solid #FF2D55;
-  border-radius: 8px;
+  background-color: rgba(255, 45, 85, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 45, 85, 0.5);
+  border-radius: 12px;
   padding: 1.5rem;
   margin: 1.5rem 0;
 }
@@ -549,7 +580,9 @@ input[type="checkbox"] {
 
 /* ===== FOOTER ===== */
 footer {
-  background-color: #1a1a1f;
+  background-color: rgba(26, 26, 31, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-top: 2px solid #FF2D55;
   margin-top: auto;
 }
@@ -559,6 +592,7 @@ footer {
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  color: #E5E5E5;
 }
 
 .footer-links {
@@ -604,6 +638,7 @@ footer {
 
   .hero {
     grid-template-columns: 1fr;
+    margin: 1rem;
   }
 
   .hero h1 {
@@ -623,6 +658,10 @@ footer {
   
   .section {
     padding: 2rem 1rem;
+  }
+
+  .block {
+    padding: 2rem 1.5rem;
   }
 
   .pricing-table {
@@ -648,6 +687,10 @@ footer {
   .hero-actions .btn {
     width: 100%;
   }
+
+  .block {
+    padding: 1.5rem 1rem;
+  }
 }
 
 /* ===== PERFORMERS GRID ===== */
@@ -659,16 +702,19 @@ footer {
 }
 
 .performer-card {
-  background-color: #1a1a1f;
-  border-radius: 8px;
+  background-color: rgba(26, 26, 31, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
   overflow: hidden;
-  border: 1px solid rgba(255, 45, 85, 0.1);
-  transition: transform 0.3s ease, border-color 0.3s ease;
+  border: 1px solid rgba(255, 45, 85, 0.2);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .performer-card:hover {
   transform: translateY(-4px);
   border-color: rgba(255, 45, 85, 0.5);
+  box-shadow: 0 8px 24px rgba(255, 45, 85, 0.3);
 }
 
 .performer-photo {
@@ -691,7 +737,7 @@ footer {
 
 .performer-stage-name {
   font-size: 0.875rem;
-  color: #b0b0b0;
+  color: #E5E5E5;
   font-style: italic;
   margin-bottom: 0.5rem;
 }
@@ -706,7 +752,7 @@ footer {
 .performer-specialties {
   font-size: 0.8rem;
   color: #FF2D55;
-  background-color: rgba(255, 45, 85, 0.1);
+  background-color: rgba(255, 45, 85, 0.2);
   padding: 0.5rem;
   border-radius: 4px;
 }
@@ -719,17 +765,20 @@ form textarea {
 /* ===== JOTFORM EMBED STYLING ===== */
 .jotform-embed {
   margin: 2rem 0;
-  background: #1a1a1f;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 45, 85, 0.1);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 3rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .jotform-embed iframe {
   width: 100%;
   border: none;
   border-radius: 8px;
+  background: transparent;
 }
 
 /* Quote Calculator Above Form */
@@ -747,6 +796,12 @@ form textarea {
     height: 250px;
   }
   
+  .jotform-embed {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 600px) {
   .jotform-embed {
     padding: 1rem;
   }
