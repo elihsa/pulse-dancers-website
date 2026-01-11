@@ -104,7 +104,7 @@ const PulseSheetsCMS = {
       return [];
     }
     
-    const startIdx = rows[0][0] === 'ID' ?  1 : 0;
+    const startIdx = rows[0][0] === ''Question'' ?  1 : 0;
     
     const faqs = rows.slice(startIdx).map((row, index) => {
       console.log(`Processing FAQ row ${index}:`, row);
