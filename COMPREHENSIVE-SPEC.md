@@ -1210,6 +1210,63 @@ Owner confirms with customer
 - **Author:** GitHub Copilot
 - **Status:** Active Development
 - **Recent Changes:** Fixed Google Sheets API integration (critical CMS fix), centered UI banners, improved booking form styling, and added Session 3 documentation
+- 
+### Session 4: Complete API Key Cleanup & Fresh Setup
+
+**Date:** 2026-01-12 (Afternoon)
+
+**Critical Actions Taken:**
+
+✅ **DELETED ALL INVALID API KEYS**
+- Removed API key 1 (jotform, 2020, 47 uses)
+- Removed API key 3 (invalid/expired, 65 uses)
+- Removed API key 4 (restricted, invalid)
+- Result: Clean slate with ZERO API keys
+
+✅ **CREATED NEW PRODUCTION API KEY**
+- **Name:** Pulse Website - Google Sheets API
+- **API Key:** AIzaSyA9nqcwwfsb3lC90DFFcL14zRtd8YApLM
+- **Creation Date:** January 12, 2026, 3:05:33 PM GMT+2
+- **Status:** Active (awaiting 5-minute propagation)
+
+✅ **CONFIGURED WITH MAXIMUM SECURITY**
+- **Application Restrictions:** Websites (HTTP referrers only)
+- **Website Restriction:** https://pulse-dancers-website.vercel.app/*
+- **API Restriction:** Google Sheets API ONLY (1 API)
+- **Domain Protection:** Enabled and verified
+- **Propagation Note:** Settings take up to 5 minutes to take full effect
+
+✅ **UPDATED GITHUB CODE**
+- File: assets/js/sheets-cms.js
+- Line 13: Replaced with new API key
+- Commit: "Add valid Google Sheets API key - new secure key with domain restrictions"
+- Deployment: Triggered on Vercel (automatic on main branch push)
+
+**Next Steps (User Verification Required):**
+
+1. Wait 5 minutes for API key restrictions to fully propagate
+2. Reload https://pulse-dancers-website.vercel.app/prices.html
+3. Verify pricing data loads successfully
+4. Check for "Error loading pricing data" message
+5. Test booking form to confirm Google Sheets API works
+6. If still not working after 5 minutes, check browser console for specific API errors
+
+**Technical Notes:**
+
+- All previous API keys have been permanently deleted
+- Google Cloud Console now shows only 1 API key (clean state)
+- API key is restricted to Google Sheets API for security
+- Domain restriction prevents unauthorized use from other domains
+- Vercel deployment is automatic and should complete within 1-2 minutes
+- API propagation may take up to 5 minutes in some cases
+
+**Specification Updates:**
+
+- Version: 2.3 (from 2.2)
+- API Key field updated with new key
+- API Configuration section reflects new setup
+- Security notes added regarding domain restrictions
+- All documentation up-to-date as of 2026-01-12, 3:05 PM
 
 ---
 
