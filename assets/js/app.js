@@ -433,6 +433,11 @@ async function loadPricingTable() {
       row.appendChild(nameCell);
       row.appendChild(durationCell);
       row.appendChild(priceCell);
+       
+ const descriptionCell = document.createElement('td');
+ descriptionCell.textContent = item.description || '';
+ 
+ row.appendChild(descriptionCell);
       tableBody.appendChild(row);
     });
   } catch (error) {
