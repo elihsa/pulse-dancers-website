@@ -10,7 +10,9 @@
  */
 const SHEET_ID = '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
   
-const API_KEY = 'AIzaSyADhHAqB8ncmg-pDxV2sCnEnRTD-k3lXs';const SHEET_NAMES = {
+const API_KEY = 'AIzaSyDYjGVKNJFz4M21ybzIHRC_BBzD7FRCVrs'
+  ;const SHEET_NAMES = 
+  
   HOME: 'HOME',
   PRICES: 'PRICES',
   FAQS: 'FAQS',
