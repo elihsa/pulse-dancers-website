@@ -10,8 +10,8 @@
  */
 const SHEET_ID = '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
   
-const API_KEY = 'AIzaSyA9nqcwwfsb3lC90DFFcL14zRtd8YApLM
-  ;const SHEET_NAMES = 
+const API_KEY = 'AIzaSyA9nqcwwfsb3lC90DFFcL14zRtd8YApLM';
+  const SHEET_NAMES = 
   
   HOME: 'HOME',
   PRICES: 'PRICES',
