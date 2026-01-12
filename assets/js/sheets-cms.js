@@ -30,8 +30,7 @@ const escapeHtml = (text) => {
 const PulseSheetsCMS = {
   async fetchSheet(sheetName, startRow = 1, endRow = 1000) {
     try {
-      const url = `/api/sheets?sheetName=${sheetName}&startRow=${startRow}&endRow=${endRow}`;
-      console.log('📊 Fetching Google Sheet:', { sheetName, url });
+const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${sheetName}!A${startRow}:Z${endRow}?key=${API_KEY}`;      console.log('📊 Fetching Google Sheet:', { sheetName, url });
       
       const response = await fetch(url);
       console.log('📥 Response status:', response.status);
