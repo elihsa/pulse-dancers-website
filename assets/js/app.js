@@ -615,7 +615,7 @@ async function loadDancers() {
 document.addEventListener('DOMContentLoaded', () => {
   loadPricingTable();
   loadBookingServices();
-    loadFAQs();
+//     loadFAQs();
   loadDancers();
   // loadInstagramFeed(); // Uncomment when Instagram API is set up
 });
