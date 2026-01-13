@@ -127,6 +127,17 @@ const PulseSheetsCMS = {
                           });
                 return result;
             },
+  
+	async getServices() {
+		const rows = await this.fetchSheet(SHEET_NAMES.SERVICES, 1, 20);
+		const result = [];
+		rows.forEach((row, index) => {
+			if (row[0] && row[1]) {
+				result[row[0].toLowerCase().replace(/\s+/g, '_')] = row[1];
+			}
+		});
+		return result;
+	}
    loadDancers(containerId) {
  const container = document.getElementById(containerId);
  if (!container) return;
