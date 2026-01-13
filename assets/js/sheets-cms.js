@@ -66,7 +66,7 @@ const PulseSheetsCMS = {
 
   async getFAQs() {
     const rows = await this.fetchSheet(SHEET_NAMES.FAQS, 1, 50);
-    const startIdx = rows[0]?.[0] === 'Question' ? 1 : 0;
+    const startIdx = rows[0]?.[0] === 'Questions' ? 1 : 0;
     return rows
       .slice(startIdx)
       .map((row) => ({
