@@ -137,7 +137,7 @@ const PulseSheetsCMS = {
 			}
 		});
 		return result;
-	}
+	},
    loadDancers(containerId) {
  const container = document.getElementById(containerId);
  if (!container) return;
