@@ -132,106 +132,13 @@
       </div>
     </section>
 
-    <section class="section">
-      <div class="block">
-        <h2>Upcoming Events</h2>
-        <p>Check out our upcoming shows and events on Facebook.</p>
-        
-        <div style="max-width: 500px; margin: 2rem auto;">
-          <!-- Facebook Page Plugin with Events Tab -->
-          <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FpulseSouthAfrica&tabs=events&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=false&appId" 
-                  width="500" 
-                  height="500" 
-                  style="border:none;overflow:hidden;max-width:100%;" 
-                  scrolling="no" 
-                  frameborder="0" 
-                  allowfullscreen="true" 
-                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
-          </iframe>
-        </div>
-        
-        <div style="text-align: center; margin-top: 1.5rem;">
-          <a href="https://www.facebook.com/pulseSouthAfrica/events" target="_blank" rel="noopener" class="btn btn-outline">
-            View All Events on Facebook
-          </a>
-        </div>
-      </div>
-    </section>
 
-    <section class="section">
-      <div class="block">
-        <h2>Follow Us on Instagram</h2>
-        <p>See our latest photos and behind-the-scenes content.</p>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0;">
-          <!-- Instagram Post 1 - This will be loaded from CMS -->
-          <div class="instagram-post" id="instagram-post-1">
-            <blockquote class="instagram-media" 
-                        data-instgrm-captioned 
-                        data-instgrm-permalink=""
-                        data-instgrm-version="14" 
-                        style="background:#FFF; border:0; border-radius:8px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:100%; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
-              <div style="padding: 2rem; text-align: center; color: #999;">Loading Instagram post...</div>
-            </blockquote>
-          </div>
-          
-          <!-- Instagram Post 2 - This will be loaded from CMS -->
-          <div class="instagram-post" id="instagram-post-2">
-            <blockquote class="instagram-media" 
-                        data-instgrm-captioned 
-                        data-instgrm-permalink=""
-                        data-instgrm-version="14" 
-                        style="background:#FFF; border:0; border-radius:8px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:100%; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
-              <div style="padding: 2rem; text-align: center; color: #999;">Loading Instagram post...</div>
-            </blockquote>
-          </div>
-        </div>
-        
-        <div style="text-align: center; margin-top: 2rem;">
           <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" class="btn">
             Follow @pulsesouthafrica on Instagram
           </a>
         </div>
       </div>
     </section>
-
-    <!-- Instagram Embed Script -->
-    <script async src="//www.instagram.com/embed.js"></script>
-    <script>
-      // Load Instagram posts from Google Sheets
-      document.addEventListener('DOMContentLoaded', async () => {
-        if (typeof PulseSheetsCMS !== 'undefined') {
-          try {
-            const social = await PulseSheetsCMS.getSocial();
-            
-            // Validate Instagram URL format
-            const isValidInstagramUrl = (url) => {
-              if (!url || typeof url !== 'string') return false;
-              try {
-                const urlObj = new URL(url);
-                return urlObj.hostname === 'www.instagram.com' || urlObj.hostname === 'instagram.com';
-              } catch {
-                return false;
-              }
-            };
-            
-            if (social.instagram_post_1 && isValidInstagramUrl(social.instagram_post_1)) {
-              document.querySelector('#instagram-post-1 .instagram-media').setAttribute('data-instgrm-permalink', social.instagram_post_1);
-            }
-            if (social.instagram_post_2 && isValidInstagramUrl(social.instagram_post_2)) {
-              document.querySelector('#instagram-post-2 .instagram-media').setAttribute('data-instgrm-permalink', social.instagram_post_2);
-            }
-            // Reinitialize Instagram embeds
-            if (window.instgrm) {
-              window.instgrm.Embeds.process();
-            }
-          } catch (error) {
-            console.error('Error loading Instagram posts:', error);
-          }
-        }
-      });
-    </script>
-
     <section class="section twocol">
       <div class="block">
         <h2>Book Pulse for Your Event</h2>
@@ -245,27 +152,6 @@
       </div>
     </section>
 
-    <section class="section">
-      <div class="block" style="text-align: center;">
-        <h2>Follow Us on Social Media</h2>
-        <p>Stay updated with our latest shows, events, and behind-the-scenes content.</p>
-        <div style="display: flex; gap: 2rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
-          <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener" class="btn btn-outline">
-            Facebook
-          </a>
-          <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" class="btn btn-outline">
-            Instagram
-          </a>
-        </div>
-      </div>
-    </section>
-    
-		<section class="section">
-			<div class="block">
-				<h2>Follow Us on Instagram</h2>
-				<div id="instagram-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem;"></div>
-			</div>
-		</section>
   </main>
 
   <footer>
@@ -320,6 +206,7 @@
 	</script>
 </body>
 </html>
+
 
 
 
