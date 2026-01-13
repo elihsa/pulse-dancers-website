@@ -260,5 +260,74 @@
   </footer>
 
   <script src="assets/js/app.js" defer></script>
+  
+<script>
+  // Handle form submission for the join form
+  const joinForm = document.getElementById('joinForm');
+  if (joinForm) {
+    joinForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      // Collect form data
+      const formData = new FormData(this);
+      const data = {
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        birthMonth: formData.get('birthMonth'),
+        birthDay: formData.get('birthDay'),
+        birthYear: formData.get('birthYear'),
+        streetAddress: formData.get('streetAddress'),
+        city: formData.get('city'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        preference: formData.getAll('preference'),
+        danceExperience: document.querySelector('input[name="danceExperience"]:checked')?.value,
+        promoExperience: document.querySelector('input[name="promoExperience"]:checked')?.value,
+        transport: document.querySelector('input[name="transport"]:checked')?.value,
+        gymLocation: formData.get('gymLocation'),
+        otherWork: formData.get('otherWork'),
+        skills: formData.get('skills')
+      };
+      
+      try {
+        // Show loading message
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.disabled = true;
+        
+        // Send form data to API
+        const response = await fetch('/api/submit-join-form', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          // Show success message
+          alert(result.message);
+          // Reset form
+          joinForm.reset();
+          // Scroll to top
+          window.scrollTo(0, 0);
+        } else {
+          const error = await response.json();
+          alert('Error submitting form: ' + (error.error || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Form submission error:', error);
+        alert('Error submitting form: ' + error.message);
+      } finally {
+        // Reset button
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+  }
+</script>
 </body>
 </html>
