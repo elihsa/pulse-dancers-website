@@ -1,108 +1,145 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Events & Socials - Pulse Male Revue</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+  <meta charset="utf-8" />
+  <title>Events & Socials - Pulse Male Revue</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Events and social media updates from Pulse Male Revue" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="preload" href="assets/css/styles.css" as="style" />
+  <link rel="preload" href="assets/js/app.js" as="script" />
+  <script src="assets/js/banner.js" defer></script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div class="logo">PULSE</div>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="events.html" class="active">Events & Socials</a></li>
-                <li><a href="prices.html">Prices</a></li>
-                <li><a href="faq.html">FAQ</a></li>
-                <li><a href="meet-the-guys.html">Meet The Guys</a></li>
-                <li><a href="join.html">Join</a></li>
-                <li><a href="book.html" class="btn-book">Book Now</a></li>
-            </ul>
+<div class="page">
+<img alt="Pulse Male Revue Top Banner" class="top-banner" style="width: 50%; display: block; margin: 0 auto;">
+
+<header>
+  <div class="nav-inner">
+    <div class="logo-wrap">
+      <a href="index.html">
+        <img src="assets/images/logo.png" alt="Pulse Male Revue International" class="logo">
+        <div class="brand" id="site-logo" style="display: none;">PULSE</div>
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="events.html" class="nav-link active">Events & Socials</a></li>
+      <li><a href="prices.html" class="nav-link">Prices</a></li>
+      <li><a href="faq.html" class="nav-link">FAQ</a></li>
+      <li><a href="meet-the-guys.html" class="nav-link">Meet The Guys</a></li>
+      <li><a href="join.html" class="nav-link">Join</a></li>
+      <li><a href="book.html" class="btn">Book Now</a></li>
+    </ul>
+  </div>
+</header>
+
+<main>
+<section class="section">
+  <div class="block">
+    <h1>Events & Socials</h1>
+    <p>Stay connected with Pulse and never miss an update. Follow our upcoming events and latest social media posts below.</p>
+  </div>
+</section>
+
+<!-- Facebook Events Section -->
+<section class="section">
+  <div class="block">
+    <h2>Upcoming Events</h2>
+    <p>Check out our upcoming shows and events on Facebook.</p>
+    <div style="max-width: 500px; margin: 2rem auto;">
+      <!-- Facebook Page Plugin with Events Tab -->
+      <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FpulseSouthAfrica&tabs=events&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=false&appId" 
+      width="500" 
+      height="500" 
+      style="border:none;overflow:hidden;max-width:100%;" 
+      scrolling="no" 
+      frameborder="0" 
+      allowfullscreen="true" 
+      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+      </iframe>
+    </div>
+    <div style="text-align: center; margin-top: 1.5rem;">
+      <a href="https://www.facebook.com/pulseSouthAfrica/events" target="_blank" rel="noopener" class="btn btn-outline">
+        View All Events on Facebook
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Instagram Section -->
+<section class="section">
+  <div class="block">
+    <h2>Follow Us on Instagram</h2>
+    <p>See our latest photos and behind-the-scenes content.</p>
+    <div id="instagram-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem;"></div>
+    <div style="text-align: center; margin-top: 2rem;">
+      <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" class="btn">
+        Follow @pulsesouthafrica on Instagram
+      </a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div>© 2025 Pulse Male Revue - South Africa.</div>
+    <div class="footer-links">
+      <a href="mailto:info@pulsedancers.com">info@pulsedancers.com</a>
+      <span>·</span>
+      <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener">Facebook</a>
+      <span>·</span>
+      <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+</footer>
+</div>
+
+<script src="assets/js/sheets-cms.js"></script>
+<script src="assets/js/app.js" defer></script>
+<script>
+// Populate Instagram posts
+async function populateInstagram() {
+  const posts = await PulseSheetsCMS.getSocial();
+  const container = document.getElementById('instagram-container');
+  
+  if (!posts || Object.keys(posts).length === 0) {
+    container.innerHTML = '<p>Follow us on Instagram @PulseSouthAfrica for the latest updates!</p>';
+    return;
+  }
+  
+  // Convert social object to array for Instagram posts
+  const instagramPosts = [];
+  for (let key in posts) {
+    if (key.includes('instagram') || key === 'uri') {
+      instagramPosts.push({ uri: posts[key] });
+    }
+  }
+  
+  const postsHTML = instagramPosts.map(post => `
+    <div style="background: #1a1a1f; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease; border: 1px solid rgba(255, 45, 85, 0.1);">
+      <a href="${post.uri}" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none; color: inherit;">
+        <div style="aspect-ratio: 1; overflow: hidden; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);">
+          <img src="https://instagram.com/p/${post.uri.split('/').filter(Boolean).pop()}/media/?size=m" alt="Instagram post" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 400%22%3E%3Crect fill=%22%23f09433%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2240%22 fill=%22white%22 text-anchor=%22middle%22 dominant-baseline=%22central%22%3EInstagram%3C/text%3E%3C/svg%3E';">
         </div>
-    </nav>
-
-    <main>
-        <section class="section">
-            <div class="block">
-                <h1>Events & Socials</h1>
-                <p>Stay connected with Pulse and never miss an update. Follow our upcoming events and latest social media posts below.</p>
-            </div>
-        </section>
-
-        <!-- Facebook Events Section -->
-        <section class="section">
-            <div class="block">
-                <h2>Upcoming Events</h2>
-                <div style="padding: 2rem; text-align: center;">
-                    <p style="color: #b0b0b0; margin-bottom: 2rem;">Get updated with our latest events. Follow us on Facebook for the most up-to-date information.</p>
-                    <a href="https://www.facebook.com/profile.php?id=61572506641706" target="_blank" rel="noopener noreferrer" class="btn" style="display: inline-block; background-color: #FF2D55; color: white; padding: 1rem 2rem; border-radius: 4px; text-decoration: none; margin-bottom: 2rem;">Follow on Facebook</a>
-                </div>
-                <div id="facebook-events" style="margin-top: 2rem;">
-                    <!-- Facebook events will load here -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Instagram Section -->
-        <section class="section">
-            <div class="block">
-                <h2>Follow Us on Instagram</h2>
-                <p style="text-align: center; color: #b0b0b0; margin-bottom: 2rem;">Check out our latest posts and behind-the-scenes moments on Instagram @PulseSouthAfrica</p>
-                <div id="instagram-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem;"></div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 Pulse Male Revue. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        <div style="padding: 1rem;">
+          <p style="margin: 0; font-size: 0.9rem; color: #E5E5E5;">Check out our post</p>
         </div>
-    </footer>
+      </a>
+    </div>
+  `).join('');
+  
+  container.innerHTML = postsHTML || '<p>Check out our Instagram posts @PulseSouthAfrica</p>';
+}
 
-    <script src="assets/js/sheets-cms.js"></script>
-    <script src="assets/js/app.js"></script>
-    <script>
-        // Populate Instagram posts
-        async function populateInstagram() {
-            const posts = await PulseSheetsCMS.getSocial();
-            const container = document.getElementById('instagram-container');
-            
-            if (!posts || Object.keys(posts).length === 0) {
-                container.innerHTML = '<p>Follow us on Instagram @PulseSouthAfrica for the latest updates!</p>';
-                return;
-            }
-            
-            // Convert social object to array for Instagram posts
-            const instagramPosts = [];
-            for (let key in posts) {
-                if (key.includes('instagram') || key === 'uri') {
-                    instagramPosts.push({ uri: posts[key] });
-                }
-            }
-            
-            const postsHTML = instagramPosts.map(post => `
-                <div style="background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
-                    <a href="${post.uri}" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none; color: inherit;">
-                        <div style="aspect-ratio: 1; overflow: hidden; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);">
-                            <img src="https://instagram.com/p/${post.uri.split('/').filter(Boolean).pop()}/media/?size=m" alt="Instagram post" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 400%22%3E%3Crect fill=%22%23f09433%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2240%22 fill=%22white%22 text-anchor=%22middle%22 dominant-baseline=%22central%22%3EInstagram%3C/text%3E%3C/svg%3E';">
-                        </div>
-                        <div style="padding: 1rem;">
-                            <p style="margin: 0; font-size: 0.9rem; color: #666;">Check out our post</p>
-                        </div>
-                    </a>
-                </div>
-            `).join('');
-            
-            container.innerHTML = postsHTML || '<p>Check out our Instagram posts @PulseSouthAfrica</p>';
-        }
-        
-        // Populate Instagram posts when page loads
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', populateInstagram);
-        } else {
-            populateInstagram();
-        }
-    </script>
+// Populate Instagram posts when page loads
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', populateInstagram);
+} else {
+  populateInstagram();
+}
+</script>
 </body>
 </html>
