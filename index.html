@@ -129,15 +129,43 @@
             <p style="color: #FF2D55; font-weight: 600;">— Sam, Pretoria</p>
           </div>
         </div>
+		   <div style="text-align: center; margin-top: 3rem; margin-bottom: 3rem;">
+ <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" class="btn">Follow @pulsesouthafrica on Instagram</a>
+ </div>
+		   <div style="margin-top: 3rem; padding: 2rem; background-color: rgba(255, 45, 85, 0.05); border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
+ <h3 style="color: #FF2D55; margin-bottom: 1.5rem;">Submit Your Review</h3>
+ <form id="review-form" style="display: grid; gap: 1rem;">
+ <div>
+ <label style="color: #E5E5E5; display: block; margin-bottom: 0.5rem;">Your Name</label>
+ <input type="text" id="review-name" placeholder="Your name" style="width: 100%; padding: 0.75rem; background-color: #2a2a2f; color: #E5E5E5; border: 1px solid rgba(255, 45, 85, 0.3); border-radius: 4px;" required>
+ </div>
+ <div>
+ <label style="color: #E5E5E5; display: block; margin-bottom: 0.5rem;">Area / City</label>
+ <input type="text" id="review-area" placeholder="e.g., Johannesburg" style="width: 100%; padding: 0.75rem; background-color: #2a2a2f; color: #E5E5E5; border: 1px solid rgba(255, 45, 85, 0.3); border-radius: 4px;" required>
+ </div>
+ <div>
+ <label style="color: #E5E5E5; display: block; margin-bottom: 0.5rem;">Rating</label>
+ <select id="review-rating" style="width: 100%; padding: 0.75rem; background-color: #2a2a2f; color: #E5E5E5; border: 1px solid rgba(255, 45, 85, 0.3); border-radius: 4px;" required>
+ <option value="">Select a rating</option>
+ <option value="5">★★★★★ (5 Stars)</option>
+ <option value="4">★★★★ (4 Stars)</option>
+ <option value="3">★★★ (3 Stars)</option>
+ <option value="2">★★ (2 Stars)</option>
+ <option value="1">★ (1 Star)</option>
+ </select>
+ </div>
+ <div>
+ <label style="color: #E5E5E5; display: block; margin-bottom: 0.5rem;">Your Review</label>
+ <textarea id="review-message" placeholder="Share your experience..." rows="4" style="width: 100%; padding: 0.75rem; background-color: #2a2a2f; color: #E5E5E5; border: 1px solid rgba(255, 45, 85, 0.3); border-radius: 4px; font-family: inherit;" required></textarea>
+ </div>
+ <button type="submit" style="padding: 0.75rem 1.5rem; background-color: #FF2D55; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 1rem;">Submit Review</button>
+ </form>
+ <div id="review-status" style="display: none; margin-top: 1rem; padding: 1rem; border-radius: 4px;" class="form-status"></div>
+ </div>
       </div>
     </section>
 
 
-          <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" class="btn">
-            Follow @pulsesouthafrica on Instagram
-          </a>
-        </div>
-      </div>
     </section>
     <section class="section twocol">
       <div class="block">
@@ -204,8 +232,39 @@
 			populateInstagram();
 		}
 	</script>
+	 <script>
+  // Handle review form submission
+  const reviewForm = document.getElementById('review-form');
+  if (reviewForm) {
+    reviewForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('review-name').value;
+      const area = document.getElementById('review-area').value;
+      const rating = document.getElementById('review-rating').value;
+      const message = document.getElementById('review-message').value;
+      if (!name || !area || !rating || !message) {
+        alert('Please fill in all fields');
+        return;
+      }
+      // Show success message
+      const statusDiv = document.getElementById('review-status');
+      statusDiv.textContent = 'Thank you for your review! We appreciate your feedback.';
+      statusDiv.style.display = 'block';
+      statusDiv.style.backgroundColor = 'rgba(0, 200, 100, 0.2)';
+      statusDiv.style.color = '#00C864';
+      statusDiv.style.borderLeft = '4px solid #00C864';
+      // Reset form
+      reviewForm.reset();
+      // Hide message after 5 seconds
+      setTimeout(() => {
+        statusDiv.style.display = 'none';
+      }, 5000);
+    });
+  }
+ </script>
 </body>
 </html>
+
 
 
 
