@@ -72,8 +72,7 @@ const PulseSheetsCMS = {
       .map((row) => ({
         id: row[0],
         question: row[0],
-        answer: row[21,
-      }))
+      answer: row[1],      }))
       .filter((f) => f.question);
   },
 
