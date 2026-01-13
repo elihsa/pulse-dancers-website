@@ -1,3 +1,4 @@
+65
 // assets/js/sheets-cms.js
 const SHEET_ID = '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
 const API_KEY = 'AIzaSyA9nqewwfsfb3lC9OBFFcLi4zRtd8YApLM';
@@ -76,7 +77,7 @@ const PulseSheetsCMS = {
       .filter((f) => f.question);
   },
 
-async getDancers() {
+  async getDancers() {
  const rows = await this.fetchSheet(SHEET_NAMES.DANCERS, 1, 30);
  const startIdx = rows[0]?.[0] === 'ID' ? 1 : 0;
  return rows
@@ -92,7 +93,7 @@ async getDancers() {
  image: row[7] || 'assets/images/performers/placeholder.jpg',
  }))
  .filter((d) => d.name);
- }
+ },
 
   async getTestimonials() {
     const rows = await this.fetchSheet(SHEET_NAMES.TESTIMONIALS, 1, 20);
