@@ -116,6 +116,17 @@ const PulseSheetsCMS = {
       .filter((row) => row[0] === 'Instagram')
       .map((row) => ({ url: row[1], caption: row[2] || '' }));
   },
+
+      async getSocial() {
+                const rows = await this.fetchSheet(SHEET_NAMES.SOCIAL, 1, 10);
+                const result = {};
+                rows.forEach((row, index) => {
+                              if (row[0] && row[1]) {
+                                                result[row[0].toLowerCase().replace(/\s+/g, '_')] = row[1];
+                                            }
+                          });
+                return result;
+            },
    loadDancers(containerId) {
  const container = document.getElementById(containerId);
  if (!container) return;
