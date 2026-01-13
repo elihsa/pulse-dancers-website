@@ -71,8 +71,8 @@ const PulseSheetsCMS = {
       .slice(startIdx)
       .map((row) => ({
         id: row[0],
-        question: row[1],
-        answer: row[2],
+        question: row[0],
+        answer: row[21,
       }))
       .filter((f) => f.question);
   },
