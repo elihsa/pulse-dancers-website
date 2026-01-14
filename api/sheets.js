@@ -14,6 +14,22 @@ export default async (req, res) => {
     }
     
     const data = await response.json();
+    
+    // Filter testimonials to only show approved ones
+    if (sheetName === 'Testimonials' && data.values) {
+      // Keep header row (index 0) and filter rows where status (column H, index 7) is 'Approved'
+      const headerRow = data.values[0];
+      const statusColumnIndex = 7; // Column H is index 7 (0-based)
+      
+      const filteredRows = data.values.filter((row, index) => {
+        // Always include header row
+        if (index === 0) return true;
+        // Include rows where status column contains 'Approved'
+        return row[statusColumnIndex]?.includes('Approved') || row[statusColumnIndex] === 'Approved';
+      });
+      
+      data.values = filteredRows;
+    }
     res.setHeader('Access-Control-Allow-Origin', '*');
     return res.status(200).json(data);
   } catch (error) {
