@@ -69,7 +69,42 @@
               <td colspan="3" style="text-align: center; padding: 2rem; color: #b0b0b0;">Loading prices...</td>
             </tr>
           </tbody>
-        </table>
+        71
+			      <script>
+        // Load prices from CMS
+        async function loadPrices() {
+          const tbody = document.getElementById('pricing-table-body');
+          if (!tbody) return;
+
+          try {
+            const prices = await PulseSheetsCMS.getPrices();
+            
+            if (!prices || prices.length === 0) {
+              tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #b0b0b0;">No pricing information available. Please contact us.</td></tr>';
+              return;
+            }
+
+            tbody.innerHTML = prices.map(p => `
+              <tr>
+                <td>${p.name || ''}</td>
+                <td>${p.duration || ''}</td>
+                <td>R${p.price ? p.price.toFixed(0) : 'TBD'}</td>
+                <td>${p.description || ''}</td>
+              </tr>
+            `).join('');
+          } catch (error) {
+            console.error('Error loading prices:', error);
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #FF2D55;">Unable to load prices at this time.</td></tr>';
+          }
+        }
+
+        // Load prices when page loads
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadPrices);
+        } else {
+          loadPrices();
+        }
+      </script>
       </div>
     </section>
 
@@ -107,7 +142,7 @@
 		<script>
 			// Populate services
 			async function populateServices() {
-				const services = await getServices();
+				const services = await PulseSheetsCMS.getServices();
 				const container = document.getElementById('services-container');
 				
 				if (!services || services.length === 0) {
@@ -137,7 +172,7 @@
 				populateServices();
 			}
 		</script>
-    </section>
+    72
   </main>
 
   <footer>
@@ -154,10 +189,11 @@
   </footer>
 </div>
 
-<script src="assets/js/sheets-cms.js"> defer</script>
+<script src="assets/js/sheets-cms.js" defer></script>
 <script src="assets/js/app.js" defer></script>
 </body>
 </html>
+
 
 
 
