@@ -1,4 +1,4 @@
-const API_KEY = AIzaSyBqmw5wBmz54vV7AUvH91UNqW6_gDLwrmw'
+const API_KEY = 'AIzaSyBqmw5wBmz54vV7AUvH91UNqW6_gDLwrmw';
 const SHEET_ID = '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
 
 export default async (req, res) => {
