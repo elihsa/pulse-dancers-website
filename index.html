@@ -26,6 +26,7 @@
   <link rel="preload" href="assets/css/styles.css" as="style" />
   <link rel="preload" href="assets/js/app.js" as="script" />
   <script src="assets/js/banner.js" defer></script>
+	  <script src="assets/js/sheets-cms.js" defer></script>
   
   <script type="application/ld+json">
   {
@@ -112,23 +113,9 @@
     <section class="section">
       <div class="block">
         <h2>Client Testimonials</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
-          <div style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
-            <div style="color: #FF2D55; margin-bottom: 0.5rem;">★★★★★</div>
-            <p style="font-style: italic; margin-bottom: 1rem;">"The guys were professional, respectful, and absolutely stunning. They made my bachelorette party unforgettable!"</p>
-            <p style="color: #FF2D55; font-weight: 600;">— Leanne, Johannesburg</p>
-          </div>
-          <div style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
-            <div style="color: #FF2D55; margin-bottom: 0.5rem;">★★★★★</div>
-            <p style="font-style: italic; margin-bottom: 1rem;">"Best entertainment we've ever had at a corporate event. The team was punctual, professional, and incredibly talented."</p>
-            <p style="color: #FF2D55; font-weight: 600;">— Megan, Sandton</p>
-          </div>
-          <div style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
-            <div style="color: #FF2D55; margin-bottom: 0.5rem;">★★★★★</div>
-            <p style="font-style: italic; margin-bottom: 1rem;">"Hired topless waiters for our girls night and it was perfect! They were charming, fun, and made everyone feel comfortable."</p>
-            <p style="color: #FF2D55; font-weight: 600;">— Sam, Pretoria</p>
-          </div>
-        </div>
+      <div id="testimonials-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
+        <!-- Testimonials will be loaded here from CMS -->
+      </div>
 		   <div style="text-align: center; margin-top: 3rem; margin-bottom: 3rem;">
  <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" class="btn">Follow @pulsesouthafrica on Instagram</a>
  </div>
@@ -200,7 +187,7 @@
   </footer>
 </div>
 
-<script src="assets/js/sheets-cms.js"></script>
+<script src="assets/js/27"></script>
 <script src="assets/js/app.js" defer></script>
   	<script>
 		// Populate Instagram posts
@@ -237,7 +224,41 @@
 		}
 	</script>
 	 <script>
-  // Handle review form submission
+      // Load and display testimonials from CMS
+    async function loadTestimonials() {
+      const container = document.getElementById('testimonials-container');
+      if (!container) return;
+
+      try {
+        const testimonials = await PulseSheetsCMS.getTestimonials();
+        
+        if (!testimonials || testimonials.length === 0) {
+          container.innerHTML = '<p style="color: #b0b0b0; text-align: center; padding: 2rem;">No testimonials yet. Be the first to share your experience!</p>';
+          return;
+        }
+
+        container.innerHTML = testimonials.map(t => `
+          <div style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
+            <div style="color: #FF2D55; margin-bottom: 0.5rem;">${'★'.repeat(t.rating || 5)}</div>
+            <p style="font-style: italic; margin-bottom: 1rem;">${t.text || ''}</p>
+            <p style="color: #FF2D55; font-weight: 600;">— ${t.name || 'Anonymous'}${t.area ? ', ' + t.area : ''}</p>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading testimonials:', error);
+        container.innerHTML = '<p style="color: #b0b0b0; text-align: center; padding: 2rem;">Unable to load testimonials at this time.</p>';
+      }
+    }
+
+    // Load testimonials when page loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadTestimonials);
+    } else {
+      loadTestimonials();
+    }
+
+
+		 // Handle review form submission
   const reviewForm = document.getElementById('review-form');
   if (reviewForm) {
     reviewForm.addEventListener('submit', async (e) => {
@@ -250,24 +271,48 @@
         alert('Please fill in all fields');
         return;
       }
-      // Show success message
-      const statusDiv = document.getElementById('review-status');
-      statusDiv.textContent = 'Thank you for your review! We appreciate your feedback.';
-      statusDiv.style.display = 'block';
-      statusDiv.style.backgroundColor = 'rgba(0, 200, 100, 0.2)';
-      statusDiv.style.color = '#00C864';
-      statusDiv.style.borderLeft = '4px solid #00C864';
-      // Reset form
-      reviewForm.reset();
-      // Hide message after 5 seconds
-      setTimeout(() => {
-        statusDiv.style.display = 'none';
-      }, 5000);
-    });
+      const email = document.getElementById('review-email').value;
+      
+      // Submit to API
+      try {
+        const response = await fetch('/api/submit-testimonial', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, area, rating, message, email })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          const statusDiv = document.getElementById('review-status');
+          statusDiv.textContent = 'Thank you for your review! It will be visible once approved.';
+          statusDiv.style.display = 'block';
+          statusDiv.style.backgroundColor = 'rgba(0, 200, 100, 0.2)';
+          statusDiv.style.color = '#00C864';
+          statusDiv.style.borderLeft = '4px solid #00C864';
+          statusDiv.style.padding = '1rem';
+          statusDiv.style.borderRadius = '4px';
+          statusDiv.style.marginTop = '1rem';
+          
+          // Reset form
+          reviewForm.reset();
+          
+          // Hide message after 5 seconds
+          setTimeout(() => {
+            statusDiv.style.display = 'none';
+          }, 5000);
+        } else {
+          alert('Error submitting review: ' + (result.error || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Error submitting review:', error);
+        alert('Failed to submit review. Please try again.');
+      }    });
   }
  </script>
 </body>
 </html>
+
 
 
 
