@@ -99,11 +99,12 @@ const PulseSheetsCMS = {
     const startIdx = rows[0]?.[0] === 'ID' ? 1 : 0;
     return rows
       .slice(startIdx)
+		      .filter((row) => row[5] === 'Approved') // Only show approved testimonials
       .map((row) => ({
-        id: row[0],
-        name: row[1],
-        text: row[2],
-        rating: parseInt(row[3]) || 5,
+        name: row[0],
+        area: row[1],
+        rating: parseInt(row[2]) || 5,
+        text: row[3],
       }))
       .filter((t) => t.name);
   },
