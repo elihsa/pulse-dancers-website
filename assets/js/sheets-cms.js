@@ -1,6 +1,4 @@
 // assets/js/sheets-cms.js
-const SHEET_ID = '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
-const API_KEY = 'AIzaSyA9nqewwfsfb3lC9OBFFcLi4zRtd8YApLM';
 
 const SHEET_NAMES = {
   HOME: 'HOME',
@@ -21,7 +19,8 @@ const escapeHtml = (text) => {
 const PulseSheetsCMS = {
   async fetchSheet(sheetName, startRow = 1, endRow = 1000) {
     try {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${sheetName}!A${startRow}:Z${endRow}?key=${API_KEY}`;
+      // Use the serverless API endpoint instead of direct Google Sheets API
+      const url = `/api/sheets?sheetName=${sheetName}&startRow=${startRow}&endRow=${endRow}`;
       const response = await fetch(url);
       if (!response.ok) {
         const errorText = await response.text();
