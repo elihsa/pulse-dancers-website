@@ -113,7 +113,8 @@ async function populateInstagram() {
   // Extract Instagram post URLs from the social object
   const instagramPosts = [];
   Object.keys(social).forEach(key => {
-    if (key.toLowerCase().includes('instagram') && key.toLowerCase().includes('post')) {
+    const lowerKey = key.toLowerCase();
+    if (lowerKey.includes('instagram') && lowerKey.includes('post')) {
       const url = social[key];
       if (url && url !== '[Paste Instagram post URL]' && url.trim() !== '') {
         instagramPosts.push({ uri: url });

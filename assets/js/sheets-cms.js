@@ -50,14 +50,20 @@ const PulseSheetsCMS = {
     const hasHeader = rows[0]?.[0]?.toLowerCase().includes('service') || rows[0]?.[0]?.toLowerCase().includes('id');
     const startIdx = hasHeader ? 1 : 0;
     
+    // Detect format by checking header row
+    let hasIdColumn = false;
+    if (hasHeader) {
+      // Check if first column is 'ID' or if there are 5+ columns
+      hasIdColumn = rows[0]?.[0]?.toLowerCase() === 'id' || rows[0]?.length >= 5;
+    }
+    
     return rows
       .slice(startIdx)
       .map((row) => {
         // Handle both formats:
         // Format 1: Service, Price, Duration, Description (4 columns)
         // Format 2: ID, Service, Price, Duration, Description (5 columns)
-        const hasId = rows[0]?.length > 4;
-        if (hasId) {
+        if (hasIdColumn) {
           return {
             id: row[0],
             name: row[1],
@@ -176,7 +182,10 @@ const PulseSheetsCMS = {
  card.style.cssText = 'background-color: #1a1a1f; border-radius: 8px; overflow: hidden; padding: 1rem; border: 1px solid rgba(255, 45, 85, 0.1);';
  
  // Handle both full path and filename
- const imageUrl = dancer.image.includes('assets/') ? dancer.image : `assets/images/performers/${dancer.image}`;
+ let imageUrl = 'assets/images/performers/placeholder.jpg';
+ if (dancer.image) {
+   imageUrl = dancer.image.includes('assets/') ? dancer.image : `assets/images/performers/${dancer.image}`;
+ }
  
  const img = document.createElement('img');
  img.src = imageUrl;
