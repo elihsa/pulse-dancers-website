@@ -97,41 +97,50 @@
 </footer>
 </div>
 
-<script src="assets/js/sheets-cms. deferjs"></script>
+<script src="assets/js/sheets-cms.js" defer></script>
 <script src="assets/js/app.js" defer></script>
 <script>
 // Populate Instagram posts
 async function populateInstagram() {
-  const posts = await PulseSheetsCMS.getSocial();
+  const social = await PulseSheetsCMS.getSocial();
   const container = document.getElementById('instagram-container');
   
-  if (!posts || Object.keys(posts).length === 0) {
-    container.innerHTML = '<p>Follow us on Instagram @PulseSouthAfrica for the latest updates!</p>';
+  if (!social || Object.keys(social).length === 0) {
+    container.innerHTML = '<p style="color: #E5E5E5;">Follow us on Instagram @pulsesouthafrica for the latest updates!</p>';
     return;
   }
   
-  // Convert social object to array for Instagram posts
+  // Extract Instagram post URLs from the social object
   const instagramPosts = [];
-  for (let key in posts) {
-    if (key.includes('instagram') || key === 'uri') {
-      instagramPosts.push({ uri: posts[key] });
+  Object.keys(social).forEach(key => {
+    const lowerKey = key.toLowerCase();
+    if (lowerKey.includes('instagram') && lowerKey.includes('post')) {
+      const url = social[key];
+      if (url && url !== '[Paste Instagram post URL]' && url.trim() !== '') {
+        instagramPosts.push({ uri: url });
+      }
     }
+  });
+  
+  if (instagramPosts.length === 0) {
+    container.innerHTML = '<p style="color: #E5E5E5;">Follow us on Instagram @pulsesouthafrica for the latest updates!</p>';
+    return;
   }
   
   const postsHTML = instagramPosts.map(post => `
     <div style="background: #1a1a1f; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease; border: 1px solid rgba(255, 45, 85, 0.1);">
       <a href="${post.uri}" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none; color: inherit;">
-        <div style="aspect-ratio: 1; overflow: hidden; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);">
-          <img src="https://instagram.com/p/${post.uri.split('/').filter(Boolean).pop()}/media/?size=m" alt="Instagram post" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 400%22%3E%3Crect fill=%22%23f09433%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2240%22 fill=%22white%22 text-anchor=%22middle%22 dominant-baseline=%22central%22%3EInstagram%3C/text%3E%3C/svg%3E';">
+        <div style="aspect-ratio: 1; overflow: hidden; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); display: flex; align-items: center; justify-content: center;">
+          <p style="color: white; font-size: 1.5rem; margin: 0;">📷</p>
         </div>
         <div style="padding: 1rem;">
-          <p style="margin: 0; font-size: 0.9rem; color: #E5E5E5;">Check out our post</p>
+          <p style="margin: 0; font-size: 0.9rem; color: #E5E5E5;">View on Instagram →</p>
         </div>
       </a>
     </div>
   `).join('');
   
-  container.innerHTML = postsHTML || '<p>Check out our Instagram posts @PulseSouthAfrica</p>';
+  container.innerHTML = postsHTML;
 }
 
 // Populate Instagram posts when page loads

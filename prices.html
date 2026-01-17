@@ -66,10 +66,10 @@
           <tbody id="pricing-table-body">
             <!-- Prices will be loaded dynamically from CMS -->
             <tr>
-              <td colspan="3" style="text-align: center; padding: 2rem; color: #b0b0b0;">Loading prices...</td>
+              <td colspan="4" style="text-align: center; padding: 2rem; color: #b0b0b0;">Loading prices...</td>
             </tr>
           </tbody>
-        71
+        </table>
 			      <script>
         // Load prices from CMS
         async function loadPrices() {
@@ -142,27 +142,40 @@
 		<script>
 			// Populate services
 			async function populateServices() {
-				const services = await PulseSheetsCMS.getServices();
-				const container = document.getElementById('services-container');
-				
-				if (!services || services.length === 0) {
-					container.style.display = 'none';
-					const heading = document.querySelector('h2');
-					if (heading && heading.textContent === 'Our Services') {
-						heading.style.display = 'none';
+				try {
+					const services = await PulseSheetsCMS.getServices();
+					const container = document.getElementById('services-container');
+					
+					if (!services || typeof services !== 'object' || Object.keys(services).length === 0) {
+						container.style.display = 'none';
+						const heading = document.querySelector('h2');
+						if (heading && heading.textContent === 'Our Services') {
+							heading.style.display = 'none';
+						}
+						return;
 					}
-					return;
+					
+					// Convert services object to array of service items
+					const servicesArray = Object.entries(services).map(([key, value]) => ({
+						name: key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+						description: value
+					}));
+					
+					const servicesHTML = servicesArray.map(service => `
+						<div style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.5rem; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+							<h3 style="margin: 0 0 1rem 0; color: #333;">${service.name || 'Service'}</h3>
+							<p style="margin: 0.5rem 0; color: #666; font-size: 0.95rem;">${service.description || ''}</p>
+						</div>
+					`).join('');
+					
+					container.innerHTML = servicesHTML;
+				} catch (error) {
+					console.error('Error loading services:', error);
+					const container = document.getElementById('services-container');
+					if (container) {
+						container.style.display = 'none';
+					}
 				}
-				
-				const servicesHTML = services.map(service => `
-					<div style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.5rem; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-						<h3 style="margin: 0 0 1rem 0; color: #333;">${service.name || 'Service'}</h3>
-						<p style="margin: 0.5rem 0; color: #666; font-size: 0.95rem;">${service.description || ''}</p>
-						<p style="margin: 1rem 0 0 0; font-size: 1.2rem; font-weight: bold; color: #d71e28;">${service.price || 'Contact for pricing'}</p>
-					</div>
-				`).join('');
-				
-				container.innerHTML = servicesHTML;
 			}
 			
 			// Populate services when page loads
@@ -172,7 +185,7 @@
 				populateServices();
 			}
 		</script>
-    72
+    </section>
   </main>
 
   <footer>
