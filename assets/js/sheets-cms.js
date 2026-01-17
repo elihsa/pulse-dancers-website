@@ -46,19 +46,34 @@ const PulseSheetsCMS = {
 
   async getPrices() {
     const rows = await this.fetchSheet(SHEET_NAMES.PRICES, 1, 20);
-    const startIdx =
-      rows[0]?.[0] === 'ID' || rows[0]?.[0]?.toLowerCase().includes('service')
-        ? 1
-        : 0;
+    // Check if first row is a header row
+    const hasHeader = rows[0]?.[0]?.toLowerCase().includes('service') || rows[0]?.[0]?.toLowerCase().includes('id');
+    const startIdx = hasHeader ? 1 : 0;
+    
     return rows
       .slice(startIdx)
-      .map((row) => ({
-        id: row[0],
-        name: row[1],
-        price: parseFloat(row[2]) || 0,
-        duration: row[3],
-        description: row[4] || '',
-      }))
+      .map((row) => {
+        // Handle both formats:
+        // Format 1: Service, Price, Duration, Description (4 columns)
+        // Format 2: ID, Service, Price, Duration, Description (5 columns)
+        const hasId = rows[0]?.length > 4;
+        if (hasId) {
+          return {
+            id: row[0],
+            name: row[1],
+            price: parseFloat(row[2]) || 0,
+            duration: row[3],
+            description: row[4] || '',
+          };
+        } else {
+          return {
+            name: row[0],
+            price: parseFloat(row[1]) || 0,
+            duration: row[2],
+            description: row[3] || '',
+          };
+        }
+      })
       .filter((p) => p.name);
   },
 
