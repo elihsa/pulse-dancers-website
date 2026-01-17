@@ -178,8 +178,7 @@ const PulseSheetsCMS = {
  
  dancers.forEach(dancer => {
  const card = document.createElement('div');
- card.className = 'dancer-card';
- card.style.cssText = 'background-color: #1a1a1f; border-radius: 8px; overflow: hidden; padding: 1rem; border: 1px solid rgba(255, 45, 85, 0.1);';
+ card.className = 'performer-card';
  
  // Handle both full path and filename
  let imageUrl = 'assets/images/performers/placeholder.jpg';
@@ -188,29 +187,27 @@ const PulseSheetsCMS = {
  }
  
  const img = document.createElement('img');
+ img.className = 'performer-photo';
  img.src = imageUrl;
- img.alt = dancer.name || 'Dancer';
- img.style.cssText = 'width: 100%; height: auto; border-radius: 4px; margin-bottom: 1rem; display: block;';
+ img.alt = dancer.name || 'Performer';
  img.onerror = function() {
  this.src = 'assets/images/performers/placeholder.jpg';
  };
  
  const content = document.createElement('div');
- content.className = 'dancer-info';
+ content.className = 'performer-info';
  
  const name = document.createElement('h3');
+ name.className = 'performer-name';
  name.textContent = dancer.name || '';
- name.style.cssText = 'margin: 0 0 0.5rem 0; color: #FF2D55;';
  
  const specialties = document.createElement('p');
- specialties.className = 'dancer-specialties';
+ specialties.className = 'performer-specialties';
  specialties.textContent = dancer.specialties || dancer.genres || '';
- specialties.style.cssText = 'margin: 0 0 0.5rem 0; color: #E5E5E5;';
  
  const bio = document.createElement('p');
- bio.className = 'dancer-bio';
+ bio.className = 'performer-bio';
  bio.textContent = dancer.bio || dancer.description || '';
- bio.style.cssText = 'margin: 0; color: #E5E5E5; font-size: 0.9rem; line-height: 1.5;';
  
  content.appendChild(name);
  content.appendChild(specialties);
