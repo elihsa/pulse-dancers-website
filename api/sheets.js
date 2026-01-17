@@ -4,13 +4,29 @@ const SHEET_ID = '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
 export default async (req, res) => {
   const { sheetName = 'PRICES', startRow = 1, endRow = 20 } = req.query;
   
+  // Set CORS headers first
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
   try {
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${sheetName}!A${startRow}:Z${endRow}?key=${API_KEY}`;
     
     const response = await fetch(url);
     
     if (!response.ok) {
-      return res.status(response.status).json({ error: 'Failed to fetch' });
+      const errorText = await response.text();
+      console.error(`Google Sheets API error: ${response.status} - ${errorText}`);
+      return res.status(response.status).json({ 
+        error: 'Failed to fetch from Google Sheets',
+        details: errorText,
+        status: response.status
+      });
     }
     
     const data = await response.json();
@@ -30,10 +46,14 @@ export default async (req, res) => {
       
       data.values = filteredRows;
     }
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    
     return res.status(200).json(data);
   } catch (error) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    return res.status(500).json({ error: error.message });
+    console.error('API endpoint error:', error);
+    return res.status(500).json({ 
+      error: 'Internal server error', 
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
