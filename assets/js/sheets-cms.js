@@ -90,22 +90,28 @@ const PulseSheetsCMS = {
   },
 
   async getDancers() {
- const rows = await this.fetchSheet(SHEET_NAMES.DANCERS, 1, 30);
- const startIdx = rows[0]?.[0] === 'ID' ? 1 : 0;
- return rows
- .slice(startIdx)
- .map((row) => ({
- id: row[0],
- name: row[1],
- initial: row[2],
- genres: row[3],
- experience: row[4],
- city: row[5],
- description: row[6],
- image: row[7] || 'assets/images/performers/placeholder.jpg',
- }))
- .filter((d) => d.name);
- },
+    const rows = await this.fetchSheet(SHEET_NAMES.DANCERS, 1, 30);
+    // Check if first row is a header
+    const hasHeader = rows[0]?.[0]?.toLowerCase() === 'name' || rows[0]?.[0]?.toLowerCase() === 'id';
+    const startIdx = hasHeader ? 1 : 0;
+    
+    return rows
+      .slice(startIdx)
+      .map((row) => {
+        // Handle format: Name | Bio | Specialties | Photo | Active
+        return {
+          name: row[0],
+          bio: row[1] || '',
+          specialties: row[2] || '',
+          image: row[3] || 'assets/images/performers/placeholder.jpg',
+          active: row[4],
+          // Keep legacy fields for compatibility
+          description: row[1] || '', // bio as description
+          genres: row[2] || '', // specialties as genres
+        };
+      })
+      .filter((d) => d.name && d.active !== 'FALSE');
+  },
 
   async getTestimonials() {
     const rows = await this.fetchSheet(SHEET_NAMES.TESTIMONIALS, 1, 20);
@@ -169,7 +175,8 @@ const PulseSheetsCMS = {
  card.className = 'dancer-card';
  card.style.cssText = 'background-color: #1a1a1f; border-radius: 8px; overflow: hidden; padding: 1rem; border: 1px solid rgba(255, 45, 85, 0.1);';
  
- const imageUrl = dancer.image ? `assets/images/performers/${dancer.image}` : 'assets/images/performers/placeholder.jpg';
+ // Handle both full path and filename
+ const imageUrl = dancer.image.includes('assets/') ? dancer.image : `assets/images/performers/${dancer.image}`;
  
  const img = document.createElement('img');
  img.src = imageUrl;
@@ -186,37 +193,19 @@ const PulseSheetsCMS = {
  name.textContent = dancer.name || '';
  name.style.cssText = 'margin: 0 0 0.5rem 0; color: #FF2D55;';
  
- const initial = document.createElement('p');
- initial.className = 'dancer-initial';
- initial.textContent = dancer.initial || '';
- initial.style.cssText = 'margin: 0 0 0.5rem 0; color: #b0b0b0; font-weight: bold;';
+ const specialties = document.createElement('p');
+ specialties.className = 'dancer-specialties';
+ specialties.textContent = dancer.specialties || dancer.genres || '';
+ specialties.style.cssText = 'margin: 0 0 0.5rem 0; color: #E5E5E5;';
  
- const genres = document.createElement('p');
- genres.className = 'dancer-genres';
- genres.textContent = dancer.genres || '';
- genres.style.cssText = 'margin: 0 0 0.5rem 0; color: #E5E5E5;';
- 
- const experience = document.createElement('p');
- experience.className = 'dancer-experience';
- experience.textContent = `Experience: ${dancer.experience || 'N/A'}`;
- experience.style.cssText = 'margin: 0 0 0.5rem 0; color: #E5E5E5; font-size: 0.9rem;';
- 
- const city = document.createElement('p');
- city.className = 'dancer-city';
- city.textContent = `Based in: ${dancer.city || 'N/A'}`;
- city.style.cssText = 'margin: 0 0 0.5rem 0; color: #E5E5E5; font-size: 0.9rem;';
- 
- const description = document.createElement('p');
- description.className = 'dancer-description';
- description.textContent = dancer.description || '';
- description.style.cssText = 'margin: 0; color: #E5E5E5; font-size: 0.9rem; line-height: 1.5;';
+ const bio = document.createElement('p');
+ bio.className = 'dancer-bio';
+ bio.textContent = dancer.bio || dancer.description || '';
+ bio.style.cssText = 'margin: 0; color: #E5E5E5; font-size: 0.9rem; line-height: 1.5;';
  
  content.appendChild(name);
- content.appendChild(initial);
- content.appendChild(genres);
- content.appendChild(experience);
- content.appendChild(city);
- content.appendChild(description);
+ content.appendChild(specialties);
+ content.appendChild(bio);
  
  card.appendChild(img);
  card.appendChild(content);
