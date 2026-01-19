@@ -6,7 +6,6 @@ async function loadBannerImage() {
     
     // Check if response is ok
     if (!response.ok) {
-      const errorText = await response.text();
       console.warn('[Banner] Could not load banner from CMS, using default:', response.status);
       throw new Error(`API returned ${response.status}`);
     }
