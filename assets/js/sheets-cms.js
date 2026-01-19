@@ -279,5 +279,4 @@ const PulseSheetsCMS = {
 
 window.PulseSheetsCMS = PulseSheetsCMS;
 console.log('%c[Pulse CMS] Initialized successfully', 'color: #FF2D55; font-weight: bold;');
-console.log('%c[Pulse CMS] Sheet ID: 1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4', 'color: #888;');
 console.log('%c[Pulse CMS] Having issues? Visit /test-cms.html or see CMS-TROUBLESHOOTING.md', 'color: #888;');

@@ -137,8 +137,15 @@
 
   <script src="assets/js/sheets-cms.js"></script>
   <script>
+    // Note: Sheet ID and API Key are also defined in api/sheets.js and exposed via the API endpoint
+    // They are read-only credentials for a public Google Sheet, safe to expose client-side
     const SHEET_ID = '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
     const API_KEY = 'AIzaSyBqmw5wBmz54vV7AUvH91UNqW6_gDLwrmw';
+    
+    // Helper function to check if data has valid content
+    function hasValidData(data) {
+      return data && (Array.isArray(data) ? data.length > 0 : Object.keys(data).length > 0);
+    }
 
     async function testAPIEndpoint() {
       const statusEl = document.getElementById('api-status');
@@ -176,10 +183,13 @@
       statusEl.textContent = 'Testing all sheets...';
       responseEl.textContent = '';
 
-      const sheets = ['HOME', 'PRICES', 'FAQS', 'DANCERS', 'SERVICES', 'TESTIMONIALS', 'SOCIAL', 'PAGE_CONTENT', 'FOOTER'];
+      // Use sheet names from PulseSheetsCMS if available, otherwise use hardcoded list
+      const sheetNames = typeof SHEET_NAMES !== 'undefined' 
+        ? Object.values(SHEET_NAMES)
+        : ['HOME', 'PRICES', 'FAQS', 'DANCERS', 'SERVICES', 'TESTIMONIALS', 'SOCIAL', 'PAGE_CONTENT', 'FOOTER'];
       const results = {};
 
-      for (const sheet of sheets) {
+      for (const sheet of sheetNames) {
         try {
           const response = await fetch(`/api/sheets?sheetName=${sheet}&startRow=1&endRow=3`);
           const data = await response.json();
@@ -281,7 +291,7 @@
       try {
         const data = await getterFn();
         
-        if (data && (Array.isArray(data) ? data.length > 0 : Object.keys(data).length > 0)) {
+        if (hasValidData(data)) {
           statusEl.className = 'status success';
           statusEl.textContent = `✓ ${sheetName} sheet is working!`;
           responseEl.textContent = JSON.stringify(data, null, 2);
