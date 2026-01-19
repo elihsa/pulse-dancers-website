@@ -26,12 +26,33 @@ const PulseSheetsCMS = {
       const response = await fetch(url);
       if (!response.ok) {
         const errorText = await response.text();
+        console.error(`[CMS Error] Failed to fetch ${sheetName} sheet:`, {
+          status: response.status,
+          error: errorText
+        });
+        
+        // Provide helpful error messages
+        if (response.status === 404) {
+          console.error(`[CMS Help] The "${sheetName}" tab might not exist in your Google Sheet. Please create it.`);
+        } else if (response.status === 403) {
+          console.error(`[CMS Help] Google Sheet might not be public. Go to Share > Anyone with link can view.`);
+        } else if (response.status === 400) {
+          console.error(`[CMS Help] The "${sheetName}" tab name might be misspelled. Tab names are case-sensitive.`);
+        }
+        
         throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
       const data = await response.json();
+      
+      // Warn if sheet is empty
+      if (!data.values || data.values.length === 0) {
+        console.warn(`[CMS Warning] ${sheetName} sheet is empty. Add content to this tab in Google Sheets.`);
+      }
+      
       return data.values || [];
     } catch (error) {
-      console.error(`Error fetching sheet ${sheetName}:`, error);
+      console.error(`[CMS Error] Failed to load ${sheetName}:`, error.message);
+      console.info(`[CMS Help] Visit /test-cms.html to diagnose CMS issues or see CMS-TROUBLESHOOTING.md`);
       return [];
     }
   },
@@ -257,4 +278,6 @@ const PulseSheetsCMS = {
 };
 
 window.PulseSheetsCMS = PulseSheetsCMS;
-console.log('PulseSheetsCMS initialized');
+console.log('%c[Pulse CMS] Initialized successfully', 'color: #FF2D55; font-weight: bold;');
+console.log('%c[Pulse CMS] Sheet ID: 1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4', 'color: #888;');
+console.log('%c[Pulse CMS] Having issues? Visit /test-cms.html or see CMS-TROUBLESHOOTING.md', 'color: #888;');
