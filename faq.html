@@ -52,8 +52,8 @@
   <main>
     <section class="section">
       <div class="block">
-        <h1>Frequently Asked Questions</h1>
-        <p>Find answers to common questions about our services, pricing, and booking process.</p>
+        <h1 id="faq-page-title">Frequently Asked Questions</h1>
+        <p id="faq-page-description">Find answers to common questions about our services, pricing, and booking process.</p>
 
         <div id="faq-content"></div>
 
@@ -71,19 +71,20 @@
 
   <footer>
     <div class="footer-inner">
-      <div>© 2025 Pulse Male Revue - South Africa.</div>
+      <div id="footer-copyright">© 2025 Pulse Male Revue - South Africa.</div>
       <div class="footer-links">
-        <a href="mailto:info@pulsedancers.com">info@pulsedancers.com</a>
+        <a href="mailto:info@pulsedancers.com" id="footer-email">info@pulsedancers.com</a>
         <span>·</span>
-        <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener" id="footer-facebook">Facebook</a>
         <span>·</span>
-        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" id="footer-instagram">Instagram</a>
       </div>
     </div>
   </footer>
 </div>
 
 <script src="assets/js/sheets-cms.js" defer></script>
+<script src="assets/js/cms-loader.js" defer></script>
 <script src="assets/js/app.js" defer></script>
 <script>
   // Load FAQ content from Google Sheets
@@ -147,6 +148,19 @@
     } catch (error) {
       console.error('Error loading FAQs:', error);
       faqContainer.innerHTML = '<p style="color: #b0b0b0; padding: 2rem; text-align: center;">Unable to load FAQs. Please try again later.</p>';
+    }
+
+    // Load FAQ page content from CMS
+    try {
+      const pageContent = await PulseSheetsCMS.getPageContent('FAQ');
+      
+      if (pageContent.pageTitle) document.getElementById('faq-page-title').textContent = pageContent.pageTitle;
+      if (pageContent.pageDescription) document.getElementById('faq-page-description').textContent = pageContent.pageDescription;
+      if (pageContent.footerTitle) document.getElementById('faq-footer-title').textContent = pageContent.footerTitle;
+      if (pageContent.footerDescription) document.getElementById('faq-footer-description').textContent = pageContent.footerDescription;
+    } catch (error) {
+      console.error('Error loading FAQ page content:', error);
+      // Keep default content if CMS fails
     }
   });
 </script>

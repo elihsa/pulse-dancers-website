@@ -27,7 +27,7 @@
   <link rel="preload" href="assets/js/app.js" as="script">
 </head>
 <body class="page">
-  	<img src="assets/images/top.png" alt="Pulse Male Revue Top Banner" class="top-banner" style="width: 50%; display: block;ock; margin: 0 auto;"
+  	<img src="assets/images/top.png" alt="Pulse Male Revue Top Banner" class="top-banner" style="width: 50%; display: block; margin: 0 auto;">
       <script src="assets/js/banner.js" defer></script>
   <header>
     <div class="nav-inner">
@@ -51,10 +51,10 @@
 
   <section class="section">
     <div class="block">
-      <h2>Join the Pulse Team</h2>
-      <p>Pulse Dancers, Africa's most sought-after male revue show, is on the lookout for new talent. If you're a professional male dancer, performer or waiter looking for lucrative work, we want to hear from you.</p>
+      <h2 id="join-page-title">Join the Pulse Team</h2>
+      <p id="join-page-description">Pulse Dancers, Africa's most sought-after male revue show, is on the lookout for new talent. If you're a professional male dancer, performer or waiter looking for lucrative work, we want to hear from you.</p>
 
-      <p class="form-info-banner" style="background-color: rgba(255, 45, 85, 0.1); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.2); margin: 2rem 0;">
+      <p class="form-info-banner" id="join-page-banner" style="background-color: rgba(255, 45, 85, 0.1); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.2); margin: 2rem 0;">
         <strong>📧 Application Form:</strong> Fill out the form below to apply to join the Pulse team. All applications are reviewed carefully and we'll contact you within 5 business days.
       </p>
 
@@ -248,20 +248,48 @@
 
   <footer>
     <div class="footer-inner">
-      <div>© 2025 Pulse Male Revue - South Africa.</div>
+      <div id="footer-copyright">© 2025 Pulse Male Revue - South Africa.</div>
       <div class="footer-links">
-        <a href="mailto:info@pulsedancers.com">info@pulsedancers.com</a>
+        <a href="mailto:info@pulsedancers.com" id="footer-email">info@pulsedancers.com</a>
         <span>·</span>
-        <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener" id="footer-facebook">Facebook</a>
         <span>·</span>
-        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" id="footer-instagram">Instagram</a>
       </div>
     </div>
   </footer>
 
+  <script src="assets/js/sheets-cms.js" defer></script>
+  <script src="assets/js/cms-loader.js" defer></script>
   <script src="assets/js/app.js" defer></script>
   
 <script>
+  // Load join page content from CMS
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const pageContent = await PulseSheetsCMS.getPageContent('JOIN');
+      
+      if (pageContent.pageTitle) document.getElementById('join-page-title').textContent = pageContent.pageTitle;
+      if (pageContent.pageDescription) document.getElementById('join-page-description').textContent = pageContent.pageDescription;
+      
+      // Security: Only allow specific safe HTML tags for formatting
+      if (pageContent.pageBanner) {
+        const bannerElement = document.getElementById('join-page-banner');
+        // Simple HTML sanitization - only allow <strong> and <em> tags
+        const sanitized = pageContent.pageBanner
+          .replace(/<script[^>]*>.*?<\/script>/gi, '') // Remove script tags
+          .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '') // Remove iframes
+          .replace(/<object[^>]*>.*?<\/object>/gi, '') // Remove objects
+          .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '') // Remove event handlers
+          .replace(/javascript:/gi, ''); // Remove javascript: protocol
+        bannerElement.innerHTML = sanitized;
+      }
+    } catch (error) {
+      console.error('Error loading join page content:', error);
+      // Keep default content if CMS fails
+    }
+  });
+
   // Handle form submission for the join form
   const joinForm = document.getElementById('joinForm');
   if (joinForm) {

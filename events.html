@@ -37,16 +37,16 @@
 <main>
 <section class="section">
   <div class="block">
-    <h1>Events & Socials</h1>
-    <p>Stay connected with Pulse and never miss an update. Follow our upcoming events and latest social media posts below.</p>
+    <h1 id="events-page-title">Events & Socials</h1>
+    <p id="events-page-description">Stay connected with Pulse and never miss an update. Follow our upcoming events and latest social media posts below.</p>
   </div>
 </section>
 
 <!-- Facebook Events Section -->
 <section class="section">
   <div class="block">
-    <h2>Upcoming Events</h2>
-    <p>Check out our upcoming shows and events on Facebook.</p>
+    <h2 id="events-upcoming-title">Upcoming Events</h2>
+    <p id="events-upcoming-description">Check out our upcoming shows and events on Facebook.</p>
     <div style="max-width: 500px; margin: 2rem auto;">
       <!-- Facebook Page Plugin with Events Tab -->
       <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FpulseSouthAfrica&tabs=events&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=false&appId" 
@@ -70,8 +70,8 @@
 <!-- Instagram Section -->
 <section class="section">
   <div class="block">
-    <h2>Follow Us on Instagram</h2>
-    <p>See our latest photos and behind-the-scenes content.</p>
+    <h2 id="events-instagram-title">Follow Us on Instagram</h2>
+    <p id="events-instagram-description">See our latest photos and behind-the-scenes content.</p>
     <div id="instagram-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem;"></div>
     <div style="text-align: center; margin-top: 2rem;">
       <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" class="btn">
@@ -85,21 +85,39 @@
 
 <footer>
   <div class="footer-inner">
-    <div>© 2025 Pulse Male Revue - South Africa.</div>
+    <div id="footer-copyright">© 2025 Pulse Male Revue - South Africa.</div>
     <div class="footer-links">
-      <a href="mailto:info@pulsedancers.com">info@pulsedancers.com</a>
+      <a href="mailto:info@pulsedancers.com" id="footer-email">info@pulsedancers.com</a>
       <span>·</span>
-      <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener">Facebook</a>
+      <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener" id="footer-facebook">Facebook</a>
       <span>·</span>
-      <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" id="footer-instagram">Instagram</a>
     </div>
   </div>
 </footer>
 </div>
 
 <script src="assets/js/sheets-cms.js" defer></script>
+<script src="assets/js/cms-loader.js" defer></script>
 <script src="assets/js/app.js" defer></script>
 <script>
+// Load events page content from CMS
+async function loadEventsPageContent() {
+  try {
+    const pageContent = await PulseSheetsCMS.getPageContent('EVENTS');
+    
+    if (pageContent.pageTitle) document.getElementById('events-page-title').textContent = pageContent.pageTitle;
+    if (pageContent.pageDescription) document.getElementById('events-page-description').textContent = pageContent.pageDescription;
+    if (pageContent.upcomingTitle) document.getElementById('events-upcoming-title').textContent = pageContent.upcomingTitle;
+    if (pageContent.upcomingDescription) document.getElementById('events-upcoming-description').textContent = pageContent.upcomingDescription;
+    if (pageContent.instagramTitle) document.getElementById('events-instagram-title').textContent = pageContent.instagramTitle;
+    if (pageContent.instagramDescription) document.getElementById('events-instagram-description').textContent = pageContent.instagramDescription;
+  } catch (error) {
+    console.error('Error loading events page content:', error);
+    // Keep default content if CMS fails
+  }
+}
+
 // Populate Instagram posts
 async function populateInstagram() {
   const social = await PulseSheetsCMS.getSocial();
@@ -145,9 +163,13 @@ async function populateInstagram() {
 
 // Populate Instagram posts when page loads
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', populateInstagram);
+  document.addEventListener('DOMContentLoaded', () => {
+    populateInstagram();
+    loadEventsPageContent();
+  });
 } else {
   populateInstagram();
+  loadEventsPageContent();
 }
 </script>
 </body>

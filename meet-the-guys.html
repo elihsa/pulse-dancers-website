@@ -52,8 +52,8 @@
 
   <section class="section">
     <div class="block">
-      <h1>Meet The Guys</h1>
-      <p>Our team consists of professional, hand-picked performers who are screened for personality, professionalism, and crowd control. Each performer brings unique energy and expertise to create an unforgettable experience.</p>
+      <h1 id="meet-page-title">Meet The Guys</h1>
+      <p id="meet-page-description">Our team consists of professional, hand-picked performers who are screened for personality, professionalism, and crowd control. Each performer brings unique energy and expertise to create an unforgettable experience.</p>
 
       <!-- Performers Grid (CMS-managed) -->
       <div id="performers-grid" class="performers-grid">
@@ -79,8 +79,8 @@
 </script>
 
       <div style="background-color: rgba(255, 45, 85, 0.1); padding: 2rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.2); margin: 3rem 0;">
-        <h2 style="margin-bottom: 1rem;">What Makes Our Team Special</h2>
-        <ul class="offers-list">
+        <h2 style="margin-bottom: 1rem;" id="meet-special-title">What Makes Our Team Special</h2>
+        <ul class="offers-list" id="meet-special-list">
           <li>Professionally trained dancers and performers</li>
           <li>Extensive experience in crowd interaction and entertainment</li>
           <li>Respectful, courteous, and adaptable to any event atmosphere</li>
@@ -90,33 +90,68 @@
       </div>
 
       <div style="background-color: #1a1a1f; padding: 2rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1); margin: 3rem 0;">
-        <h2 style="margin-bottom: 1rem;">Request Specific Performers</h2>
-        <p style="margin-bottom: 1.5rem;">When you book with Pulse, you can request specific performers based on your preferences. Once selected, they're locked in for your event - no last-minute changes without your consent.</p>
-        <a href="book.html" class="btn">Book Your Event</a>
+        <h2 style="margin-bottom: 1rem;" id="meet-request-title">Request Specific Performers</h2>
+        <p style="margin-bottom: 1.5rem;" id="meet-request-description">When you book with Pulse, you can request specific performers based on your preferences. Once selected, they're locked in for your event - no last-minute changes without your consent.</p>
+        <a href="book.html" class="btn" id="meet-request-button">Book Your Event</a>
       </div>
 
       <div style="text-align: center; margin-top: 4rem; padding: 3rem 2rem; background-color: rgba(255, 45, 85, 0.05); border-radius: 8px;">
-        <h2 style="margin-bottom: 1rem;">Interested in Joining Our Team?</h2>
-        <p style="margin-bottom: 2rem;">We're always looking for talented, professional performers to join Pulse Male Revue. If you have what it takes, we'd love to hear from you.</p>
-        <a href="join.html" class="btn">Apply Now</a>
+        <h2 style="margin-bottom: 1rem;" id="meet-join-title">Interested in Joining Our Team?</h2>
+        <p style="margin-bottom: 2rem;" id="meet-join-description">We're always looking for talented, professional performers to join Pulse Male Revue. If you have what it takes, we'd love to hear from you.</p>
+        <a href="join.html" class="btn" id="meet-join-button">Apply Now</a>
       </div>
     </div>
   </section>
 
   <footer>
     <div class="footer-inner">
-      <div>© 2025 Pulse Male Revue - South Africa.</div>
+      <div id="footer-copyright">© 2025 Pulse Male Revue - South Africa.</div>
       <div class="footer-links">
-        <a href="mailto:info@pulsedancers.com">info@pulsedancers.com</a>
+        <a href="mailto:info@pulsedancers.com" id="footer-email">info@pulsedancers.com</a>
         <span>·</span>
-        <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener" id="footer-facebook">Facebook</a>
         <span>·</span>
-        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" id="footer-instagram">Instagram</a>
       </div>
     </div>
   </footer>
 
+  <script src="assets/js/cms-loader.js" defer></script>
   <script src="assets/js/app.js" defer></script>
+  <script>
+    // Load meet page content from CMS
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const pageContent = await PulseSheetsCMS.getPageContent('MEET');
+        
+        if (pageContent.pageTitle) document.getElementById('meet-page-title').textContent = pageContent.pageTitle;
+        if (pageContent.pageDescription) document.getElementById('meet-page-description').textContent = pageContent.pageDescription;
+        if (pageContent.specialTitle) document.getElementById('meet-special-title').textContent = pageContent.specialTitle;
+        if (pageContent.requestTitle) document.getElementById('meet-request-title').textContent = pageContent.requestTitle;
+        if (pageContent.requestDescription) document.getElementById('meet-request-description').textContent = pageContent.requestDescription;
+        if (pageContent.requestButton) document.getElementById('meet-request-button').textContent = pageContent.requestButton;
+        if (pageContent.joinTitle) document.getElementById('meet-join-title').textContent = pageContent.joinTitle;
+        if (pageContent.joinDescription) document.getElementById('meet-join-description').textContent = pageContent.joinDescription;
+        if (pageContent.joinButton) document.getElementById('meet-join-button').textContent = pageContent.joinButton;
+        
+        // Load special list items if provided
+        if (pageContent.specialList) {
+          const specialList = document.getElementById('meet-special-list');
+          const items = pageContent.specialList.split('|').map(s => s.trim());
+          // Use textContent to prevent XSS
+          specialList.innerHTML = '';
+          items.forEach(itemText => {
+            const li = document.createElement('li');
+            li.textContent = itemText;
+            specialList.appendChild(li);
+          });
+        }
+      } catch (error) {
+        console.error('Error loading meet page content:', error);
+        // Keep default content if CMS fails
+      }
+    });
+  </script>
 </body>
 </html>
 

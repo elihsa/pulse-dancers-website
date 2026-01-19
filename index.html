@@ -26,7 +26,6 @@
   <link rel="preload" href="assets/css/styles.css" as="style" />
   <link rel="preload" href="assets/js/app.js" as="script" />
   <script src="assets/js/banner.js" defer></script>
-	  <script src="assets/js/sheets-cms.js" defer></script>
   
   <script type="application/ld+json">
   {
@@ -75,33 +74,33 @@
       <div>
         <div class="hero-kicker">
           <span></span>
-          <div>Choreographed Male Revue</div>
+          <div id="hero-kicker-text">Choreographed Male Revue</div>
         </div>
-        <h1>Fulfill your Fantasies</h1>
-        <p class="hero-sub">South Africa's choreographed male revue for bachelorettes, ladies nights and corporate events. Hand-picked performers. Professional. Respectful. Unforgettable.</p>
+        <h1 id="hero-title">Fulfill your Fantasies</h1>
+        <p class="hero-sub" id="hero-subtitle">South Africa's choreographed male revue for bachelorettes, ladies nights and corporate events. Hand-picked performers. Professional. Respectful. Unforgettable.</p>
         <div class="hero-actions">
-          <a href="book.html" class="btn">Book a Show</a>
-          <a href="prices.html" class="btn btn-outline">View Prices</a>
-          <a href="join.html" class="btn btn-outline">Join the Team</a>
+          <a href="book.html" class="btn" id="hero-cta1">Book a Show</a>
+          <a href="prices.html" class="btn btn-outline" id="hero-cta2">View Prices</a>
+          <a href="join.html" class="btn btn-outline" id="hero-cta3">Join the Team</a>
         </div>
       </div>
       <aside class="hero-side">
         <div class="hero-stat">
-          <strong>The Full Experience</strong><br>
-          Choreographed shows, topless & bottomless waiters, games, MCs, custom appearances.
+          <strong id="hero-side-title">The Full Experience</strong><br>
+          <span id="hero-side-description">Choreographed shows, topless & bottomless waiters, games, MCs, custom appearances.</span>
         </div>
-        <p class="hero-tagline">Hand-picked performers screened for personality, professionalism and crowd control.</p>
+        <p class="hero-tagline" id="hero-tagline">Hand-picked performers screened for personality, professionalism and crowd control.</p>
       </aside>
     </section>
 
     <section class="section stack">
       <div class="block">
-        <h2>About Pulse Male Revue</h2>
-        <p>Pulse is choreographed male entertainment built around strong performers, tight routines, and respectful, professional crowd interaction. You decide how wild or conservative; the team adjusts to your crowd.</p>
+        <h2 id="about-title">About Pulse Male Revue</h2>
+        <p id="about-description">Pulse is choreographed male entertainment built around strong performers, tight routines, and respectful, professional crowd interaction. You decide how wild or conservative; the team adjusts to your crowd.</p>
       </div>
       <div class="block">
-        <h2>What We Offer</h2>
-        <ul class="offers-list">
+        <h2 id="services-title">What We Offer</h2>
+        <ul class="offers-list" id="services-list">
           <li>Choreographed strip shows (1-man, multi-man)</li>
           <li>Topless and bottomless waiters</li>
           <li>Naughty games with a host</li>
@@ -175,19 +174,20 @@
 
   <footer>
     <div class="footer-inner">
-      <div>© 2025 Pulse Male Revue - South Africa.</div>
+      <div id="footer-copyright">© 2025 Pulse Male Revue - South Africa.</div>
       <div class="footer-links">
-        <a href="mailto:info@pulsedancers.com">info@pulsedancers.com</a>
+        <a href="mailto:info@pulsedancers.com" id="footer-email">info@pulsedancers.com</a>
         <span>·</span>
-        <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener" id="footer-facebook">Facebook</a>
         <span>·</span>
-        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" id="footer-instagram">Instagram</a>
       </div>
     </div>
   </footer>
 </div>
 
 <script src="assets/js/sheets-cms.js" defer></script>
+<script src="assets/js/cms-loader.js" defer></script>
 <script src="assets/js/app.js" defer></script>
 	 <script>
       // Load and display testimonials from CMS
@@ -216,11 +216,54 @@
       }
     }
 
+    // Load home page content from CMS
+    async function loadHomeContent() {
+      try {
+        const homeData = await PulseSheetsCMS.getHome();
+        
+        // Update hero section
+        if (homeData.heroKickerText) document.getElementById('hero-kicker-text').textContent = homeData.heroKickerText;
+        if (homeData.heroTitle) document.getElementById('hero-title').textContent = homeData.heroTitle;
+        if (homeData.heroSubtitle) document.getElementById('hero-subtitle').textContent = homeData.heroSubtitle;
+        if (homeData.heroCTA1) document.getElementById('hero-cta1').textContent = homeData.heroCTA1;
+        if (homeData.heroCTA2) document.getElementById('hero-cta2').textContent = homeData.heroCTA2;
+        if (homeData.heroCTA3) document.getElementById('hero-cta3').textContent = homeData.heroCTA3;
+        if (homeData.heroSideTitle) document.getElementById('hero-side-title').textContent = homeData.heroSideTitle;
+        if (homeData.heroSideDescription) document.getElementById('hero-side-description').textContent = homeData.heroSideDescription;
+        if (homeData.heroTagline) document.getElementById('hero-tagline').textContent = homeData.heroTagline;
+        
+        // Update about section
+        if (homeData.aboutTitle) document.getElementById('about-title').textContent = homeData.aboutTitle;
+        if (homeData.aboutDescription) document.getElementById('about-description').textContent = homeData.aboutDescription;
+        if (homeData.servicesTitle) document.getElementById('services-title').textContent = homeData.servicesTitle;
+        
+        // Update services list if provided
+        if (homeData.servicesList) {
+          const servicesList = document.getElementById('services-list');
+          const services = homeData.servicesList.split('|').map(s => s.trim());
+          // Use textContent to prevent XSS
+          servicesList.innerHTML = '';
+          services.forEach(serviceText => {
+            const li = document.createElement('li');
+            li.textContent = serviceText;
+            servicesList.appendChild(li);
+          });
+        }
+      } catch (error) {
+        console.error('Error loading home content:', error);
+        // Keep default content if CMS fails
+      }
+    }
+
     // Load testimonials when page loads
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', loadTestimonials);
+      document.addEventListener('DOMContentLoaded', () => {
+        loadTestimonials();
+        loadHomeContent();
+      });
     } else {
       loadTestimonials();
+      loadHomeContent();
     }
 
 
