@@ -57,17 +57,36 @@ Follow these steps to create a valid Google Sheets API key:
 
 ### Step 6: Update the Code
 
-Replace the API key in these files:
+You have two options for updating the API key:
 
-**File 1: `/api/sheets.js`** (Line 1)
+#### Option A: Environment Variables (Recommended for Production)
+
+Add the key as environment variables in your Vercel deployment:
+
+1. Go to your Vercel project dashboard
+2. Navigate to Settings → Environment Variables
+3. Add two variables:
+   - `GOOGLE_SHEETS_API_KEY` = your new API key
+   - `GOOGLE_SHEET_ID` = 1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4
+4. Redeploy your site
+
+This is more secure and allows different keys for different environments.
+
+#### Option B: Hard-Code in Files (Simpler for Testing)
+
+Replace the API key directly in the code:
+
+**File 1: `/api/sheets.js`** (Line 11)
 ```javascript
-const API_KEY = 'YOUR_NEW_API_KEY_HERE';
+const API_KEY = process.env.GOOGLE_SHEETS_API_KEY || 'YOUR_NEW_API_KEY_HERE';
 ```
 
 **File 2: `/home/runner/work/pulse-dancers-website/pulse-dancers-website/test-cms.html`** (Line 145)
 ```javascript
-const API_KEY = 'YOUR_NEW_API_KEY_HERE';
+const API_KEY = 'YOUR_NEW_API_KEY_HERE'; // ❌ INVALID KEY
 ```
+
+Note: Even with hard-coded keys, they're safe if properly restricted in Google Cloud Console.
 
 ### Step 7: Make Your Google Sheet Public
 

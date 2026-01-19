@@ -1,9 +1,15 @@
-const API_KEY = 'AIzaSyBqmw5wBmz54vV7AUvH91UNqW6_gDLwrmw';
-const SHEET_ID = '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
-
-// IMPORTANT: This API key is currently INVALID!
+// NOTE: This API key is intentionally hard-coded for now as it's a CLIENT-SIDE API key
+// that is meant to be publicly visible (it will be in browser requests anyway).
+// The key should be restricted in Google Cloud Console to only allow:
+// 1. HTTP referrers (website domains only)
+// 2. Google Sheets API only
+// 3. Read-only access
+//
+// CRITICAL: This API key is currently INVALID!
 // See API-KEY-SETUP-GUIDE.md for instructions on getting a valid key.
 // The CMS will not work until you replace this with a valid Google Sheets API key.
+const API_KEY = process.env.GOOGLE_SHEETS_API_KEY || 'AIzaSyBqmw5wBmz54vV7AUvH91UNqW6_gDLwrmw';
+const SHEET_ID = process.env.GOOGLE_SHEET_ID || '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
 
 export default async (req, res) => {
   const { sheetName = 'PRICES', startRow = 1, endRow = 20 } = req.query;
