@@ -70,6 +70,15 @@
 </head>
 <body>
   <h1>🔍 Pulse CMS Integration Test Page</h1>
+  
+  <div class="test-section" style="background-color: rgba(244, 67, 54, 0.2); border-color: #F44336;">
+    <h2 style="color: #F44336;">🚨 CRITICAL: Invalid API Key</h2>
+    <p><strong>The Google Sheets API key is currently INVALID.</strong></p>
+    <p>The CMS cannot work without a valid API key. All tests below will fail.</p>
+    <p><strong>Solution:</strong> Follow the instructions in <code>API-KEY-SETUP-GUIDE.md</code> to get a valid key.</p>
+    <p><strong>Status:</strong> The website will display fallback content instead of loading from Google Sheets.</p>
+  </div>
+
   <p>This page tests all CMS functionality to help diagnose any issues.</p>
 
   <div class="test-section">
@@ -137,12 +146,11 @@
 
   <script src="assets/js/sheets-cms.js"></script>
   <script>
-    // Note: These credentials are intentionally client-side for this diagnostic tool
-    // They are read-only API credentials that only access a public Google Sheet
-    // The same values are already exposed in /api/sheets.js (Vercel serverless function)
-    // This is standard practice for Google Sheets API with public, read-only access
+    // ⚠️ CRITICAL: These API credentials are currently INVALID
+    // The API key below returns "API key not valid" error from Google Sheets API
+    // See API-KEY-SETUP-GUIDE.md for instructions on getting a valid key
     const SHEET_ID = '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
-    const API_KEY = 'AIzaSyBqmw5wBmz54vV7AUvH91UNqW6_gDLwrmw';
+    const API_KEY = 'AIzaSyBqmw5wBmz54vV7AUvH91UNqW6_gDLwrmw'; // ❌ INVALID KEY
     
     // Helper function to check if data has valid content
     // Note: Could be moved to shared utility, but kept here for test page independence
