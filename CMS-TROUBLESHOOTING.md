@@ -2,6 +2,21 @@
 
 This guide helps you diagnose and fix common CMS issues with the Pulse Dancers website.
 
+## 🚨 CRITICAL UPDATE - January 19, 2026
+
+**The current API key is INVALID and the CMS is NOT working.**
+
+- Current API Key: `AIzaSyBqmw5wBmz54vV7AUvH91UNqW6_gDLwrmw`  
+- Status: ❌ Returns "API key not valid" error from Google Sheets API
+- Impact: **CMS is completely non-functional**
+
+**Required Action:**
+1. Follow **API-KEY-SETUP-GUIDE.md** to get a valid Google Sheets API key
+2. Update the key in `api/sheets.js` (line 1)
+3. Run `node test-cms-complete.js` to verify the fix
+
+Until a valid API key is provided, the CMS cannot work and the website will show fallback content.
+
 ## Quick Diagnosis
 
 Visit **[Your-Site-URL]/test-cms.html** to run automated tests. This page will:
