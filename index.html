@@ -242,7 +242,13 @@
         if (homeData.servicesList) {
           const servicesList = document.getElementById('services-list');
           const services = homeData.servicesList.split('|').map(s => s.trim());
-          servicesList.innerHTML = services.map(s => `<li>${s}</li>`).join('');
+          // Use textContent to prevent XSS
+          servicesList.innerHTML = '';
+          services.forEach(serviceText => {
+            const li = document.createElement('li');
+            li.textContent = serviceText;
+            servicesList.appendChild(li);
+          });
         }
       } catch (error) {
         console.error('Error loading home content:', error);

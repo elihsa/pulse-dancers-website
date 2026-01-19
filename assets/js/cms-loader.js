@@ -2,6 +2,14 @@
 // This script loads footer and common elements that appear across all pages
 
 async function loadFooterContent() {
+  // Check if PulseSheetsCMS is available
+  if (typeof PulseSheetsCMS === 'undefined') {
+    console.warn('PulseSheetsCMS not loaded yet, retrying footer load...');
+    // Retry after a short delay
+    setTimeout(loadFooterContent, 100);
+    return;
+  }
+
   try {
     const footerData = await PulseSheetsCMS.getFooter();
     

@@ -271,6 +271,9 @@
       
       if (pageContent.pageTitle) document.getElementById('join-page-title').textContent = pageContent.pageTitle;
       if (pageContent.pageDescription) document.getElementById('join-page-description').textContent = pageContent.pageDescription;
+      
+      // Note: pageBanner intentionally allows HTML for formatting (strong, em tags)
+      // Only use trusted content from CMS - do not allow user-submitted content here
       if (pageContent.pageBanner) document.getElementById('join-page-banner').innerHTML = pageContent.pageBanner;
     } catch (error) {
       console.error('Error loading join page content:', error);

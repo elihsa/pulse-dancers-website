@@ -168,6 +168,12 @@ const PulseSheetsCMS = {
 	},
 
   async getPageContent(pageName) {
+    // Validate input
+    if (!pageName || typeof pageName !== 'string') {
+      console.error('getPageContent: pageName must be a non-empty string');
+      return {};
+    }
+    
     const rows = await this.fetchSheet(SHEET_NAMES.PAGE_CONTENT, 1, 100);
     const result = {};
     rows.forEach((row) => {

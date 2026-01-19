@@ -138,7 +138,13 @@
         if (pageContent.specialList) {
           const specialList = document.getElementById('meet-special-list');
           const items = pageContent.specialList.split('|').map(s => s.trim());
-          specialList.innerHTML = items.map(item => `<li>${item}</li>`).join('');
+          // Use textContent to prevent XSS
+          specialList.innerHTML = '';
+          items.forEach(itemText => {
+            const li = document.createElement('li');
+            li.textContent = itemText;
+            specialList.appendChild(li);
+          });
         }
       } catch (error) {
         console.error('Error loading meet page content:', error);
