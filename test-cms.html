@@ -137,12 +137,15 @@
 
   <script src="assets/js/sheets-cms.js"></script>
   <script>
-    // Note: Sheet ID and API Key are also defined in api/sheets.js and exposed via the API endpoint
-    // They are read-only credentials for a public Google Sheet, safe to expose client-side
+    // Note: These credentials are intentionally client-side for this diagnostic tool
+    // They are read-only API credentials that only access a public Google Sheet
+    // The same values are already exposed in /api/sheets.js (Vercel serverless function)
+    // This is standard practice for Google Sheets API with public, read-only access
     const SHEET_ID = '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
     const API_KEY = 'AIzaSyBqmw5wBmz54vV7AUvH91UNqW6_gDLwrmw';
     
     // Helper function to check if data has valid content
+    // Note: Could be moved to shared utility, but kept here for test page independence
     function hasValidData(data) {
       return data && (Array.isArray(data) ? data.length > 0 : Object.keys(data).length > 0);
     }
