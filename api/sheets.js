@@ -21,11 +21,30 @@ export default async (req, res) => {
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Google Sheets API error: ${response.status} - ${errorText}`);
+      console.error(`[Sheets API] Error fetching ${sheetName}: ${response.status} - ${errorText}`);
+      
+      // Parse error for better messages
+      let helpfulMessage = 'Failed to fetch from Google Sheets';
+      try {
+        const errorData = JSON.parse(errorText);
+        if (errorData.error?.message) {
+          helpfulMessage = errorData.error.message;
+        }
+      } catch (e) {
+        // If we can't parse JSON, use the raw text
+        helpfulMessage = errorText;
+      }
+      
       return res.status(response.status).json({ 
         error: 'Failed to fetch from Google Sheets',
-        details: errorText,
-        status: response.status
+        details: helpfulMessage,
+        sheetName: sheetName,
+        status: response.status,
+        help: response.status === 400 
+          ? `The "${sheetName}" tab may not exist or is misspelled. Tab names are case-sensitive.`
+          : response.status === 403
+          ? 'The Google Sheet may not be public. Go to Share > Anyone with the link can view.'
+          : 'Check that the Sheet ID and API key are correct.'
       });
     }
     
@@ -49,11 +68,13 @@ export default async (req, res) => {
     
     return res.status(200).json(data);
   } catch (error) {
-    console.error('API endpoint error:', error);
+    console.error('[Sheets API] Endpoint error:', error);
     return res.status(500).json({ 
       error: 'Internal server error', 
       message: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      sheetName: sheetName,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+      help: 'Check the server logs for more details. Visit /test-cms.html to diagnose issues.'
     });
   }
 };
