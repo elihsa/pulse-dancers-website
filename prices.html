@@ -51,7 +51,7 @@
   <main>
     <section class="section">
       <div class="block">
-        <h1>Pricing</h1>
+        <h1 id="prices-page-title">Pricing</h1>
         <p id="pricing-notes">All prices are excl. travel and sustenance. Contact us for custom packages.</p>
 
         <table class="pricing-table">
@@ -104,25 +104,56 @@
         } else {
           loadPrices();
         }
+
+        // Load prices page content from CMS
+        async function loadPricesPageContent() {
+          try {
+            const pageContent = await PulseSheetsCMS.getPageContent('PRICES');
+            
+            // Update all editable text elements
+            if (pageContent.pageTitle) document.getElementById('prices-page-title').textContent = pageContent.pageTitle;
+            if (pageContent.pricingNotes) document.getElementById('pricing-notes').textContent = pageContent.pricingNotes;
+            if (pageContent.howTitle) document.getElementById('pricing-how-title').textContent = pageContent.howTitle;
+            if (pageContent.baseRateTitle) document.getElementById('pricing-base-title').textContent = pageContent.baseRateTitle;
+            if (pageContent.baseRateText) document.getElementById('pricing-base-text').textContent = pageContent.baseRateText;
+            if (pageContent.travelTitle) document.getElementById('pricing-travel-title').textContent = pageContent.travelTitle;
+            if (pageContent.travelText) document.getElementById('pricing-travel-text').textContent = pageContent.travelText;
+            if (pageContent.customTitle) document.getElementById('pricing-custom-title').textContent = pageContent.customTitle;
+            if (pageContent.customText) document.getElementById('pricing-custom-text').textContent = pageContent.customText;
+            if (pageContent.ctaTitle) document.getElementById('pricing-cta-title').textContent = pageContent.ctaTitle;
+            if (pageContent.ctaDescription) document.getElementById('pricing-cta-description').textContent = pageContent.ctaDescription;
+            if (pageContent.ctaButton) document.getElementById('pricing-cta-button').textContent = pageContent.ctaButton;
+          } catch (error) {
+            console.error('Error loading prices page content:', error);
+            // Keep default content if CMS fails
+          }
+        }
+
+        // Load page content
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadPricesPageContent);
+        } else {
+          loadPricesPageContent();
+        }
       </script>
       </div>
     </section>
 
     <section class="section">
       <div class="block">
-        <h2>How Pricing Works</h2>
+        <h2 id="pricing-how-title">How Pricing Works</h2>
         <div style="display: grid; gap: 1.5rem; margin-top: 2rem;">
           <div style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
-            <h3 style="color: #FF2D55; margin-bottom: 0.75rem;">Base Rate</h3>
-            <p style="color: #E5E5E5;">Show or service price above.</p>
+            <h3 style="color: #FF2D55; margin-bottom: 0.75rem;" id="pricing-base-title">Base Rate</h3>
+            <p style="color: #E5E5E5;" id="pricing-base-text">Show or service price above.</p>
           </div>
           <div style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
-            <h3 style="color: #FF2D55; margin-bottom: 0.75rem;">Travel</h3>
-            <p style="color: #E5E5E5;">R4 per km outside 50km radius from Sandton City (round trip).</p>
+            <h3 style="color: #FF2D55; margin-bottom: 0.75rem;" id="pricing-travel-title">Travel</h3>
+            <p style="color: #E5E5E5;" id="pricing-travel-text">R4 per km outside 50km radius from Sandton City (round trip).</p>
           </div>
           <div style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
-            <h3 style="color: #FF2D55; margin-bottom: 0.75rem;">Custom Packages</h3>
-            <p style="color: #E5E5E5;">Multi-day events, VIP add-ons, theme packages - contact us for a tailored quote.</p>
+            <h3 style="color: #FF2D55; margin-bottom: 0.75rem;" id="pricing-custom-title">Custom Packages</h3>
+            <p style="color: #E5E5E5;" id="pricing-custom-text">Multi-day events, VIP add-ons, theme packages - contact us for a tailored quote.</p>
           </div>
         </div>
       </div>
@@ -130,9 +161,9 @@
 
     <section class="section">
       <div class="block" style="text-align: center; background-color: rgba(255, 45, 85, 0.1); padding: 3rem 2rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.2);">
-        <h2>Ready to Book?</h2>
-        <p style="margin-bottom: 2rem;">Get a personalized quote based on your event details with automatic distance calculation.</p>
-        <a href="book.html" class="btn">Get a Quote</a>
+        <h2 id="pricing-cta-title">Ready to Book?</h2>
+        <p style="margin-bottom: 2rem;" id="pricing-cta-description">Get a personalized quote based on your event details with automatic distance calculation.</p>
+        <a href="book.html" class="btn" id="pricing-cta-button">Get a Quote</a>
       </div>
       
 		<!-- Services Section -->
@@ -190,19 +221,20 @@
 
   <footer>
     <div class="footer-inner">
-      <div>© 2025 Pulse Male Revue - South Africa.</div>
+      <div id="footer-copyright">© 2025 Pulse Male Revue - South Africa.</div>
       <div class="footer-links">
-        <a href="mailto:info@pulsedancers.com">info@pulsedancers.com</a>
+        <a href="mailto:info@pulsedancers.com" id="footer-email">info@pulsedancers.com</a>
         <span>·</span>
-        <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener" id="footer-facebook">Facebook</a>
         <span>·</span>
-        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" id="footer-instagram">Instagram</a>
       </div>
     </div>
   </footer>
 </div>
 
 <script src="assets/js/sheets-cms.js" defer></script>
+<script src="assets/js/cms-loader.js" defer></script>
 <script src="assets/js/app.js" defer></script>
 </body>
 </html>

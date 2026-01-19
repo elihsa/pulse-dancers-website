@@ -8,6 +8,8 @@ const SHEET_NAMES = {
   SERVICES: 'SERVICES',
   TESTIMONIALS: 'TESTIMONIALS',
   SOCIAL: 'SOCIAL',
+  PAGE_CONTENT: 'PAGE_CONTENT',
+  FOOTER: 'FOOTER',
 };
 
 const escapeHtml = (text) => {
@@ -164,6 +166,29 @@ const PulseSheetsCMS = {
 		});
 		return result;
 	},
+
+  async getPageContent(pageName) {
+    const rows = await this.fetchSheet(SHEET_NAMES.PAGE_CONTENT, 1, 100);
+    const result = {};
+    rows.forEach((row) => {
+      // Format: Page | Key | Value
+      if (row[0] && row[1] && row[2] && row[0].toLowerCase() === pageName.toLowerCase()) {
+        result[row[1]] = row[2];
+      }
+    });
+    return result;
+  },
+
+  async getFooter() {
+    const rows = await this.fetchSheet(SHEET_NAMES.FOOTER, 1, 10);
+    const result = {};
+    rows.forEach((row) => {
+      if (row[0] && row[1]) {
+        result[row[0]] = row[1];
+      }
+    });
+    return result;
+  },
    loadDancers(containerId) {
  const container = document.getElementById(containerId);
  if (!container) return;
