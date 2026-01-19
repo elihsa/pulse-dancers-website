@@ -1,13 +1,22 @@
 // CMS Content Loader - Loads dynamic content from Google Sheets CMS
 // This script loads footer and common elements that appear across all pages
 
+let loadFooterRetryCount = 0;
+const MAX_FOOTER_RETRY = 10; // Maximum 1 second total wait time
+
 async function loadFooterContent() {
   // Check if PulseSheetsCMS is available
   if (typeof PulseSheetsCMS === 'undefined') {
-    console.warn('PulseSheetsCMS not loaded yet, retrying footer load...');
-    // Retry after a short delay
-    setTimeout(loadFooterContent, 100);
-    return;
+    loadFooterRetryCount++;
+    if (loadFooterRetryCount < MAX_FOOTER_RETRY) {
+      console.warn(`PulseSheetsCMS not loaded yet, retrying footer load (${loadFooterRetryCount}/${MAX_FOOTER_RETRY})...`);
+      // Retry after a short delay
+      setTimeout(loadFooterContent, 100);
+      return;
+    } else {
+      console.error('PulseSheetsCMS failed to load after maximum retries. Footer will use default content.');
+      return;
+    }
   }
 
   try {

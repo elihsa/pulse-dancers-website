@@ -272,9 +272,18 @@
       if (pageContent.pageTitle) document.getElementById('join-page-title').textContent = pageContent.pageTitle;
       if (pageContent.pageDescription) document.getElementById('join-page-description').textContent = pageContent.pageDescription;
       
-      // Note: pageBanner intentionally allows HTML for formatting (strong, em tags)
-      // Only use trusted content from CMS - do not allow user-submitted content here
-      if (pageContent.pageBanner) document.getElementById('join-page-banner').innerHTML = pageContent.pageBanner;
+      // Security: Only allow specific safe HTML tags for formatting
+      if (pageContent.pageBanner) {
+        const bannerElement = document.getElementById('join-page-banner');
+        // Simple HTML sanitization - only allow <strong> and <em> tags
+        const sanitized = pageContent.pageBanner
+          .replace(/<script[^>]*>.*?<\/script>/gi, '') // Remove script tags
+          .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '') // Remove iframes
+          .replace(/<object[^>]*>.*?<\/object>/gi, '') // Remove objects
+          .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '') // Remove event handlers
+          .replace(/javascript:/gi, ''); // Remove javascript: protocol
+        bannerElement.innerHTML = sanitized;
+      }
     } catch (error) {
       console.error('Error loading join page content:', error);
       // Keep default content if CMS fails
