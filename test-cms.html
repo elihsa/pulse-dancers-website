@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS Test Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #1a1a1f;
+      color: #E5E5E5;
+    }
+    h1 {
+      color: #FF2D55;
+    }
+    .test-section {
+      background-color: #2a2a2f;
+      border: 1px solid rgba(255, 45, 85, 0.2);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .test-section h2 {
+      color: #FF2D55;
+      margin-top: 0;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    .loading {
+      background-color: rgba(255, 193, 7, 0.2);
+      color: #FFC107;
+    }
+    .success {
+      background-color: rgba(76, 175, 80, 0.2);
+      color: #4CAF50;
+    }
+    .error {
+      background-color: rgba(244, 67, 54, 0.2);
+      color: #F44336;
+    }
+    pre {
+      background-color: #1a1a1f;
+      border: 1px solid rgba(255, 45, 85, 0.1);
+      border-radius: 4px;
+      padding: 10px;
+      overflow-x: auto;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .test-button {
+      background-color: #FF2D55;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+    }
+    .test-button:hover {
+      background-color: #E02548;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 Pulse CMS Integration Test Page</h1>
+  <p>This page tests all CMS functionality to help diagnose any issues.</p>
+
+  <div class="test-section">
+    <h2>API Endpoint Test</h2>
+    <button class="test-button" onclick="testAPIEndpoint()">Test API</button>
+    <div id="api-status" class="status loading">Click "Test API" to check if the serverless function is working...</div>
+    <pre id="api-response"></pre>
+  </div>
+
+  <div class="test-section">
+    <h2>Sheet Structure Test</h2>
+    <button class="test-button" onclick="testSheetStructure()">Test All Sheets</button>
+    <div id="sheet-status" class="status loading">Click "Test All Sheets" to verify sheet structure...</div>
+    <pre id="sheet-response"></pre>
+  </div>
+
+  <div class="test-section">
+    <h2>HOME Sheet Test</h2>
+    <button class="test-button" onclick="testHomeSheet()">Test HOME</button>
+    <div id="home-status" class="status loading">Click "Test HOME" to check home page data...</div>
+    <pre id="home-response"></pre>
+  </div>
+
+  <div class="test-section">
+    <h2>PRICES Sheet Test</h2>
+    <button class="test-button" onclick="testPricesSheet()">Test PRICES</button>
+    <div id="prices-status" class="status loading">Click "Test PRICES" to check pricing data...</div>
+    <pre id="prices-response"></pre>
+  </div>
+
+  <div class="test-section">
+    <h2>FAQS Sheet Test</h2>
+    <button class="test-button" onclick="testFAQsSheet()">Test FAQS</button>
+    <div id="faqs-status" class="status loading">Click "Test FAQS" to check FAQ data...</div>
+    <pre id="faqs-response"></pre>
+  </div>
+
+  <div class="test-section">
+    <h2>DANCERS Sheet Test</h2>
+    <button class="test-button" onclick="testDancersSheet()">Test DANCERS</button>
+    <div id="dancers-status" class="status loading">Click "Test DANCERS" to check performer data...</div>
+    <pre id="dancers-response"></pre>
+  </div>
+
+  <div class="test-section">
+    <h2>TESTIMONIALS Sheet Test</h2>
+    <button class="test-button" onclick="testTestimonialsSheet()">Test TESTIMONIALS</button>
+    <div id="testimonials-status" class="status loading">Click "Test TESTIMONIALS" to check testimonial data...</div>
+    <pre id="testimonials-response"></pre>
+  </div>
+
+  <div class="test-section">
+    <h2>PAGE_CONTENT Sheet Test</h2>
+    <button class="test-button" onclick="testPageContentSheet()">Test PAGE_CONTENT</button>
+    <div id="page-content-status" class="status loading">Click "Test PAGE_CONTENT" to check page content data...</div>
+    <pre id="page-content-response"></pre>
+  </div>
+
+  <div class="test-section">
+    <h2>FOOTER Sheet Test</h2>
+    <button class="test-button" onclick="testFooterSheet()">Test FOOTER</button>
+    <div id="footer-status" class="status loading">Click "Test FOOTER" to check footer data...</div>
+    <pre id="footer-response"></pre>
+  </div>
+
+  <script src="assets/js/sheets-cms.js"></script>
+  <script>
+    const SHEET_ID = '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
+    const API_KEY = 'AIzaSyBqmw5wBmz54vV7AUvH91UNqW6_gDLwrmw';
+
+    async function testAPIEndpoint() {
+      const statusEl = document.getElementById('api-status');
+      const responseEl = document.getElementById('api-response');
+      
+      statusEl.className = 'status loading';
+      statusEl.textContent = 'Testing API endpoint...';
+      responseEl.textContent = '';
+
+      try {
+        const response = await fetch('/api/sheets?sheetName=HOME&startRow=1&endRow=5');
+        const data = await response.json();
+        
+        if (response.ok) {
+          statusEl.className = 'status success';
+          statusEl.textContent = '✓ API endpoint is working!';
+          responseEl.textContent = JSON.stringify(data, null, 2);
+        } else {
+          statusEl.className = 'status error';
+          statusEl.textContent = `✗ API returned error: ${response.status}`;
+          responseEl.textContent = JSON.stringify(data, null, 2);
+        }
+      } catch (error) {
+        statusEl.className = 'status error';
+        statusEl.textContent = `✗ API test failed: ${error.message}`;
+        responseEl.textContent = error.stack;
+      }
+    }
+
+    async function testSheetStructure() {
+      const statusEl = document.getElementById('sheet-status');
+      const responseEl = document.getElementById('sheet-response');
+      
+      statusEl.className = 'status loading';
+      statusEl.textContent = 'Testing all sheets...';
+      responseEl.textContent = '';
+
+      const sheets = ['HOME', 'PRICES', 'FAQS', 'DANCERS', 'SERVICES', 'TESTIMONIALS', 'SOCIAL', 'PAGE_CONTENT', 'FOOTER'];
+      const results = {};
+
+      for (const sheet of sheets) {
+        try {
+          const response = await fetch(`/api/sheets?sheetName=${sheet}&startRow=1&endRow=3`);
+          const data = await response.json();
+          
+          if (response.ok) {
+            results[sheet] = {
+              status: 'OK',
+              rows: data.values ? data.values.length : 0,
+              sample: data.values ? data.values[0] : null
+            };
+          } else {
+            results[sheet] = {
+              status: 'ERROR',
+              message: data.error || 'Unknown error'
+            };
+          }
+        } catch (error) {
+          results[sheet] = {
+            status: 'ERROR',
+            message: error.message
+          };
+        }
+      }
+
+      const hasErrors = Object.values(results).some(r => r.status === 'ERROR');
+      
+      if (hasErrors) {
+        statusEl.className = 'status error';
+        statusEl.textContent = '✗ Some sheets have errors. Check details below.';
+      } else {
+        statusEl.className = 'status success';
+        statusEl.textContent = '✓ All sheets are accessible!';
+      }
+      
+      responseEl.textContent = JSON.stringify(results, null, 2);
+    }
+
+    async function testHomeSheet() {
+      await testSheet('HOME', 'home', PulseSheetsCMS.getHome.bind(PulseSheetsCMS));
+    }
+
+    async function testPricesSheet() {
+      await testSheet('PRICES', 'prices', PulseSheetsCMS.getPrices.bind(PulseSheetsCMS));
+    }
+
+    async function testFAQsSheet() {
+      await testSheet('FAQS', 'faqs', PulseSheetsCMS.getFAQs.bind(PulseSheetsCMS));
+    }
+
+    async function testDancersSheet() {
+      await testSheet('DANCERS', 'dancers', PulseSheetsCMS.getDancers.bind(PulseSheetsCMS));
+    }
+
+    async function testTestimonialsSheet() {
+      await testSheet('TESTIMONIALS', 'testimonials', PulseSheetsCMS.getTestimonials.bind(PulseSheetsCMS));
+    }
+
+    async function testPageContentSheet() {
+      const statusEl = document.getElementById('page-content-status');
+      const responseEl = document.getElementById('page-content-response');
+      
+      statusEl.className = 'status loading';
+      statusEl.textContent = 'Testing PAGE_CONTENT sheet...';
+      responseEl.textContent = '';
+
+      try {
+        const pricesData = await PulseSheetsCMS.getPageContent('PRICES');
+        const faqData = await PulseSheetsCMS.getPageContent('FAQ');
+        const meetData = await PulseSheetsCMS.getPageContent('MEET');
+        
+        const result = {
+          PRICES: pricesData,
+          FAQ: faqData,
+          MEET: meetData
+        };
+        
+        statusEl.className = 'status success';
+        statusEl.textContent = '✓ PAGE_CONTENT sheet is working!';
+        responseEl.textContent = JSON.stringify(result, null, 2);
+      } catch (error) {
+        statusEl.className = 'status error';
+        statusEl.textContent = `✗ PAGE_CONTENT test failed: ${error.message}`;
+        responseEl.textContent = error.stack;
+      }
+    }
+
+    async function testFooterSheet() {
+      await testSheet('FOOTER', 'footer', PulseSheetsCMS.getFooter.bind(PulseSheetsCMS));
+    }
+
+    async function testSheet(sheetName, elementPrefix, getterFn) {
+      const statusEl = document.getElementById(`${elementPrefix}-status`);
+      const responseEl = document.getElementById(`${elementPrefix}-response`);
+      
+      statusEl.className = 'status loading';
+      statusEl.textContent = `Testing ${sheetName} sheet...`;
+      responseEl.textContent = '';
+
+      try {
+        const data = await getterFn();
+        
+        if (data && (Array.isArray(data) ? data.length > 0 : Object.keys(data).length > 0)) {
+          statusEl.className = 'status success';
+          statusEl.textContent = `✓ ${sheetName} sheet is working!`;
+          responseEl.textContent = JSON.stringify(data, null, 2);
+        } else {
+          statusEl.className = 'status error';
+          statusEl.textContent = `✗ ${sheetName} sheet returned no data. The sheet might be empty or not exist.`;
+          responseEl.textContent = 'No data returned';
+        }
+      } catch (error) {
+        statusEl.className = 'status error';
+        statusEl.textContent = `✗ ${sheetName} test failed: ${error.message}`;
+        responseEl.textContent = error.stack;
+      }
+    }
+
+    // Run API test automatically on load
+    window.addEventListener('DOMContentLoaded', () => {
+      console.log('CMS Test Page loaded. PulseSheetsCMS:', typeof PulseSheetsCMS);
+      testAPIEndpoint();
+    });
+  </script>
+</body>
+</html>

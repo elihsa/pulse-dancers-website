@@ -42,8 +42,8 @@ The site currently displays "PULSE" as text branding because no logo image exist
 The Google Sheets integration is fully configured and will work once the sheet is populated with data.
 
 **Configuration (already set up):**
-- Sheet ID: `12zPYBbpdDLhqTPylP0oUgPqimy5fXIfg`
-- API Key: `AIzaSyDmIhz0iWcB8R-BBXkFFGi36bCQIm7fgA8`
+- Sheet ID: `1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4`
+- API Key: `AIzaSyBqmw5wBmz54vV7AUvH91UNqW6_gDLwrmw`
 
 **What will load from Google Sheets:**
 - Prices page → PRICES tab (GID: 2117273325)

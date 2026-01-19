@@ -93,7 +93,8 @@ const PulseSheetsCMS = {
       .map((row) => ({
         id: row[0],
         question: row[0],
-      answer: row[1],      }))
+        answer: row[1],
+      }))
       .filter((f) => f.question);
   },
 
@@ -126,7 +127,7 @@ const PulseSheetsCMS = {
     const startIdx = rows[0]?.[0] === 'ID' ? 1 : 0;
     return rows
       .slice(startIdx)
-		      .filter((row) => row[6] === 'Approved') // Only show approved testimonials (column G, index 6)
+      .filter((row) => row[6] === 'Approved') // Only show approved testimonials (column G, index 6)
       .map((row) => ({
         name: row[0],
         rating: parseInt(row[1]) || 5,
@@ -145,27 +146,27 @@ const PulseSheetsCMS = {
       .map((row) => ({ url: row[1], caption: row[2] || '' }));
   },
 
-      async getSocial() {
-                const rows = await this.fetchSheet(SHEET_NAMES.SOCIAL, 1, 10);
-                const result = {};
-                rows.forEach((row, index) => {
-                              if (row[0] && row[1]) {
-                                                result[row[0].toLowerCase().replace(/\s+/g, '_')] = row[1];
-                                            }
-                          });
-                return result;
-            },
+  async getSocial() {
+    const rows = await this.fetchSheet(SHEET_NAMES.SOCIAL, 1, 10);
+    const result = {};
+    rows.forEach((row, index) => {
+      if (row[0] && row[1]) {
+        result[row[0].toLowerCase().replace(/\s+/g, '_')] = row[1];
+      }
+    });
+    return result;
+  },
   
-	async getServices() {
-		const rows = await this.fetchSheet(SHEET_NAMES.SERVICES, 1, 20);
-		const result = {};
-		rows.forEach((row, index) => {
-			if (row[0] && row[1]) {
-				result[row[0].toLowerCase().replace(/\s+/g, '_')] = row[1];
-			}
-		});
-		return result;
-	},
+  async getServices() {
+    const rows = await this.fetchSheet(SHEET_NAMES.SERVICES, 1, 20);
+    const result = {};
+    rows.forEach((row, index) => {
+      if (row[0] && row[1]) {
+        result[row[0].toLowerCase().replace(/\s+/g, '_')] = row[1];
+      }
+    });
+    return result;
+  },
 
   async getPageContent(pageName) {
     // Validate input
@@ -195,64 +196,64 @@ const PulseSheetsCMS = {
     });
     return result;
   },
-   loadDancers(containerId) {
- const container = document.getElementById(containerId);
- if (!container) return;
- 
- this.getDancers().then(dancers => {
- if (!dancers || dancers.length === 0) {
- container.innerHTML = '<p style="color: #b0b0b0; padding: 2rem; text-align: center;">No performer profiles available at this time.</p>';
- return;
- }
- 
- container.innerHTML = '';
- 
- dancers.forEach(dancer => {
- const card = document.createElement('div');
- card.className = 'performer-card';
- 
- // Handle both full path and filename
- let imageUrl = 'assets/images/performers/placeholder.jpg';
- if (dancer.image) {
-   imageUrl = dancer.image.includes('assets/') ? dancer.image : `assets/images/performers/${dancer.image}`;
- }
- 
- const img = document.createElement('img');
- img.className = 'performer-photo';
- img.src = imageUrl;
- img.alt = dancer.name || 'Performer';
- img.onerror = function() {
- this.src = 'assets/images/performers/placeholder.jpg';
- };
- 
- const content = document.createElement('div');
- content.className = 'performer-info';
- 
- const name = document.createElement('h3');
- name.className = 'performer-name';
- name.textContent = dancer.name || '';
- 
- const specialties = document.createElement('p');
- specialties.className = 'performer-specialties';
- specialties.textContent = dancer.specialties || dancer.genres || '';
- 
- const bio = document.createElement('p');
- bio.className = 'performer-bio';
- bio.textContent = dancer.bio || dancer.description || '';
- 
- content.appendChild(name);
- content.appendChild(specialties);
- content.appendChild(bio);
- 
- card.appendChild(img);
- card.appendChild(content);
- container.appendChild(card);
- });
- }).catch(error => {
- console.error('Error loading dancers:', error);
- container.innerHTML = '<p style="color: #b0b0b0; padding: 2rem; text-align: center;">Unable to load performers. Please contact us for more information.</p>';
- });
- },
+  loadDancers(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    this.getDancers().then(dancers => {
+      if (!dancers || dancers.length === 0) {
+        container.innerHTML = '<p style="color: #b0b0b0; padding: 2rem; text-align: center;">No performer profiles available at this time.</p>';
+        return;
+      }
+      
+      container.innerHTML = '';
+      
+      dancers.forEach(dancer => {
+        const card = document.createElement('div');
+        card.className = 'performer-card';
+        
+        // Handle both full path and filename
+        let imageUrl = 'assets/images/performers/placeholder.jpg';
+        if (dancer.image) {
+          imageUrl = dancer.image.includes('assets/') ? dancer.image : `assets/images/performers/${dancer.image}`;
+        }
+        
+        const img = document.createElement('img');
+        img.className = 'performer-photo';
+        img.src = imageUrl;
+        img.alt = dancer.name || 'Performer';
+        img.onerror = function() {
+          this.src = 'assets/images/performers/placeholder.jpg';
+        };
+        
+        const content = document.createElement('div');
+        content.className = 'performer-info';
+        
+        const name = document.createElement('h3');
+        name.className = 'performer-name';
+        name.textContent = dancer.name || '';
+        
+        const specialties = document.createElement('p');
+        specialties.className = 'performer-specialties';
+        specialties.textContent = dancer.specialties || dancer.genres || '';
+        
+        const bio = document.createElement('p');
+        bio.className = 'performer-bio';
+        bio.textContent = dancer.bio || dancer.description || '';
+        
+        content.appendChild(name);
+        content.appendChild(specialties);
+        content.appendChild(bio);
+        
+        card.appendChild(img);
+        card.appendChild(content);
+        container.appendChild(card);
+      });
+    }).catch(error => {
+      console.error('Error loading dancers:', error);
+      container.innerHTML = '<p style="color: #b0b0b0; padding: 2rem; text-align: center;">Unable to load performers. Please contact us for more information.</p>';
+    });
+  },
 };
 
 window.PulseSheetsCMS = PulseSheetsCMS;
