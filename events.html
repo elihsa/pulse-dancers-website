@@ -118,6 +118,30 @@ async function loadEventsPageContent() {
   }
 }
 
+// Helper function to check if a key represents an Instagram post
+function isInstagramPostKey(key) {
+  const lowerKey = key.toLowerCase();
+  // Match keys that start with 'instagram' and either:
+  // - end with optional separator and number (instagram_1, instagram-1, instagram1)
+  // - contain 'post' anywhere (instagram_post, instagrampost)
+  // - contain 'url' anywhere (instagram_url, instagramurl)
+  return lowerKey.startsWith('instagram') && 
+         (lowerKey.match(/^instagram[_-]?\d+$/) || 
+          lowerKey.includes('post') || 
+          lowerKey.includes('url'));
+}
+
+// Helper function to validate Instagram URL
+function isValidInstagramUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  const trimmedUrl = url.trim();
+  // Check if URL is valid and not a placeholder
+  return trimmedUrl !== '' &&
+         trimmedUrl !== '[Paste Instagram post URL]' &&
+         !trimmedUrl.includes('[') &&
+         (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://'));
+}
+
 // Populate Instagram posts
 async function populateInstagram() {
   const social = await PulseSheetsCMS.getSocial();
@@ -131,10 +155,9 @@ async function populateInstagram() {
   // Extract Instagram post URLs from the social object
   const instagramPosts = [];
   Object.keys(social).forEach(key => {
-    const lowerKey = key.toLowerCase();
-    if (lowerKey.includes('instagram') && lowerKey.includes('post')) {
+    if (isInstagramPostKey(key)) {
       const url = social[key];
-      if (url && url !== '[Paste Instagram post URL]' && url.trim() !== '') {
+      if (isValidInstagramUrl(url)) {
         instagramPosts.push({ uri: url });
       }
     }
