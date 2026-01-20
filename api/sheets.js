@@ -4,11 +4,7 @@
 // 1. HTTP referrers (website domains only)
 // 2. Google Sheets API only
 // 3. Read-only access
-//
-// CRITICAL: This API key is currently INVALID!
-// See API-KEY-SETUP-GUIDE.md for instructions on getting a valid key.
-// The CMS will not work until you replace this with a valid Google Sheets API key.
-const API_KEY = process.env.GOOGLE_SHEETS_API_KEY || 'AIzaSyBqmw5wBmz54vV7AUvH91UNqW6_gDLwrmw';
+const API_KEY = process.env.GOOGLE_SHEETS_API_KEY || 'AIzaSyA9nqewwfsfb3lC9OBFFcLi4zRtd8YApLM';
 const SHEET_ID = process.env.GOOGLE_SHEET_ID || '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
 
 export default async (req, res) => {

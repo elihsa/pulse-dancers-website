@@ -71,12 +71,12 @@
 <body>
   <h1>🔍 Pulse CMS Integration Test Page</h1>
   
-  <div class="test-section" style="background-color: rgba(244, 67, 54, 0.2); border-color: #F44336;">
-    <h2 style="color: #F44336;">🚨 CRITICAL: Invalid API Key</h2>
-    <p><strong>The Google Sheets API key is currently INVALID.</strong></p>
-    <p>The CMS cannot work without a valid API key. All tests below will fail.</p>
-    <p><strong>Solution:</strong> Follow the instructions in <code>API-KEY-SETUP-GUIDE.md</code> to get a valid key.</p>
-    <p><strong>Status:</strong> The website will display fallback content instead of loading from Google Sheets.</p>
+  <div class="test-section" style="background-color: rgba(76, 175, 80, 0.2); border-color: #4CAF50;">
+    <h2 style="color: #4CAF50;">✅ API Key Updated!</h2>
+    <p><strong>A valid API key has been configured.</strong></p>
+    <p>The API key has HTTP referrer restrictions (good security practice).</p>
+    <p><strong>Status:</strong> CMS should work on the deployed website.</p>
+    <p><strong>Note:</strong> Tests below will work because this page is served from the website.</p>
   </div>
 
   <p>This page tests all CMS functionality to help diagnose any issues.</p>
@@ -146,11 +146,11 @@
 
   <script src="assets/js/sheets-cms.js"></script>
   <script>
-    // ⚠️ CRITICAL: These API credentials are currently INVALID
-    // The API key below returns "API key not valid" error from Google Sheets API
-    // See API-KEY-SETUP-GUIDE.md for instructions on getting a valid key
+    // Google Sheets API credentials
+    // Note: This API key has HTTP referrer restrictions for security
+    // It will work on the website but may not work in local Node.js tests
     const SHEET_ID = '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
-    const API_KEY = 'AIzaSyBqmw5wBmz54vV7AUvH91UNqW6_gDLwrmw'; // ❌ INVALID KEY
+    const API_KEY = 'AIzaSyA9nqewwfsfb3lC9OBFFcLi4zRtd8YApLM';
     
     // Helper function to check if data has valid content
     // Note: Could be moved to shared utility, but kept here for test page independence
