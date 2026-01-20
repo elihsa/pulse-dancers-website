@@ -1,0 +1,38 @@
+Page,Key,Value
+PRICES,pageTitle,Pricing
+PRICES,pricingNotes,"All prices are excl. travel and sustenance. Contact us for custom packages."
+PRICES,howTitle,How Pricing Works
+PRICES,baseRateTitle,Base Rate
+PRICES,baseRateText,Show or service price above.
+PRICES,travelTitle,Travel
+PRICES,travelText,R4 per km outside 50km radius from Sandton City (round trip).
+PRICES,customTitle,Custom Packages
+PRICES,customText,"Multi-day events, VIP add-ons, theme packages - contact us for a tailored quote."
+PRICES,ctaTitle,Ready to Book?
+PRICES,ctaDescription,Get a personalized quote based on your event details with automatic distance calculation.
+PRICES,ctaButton,Get a Quote
+FAQ,pageTitle,Frequently Asked Questions
+FAQ,pageDescription,"Find answers to common questions about our services, pricing, and booking process."
+FAQ,footerTitle,Still have questions?
+FAQ,footerDescription,Contact us directly or submit a booking request for a personalized consultation.
+MEET,pageTitle,Meet The Guys
+MEET,pageDescription,"Our team consists of professional, hand-picked performers who are screened for personality, professionalism, and crowd control. Each performer brings unique energy and expertise to create an unforgettable experience."
+MEET,specialTitle,What Makes Our Team Special
+MEET,specialList,Professionally trained dancers and performers|Extensive experience in crowd interaction and entertainment|Respectful, courteous, and adaptable to any event atmosphere|Diverse team able to match various event themes and preferences|Regular training and choreography updates
+MEET,requestTitle,Request Specific Performers
+MEET,requestDescription,"When you book with Pulse, you can request specific performers based on your preferences. Once selected, they're locked in for your event - no last-minute changes without your consent."
+MEET,requestButton,Book Your Event
+MEET,joinTitle,Interested in Joining Our Team?
+MEET,joinDescription,"We're always looking for talented, professional performers to join Pulse Male Revue. If you have what it takes, we'd love to hear from you."
+MEET,joinButton,Apply Now
+EVENTS,pageTitle,Events & Socials
+EVENTS,pageDescription,Stay connected with Pulse and never miss an update. Follow our upcoming events and latest social media posts below.
+EVENTS,upcomingTitle,Upcoming Events
+EVENTS,upcomingDescription,Check out our upcoming shows and events on Facebook.
+EVENTS,instagramTitle,Follow Us on Instagram
+EVENTS,instagramDescription,See our latest photos and behind-the-scenes content.
+BOOK,pageTitle,Book Pulse for Your Event
+BOOK,pageDescription,Fill out the form below with your event details. We'll respond within 24 hours with a personalized quote.
+JOIN,pageTitle,Join the Pulse Team
+JOIN,pageDescription,"Pulse Dancers, Africa's most sought-after male revue show, is on the lookout for new talent. If you're a professional male dancer, performer or waiter looking for lucrative work, we want to hear from you."
+JOIN,pageBanner,<strong>📧 Application Form:</strong> Fill out the form below to apply to join the Pulse team. All applications are reviewed carefully and we'll contact you within 5 business days.
