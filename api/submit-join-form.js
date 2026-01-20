@@ -1,8 +1,8 @@
 // Form submission handler for join.html
 // This endpoint receives form submissions and stores them in Google Sheets
 
-const API_KEY = process.env.GOOGLE_SHEETS_API_KEY || "AIzaSyA9nqewwfsfb3lC9OBFFcLi4zRtd8YApLM";
-const SHEET_ID = process.env.GOOGLE_SHEETS_JOIN_FORM_ID || process.env.GOOGLE_SHEET_ID || "1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4";
+const API_KEY = process.env.GOOGLE_SHEETS_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_SHEETS_API_KEY;
+const SHEET_ID = process.env.GOOGLE_SHEETS_JOIN_FORM_ID || process.env.GOOGLE_SHEET_ID || process.env.NEXT_PUBLIC_GOOGLE_SHEET_ID;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'info@pulsedancers.com';
 
 export default async (req, res) => {
@@ -22,6 +22,15 @@ export default async (req, res) => {
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Check for required environment variables
+  if (!API_KEY || !SHEET_ID) {
+    console.error('Missing required environment variables: GOOGLE_SHEETS_API_KEY or GOOGLE_SHEET_ID');
+    return res.status(500).json({ 
+      error: 'Server configuration error',
+      message: 'Google Sheets API is not properly configured. Please contact the administrator.'
+    });
   }
 
   try {

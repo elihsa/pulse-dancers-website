@@ -23,6 +23,15 @@ export default async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Check for required environment variables
+  if (!API_KEY || !SHEET_ID) {
+    console.error('Missing required environment variables: GOOGLE_SHEETS_API_KEY or GOOGLE_SHEET_ID');
+    return res.status(500).json({ 
+      error: 'Server configuration error',
+      message: 'Google Sheets API is not properly configured. Please contact the administrator.'
+    });
+  }
+
   try {
     const { name, area, rating, message, email } = req.body;
 

@@ -218,6 +218,13 @@
   <script src="assets/js/app.js" defer></script>
   
   <script>
+    // HTML escape function to prevent XSS
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text || '';
+      return div.innerHTML;
+    }
+    
     // Lightbox functions
     function openLightbox(imageSrc) {
       const lightbox = document.getElementById('lightbox');
@@ -298,15 +305,24 @@
         }
         
         // Render gallery items
-        container.innerHTML = galleryItems.map(item => `
-          <div class="gallery-item" onclick="openLightbox('${item.imageUrl}')">
-            <img src="${item.imageUrl}" alt="${item.title}" loading="lazy">
+        container.innerHTML = galleryItems.map((item, index) => `
+          <div class="gallery-item" data-image-url="${escapeHtml(item.imageUrl)}" data-item-index="${index}">
+            <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.title)}" loading="lazy">
             <div class="gallery-item-info">
-              <div class="gallery-item-title">${item.title}</div>
-              ${item.description ? `<div class="gallery-item-description">${item.description}</div>` : ''}
+              <div class="gallery-item-title">${escapeHtml(item.title)}</div>
+              ${item.description ? `<div class="gallery-item-description">${escapeHtml(item.description)}</div>` : ''}
             </div>
           </div>
         `).join('');
+        
+        // Add click handlers after rendering (safer than inline onclick)
+        const galleryItemsElements = container.querySelectorAll('.gallery-item');
+        galleryItemsElements.forEach(item => {
+          item.addEventListener('click', () => {
+            const imageUrl = item.getAttribute('data-image-url');
+            openLightbox(imageUrl);
+          });
+        });
         
       } catch (error) {
         console.error('Error loading gallery:', error);

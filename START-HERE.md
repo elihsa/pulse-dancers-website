@@ -17,7 +17,21 @@ Your website has been fully updated with all the features you requested. This gu
 
 ---
 
-## 🚀 Quick Start (3 Steps)
+## 🚀 Quick Start (4 Steps)
+
+### Step 0: Set Environment Variables in Vercel (2 minutes)
+
+Before the forms will work, you need to configure environment variables in Vercel:
+
+1. Go to your Vercel dashboard: **https://vercel.com/dashboard**
+2. Select your project
+3. Go to Settings → Environment Variables
+4. Add these variables:
+   - `GOOGLE_SHEETS_API_KEY` = `AIzaSyA9nqewwfsfb3lC9OBFFcLi4zRtd8YApLM`
+   - `GOOGLE_SHEET_ID` = `1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4`
+5. Save and redeploy
+
+**Note:** These API keys are already configured in your Google Sheet. See `.env.example` for details.
 
 ### Step 1: Create 3 New Sheets (10 minutes)
 
