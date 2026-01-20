@@ -60,7 +60,21 @@ window.addEventListener('load', () => {
 });
 
 // ===== HERO PARALLAX EFFECT =====
-window.addEventListener('scroll', () => {
+// Throttle function to limit scroll event frequency
+function throttle(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// Throttled scroll handler to prevent performance issues
+const handleScroll = throttle(() => {
   const scrolled = window.pageYOffset;
   const heroContent = document.querySelector('.hero-content');
   
@@ -68,7 +82,9 @@ window.addEventListener('scroll', () => {
     heroContent.style.transform = `translateY(${scrolled * 0.5}px)`;
     heroContent.style.opacity = 1 - (scrolled / 500);
   }
-});
+}, 16); // ~60fps
+
+window.addEventListener('scroll', handleScroll, { passive: true });
 
 // ===== INTERSECTION OBSERVER FOR FADE-IN =====
 const observerOptions = {

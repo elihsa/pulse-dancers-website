@@ -24,24 +24,24 @@ export default async (req, res) => {
   }
 
   try {
-    const { name, area, stars, message, email } = req.body;
+    const { name, area, rating, message, email } = req.body;
 
     // Validate required fields
-    if (!name || !area || !stars || !message || !email) {
+    if (!name || !area || !rating || !message || !email) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Validate stars is a number between 1-5
-    const starsNum = parseInt(stars);
-    if (isNaN(starsNum) || starsNum < 1 || starsNum > 5) {
-      return res.status(400).json({ error: 'Stars must be between 1 and 5' });
+    // Validate rating is a number between 1-5
+    const ratingNum = parseInt(rating);
+    if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
+      return res.status(400).json({ error: 'Rating must be between 1 and 5' });
     }
 
     // Format the row data for Google Sheets
     const timestamp = new Date().toISOString();
     const values = [[
       name,
-      starsNum,
+      ratingNum,
       message,
       area,
       timestamp.split('T')[0], // Date only (YYYY-MM-DD)

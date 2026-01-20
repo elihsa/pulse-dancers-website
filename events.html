@@ -129,12 +129,20 @@ async function populateInstagram() {
   }
   
   // Extract Instagram post URLs from the social object
+  // Look for any key containing 'instagram' (more flexible matching)
   const instagramPosts = [];
   Object.keys(social).forEach(key => {
     const lowerKey = key.toLowerCase();
-    if (lowerKey.includes('instagram') && lowerKey.includes('post')) {
+    // Match any key containing 'instagram' and ending with a number or containing 'post'/'url'
+    if (lowerKey.includes('instagram') && 
+        (lowerKey.match(/\d+$/) || lowerKey.includes('post') || lowerKey.includes('url'))) {
       const url = social[key];
-      if (url && url !== '[Paste Instagram post URL]' && url.trim() !== '') {
+      // Check if the URL is valid and not a placeholder
+      if (url && 
+          url.trim() !== '' && 
+          url !== '[Paste Instagram post URL]' &&
+          !url.includes('[') &&
+          (url.startsWith('http://') || url.startsWith('https://'))) {
         instagramPosts.push({ uri: url });
       }
     }

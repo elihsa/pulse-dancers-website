@@ -144,17 +144,28 @@ const PulseSheetsCMS = {
 
   async getTestimonials() {
     const rows = await this.fetchSheet(SHEET_NAMES.TESTIMONIALS, 1, 20);
-    const startIdx = rows[0]?.[0] === 'ID' ? 1 : 0;
+    if (!rows || rows.length === 0) return [];
+    
+    // Check if first row is a header (contains 'Name' or 'ID')
+    const hasHeader = rows[0]?.[0]?.toLowerCase()?.includes('name') || 
+                     rows[0]?.[0]?.toLowerCase() === 'id';
+    const startIdx = hasHeader ? 1 : 0;
+    
     return rows
       .slice(startIdx)
-      .filter((row) => row[6] === 'Approved') // Only show approved testimonials (column G, index 6)
+      .filter((row) => {
+        // Only show approved testimonials (column G, index 6)
+        // Handle case-insensitive matching and trim whitespace
+        const status = (row[6] || '').toString().trim().toLowerCase();
+        return status === 'approved';
+      })
       .map((row) => ({
-        name: row[0],
+        name: row[0] || '',
         rating: parseInt(row[1]) || 5,
-        text: row[2],
-        area: row[3],
+        text: row[2] || '',
+        area: row[3] || '',
       }))
-      .filter((t) => t.name);
+      .filter((t) => t.name && t.text); // Must have name and text
   },
 
   async getInstagramPosts() {
