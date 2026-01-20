@@ -100,6 +100,37 @@
           </select>
           <select id="birthDay" name="birthDay" required>
             <option value="">Day</option>
+            <option value="01">1</option>
+            <option value="02">2</option>
+            <option value="03">3</option>
+            <option value="04">4</option>
+            <option value="05">5</option>
+            <option value="06">6</option>
+            <option value="07">7</option>
+            <option value="08">8</option>
+            <option value="09">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+            <option value="24">24</option>
+            <option value="25">25</option>
+            <option value="26">26</option>
+            <option value="27">27</option>
+            <option value="28">28</option>
+            <option value="29">29</option>
+            <option value="30">30</option>
+            <option value="31">31</option>
           </select>
           <select id="birthYear" name="birthYear" required>
             <option value="">Year</option>
@@ -290,6 +321,65 @@
       console.error('Error loading join page content:', error);
       // Keep default content if CMS fails
     }
+
+    // Function to update days based on selected month and year
+    function updateDays() {
+      const monthSelect = document.getElementById('birthMonth');
+      const daySelect = document.getElementById('birthDay');
+      const yearSelect = document.getElementById('birthYear');
+      
+      // Validate that all required elements exist
+      if (!monthSelect || !daySelect || !yearSelect) {
+        console.error('Birth date form elements not found');
+        return;
+      }
+      
+      const month = parseInt(monthSelect.value);
+      const year = parseInt(yearSelect.value);
+      
+      if (!month) {
+        return; // Don't update if month is not selected
+      }
+      
+      // Remember the current selection
+      const currentDay = daySelect.value;
+      
+      // Determine number of days in the month
+      let daysInMonth;
+      if (month === 2) { // February
+        // Check for leap year
+        if (year && ((year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0))) {
+          daysInMonth = 29;
+        } else {
+          daysInMonth = 28;
+        }
+      } else if ([4, 6, 9, 11].includes(month)) {
+        daysInMonth = 30;
+      } else {
+        daysInMonth = 31;
+      }
+      
+      // Clear current options except placeholder
+      daySelect.innerHTML = '<option value="">Day</option>';
+      
+      // Add day options
+      for (let i = 1; i <= daysInMonth; i++) {
+        const option = document.createElement('option');
+        const dayValue = i.toString().padStart(2, '0');
+        option.value = dayValue;
+        option.textContent = i;
+        daySelect.appendChild(option);
+      }
+      
+      // Restore selection if valid
+      if (currentDay && parseInt(currentDay) <= daysInMonth) {
+        daySelect.value = currentDay;
+      }
+    }
+    
+    // Add event listeners for month and year changes
+    document.getElementById('birthMonth').addEventListener('change', updateDays);
+    document.getElementById('birthYear').addEventListener('change', updateDays);
   });
 
   // Handle form submission for the join form
