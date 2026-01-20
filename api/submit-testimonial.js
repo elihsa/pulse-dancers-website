@@ -49,8 +49,8 @@ export default async (req, res) => {
       'Pending' // Status starts as Pending - must be manually approved
     ]];
 
-    // Append to Google Sheets "Testimonials" sheet
-    const sheetName = 'Testimonials';
+    // Append to Google Sheets "TESTIMONIALS" sheet
+    const sheetName = 'TESTIMONIALS';
     const range = `${sheetName}!A1`;
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&key=${API_KEY}`;
 

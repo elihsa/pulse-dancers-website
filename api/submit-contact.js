@@ -1,9 +1,8 @@
-// Form submission handler for join.html
-// This endpoint receives form submissions and stores them in Google Sheets
+// Contact form submission handler
+// This endpoint receives contact form submissions and stores them in Google Sheets
 
 const API_KEY = process.env.GOOGLE_SHEETS_API_KEY || "AIzaSyA9nqewwfsfb3lC9OBFFcLi4zRtd8YApLM";
-const SHEET_ID = process.env.GOOGLE_SHEETS_JOIN_FORM_ID || process.env.GOOGLE_SHEET_ID || "1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4";
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'info@pulsedancers.com';
+const SHEET_ID = process.env.GOOGLE_SHEET_ID || "1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4";
 
 export default async (req, res) => {
   // Handle CORS
@@ -25,39 +24,33 @@ export default async (req, res) => {
   }
 
   try {
-    const { firstName, lastName, birthMonth, birthDay, birthYear, streetAddress, city, email, phone, danceExperience, promoExperience, transport, gymLocation, otherWork, skills, preference } = req.body;
+    const { name, email, phone, subject, message } = req.body;
 
     // Validate required fields
-    if (!firstName || !lastName || !email || !phone) {
+    if (!name || !email || !subject || !message) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Format preference as comma-separated values
-    const preferences = Array.isArray(preference) ? preference.join(', ') : preference || 'Not specified';
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email address' });
+    }
 
     // Format the row data for Google Sheets
     const timestamp = new Date().toISOString();
     const values = [[
       timestamp,
-      firstName,
-      lastName,
-      `${birthMonth}/${birthDay}/${birthYear}`,
-      streetAddress,
-      city,
+      name,
       email,
-      phone,
-      preferences,
-      danceExperience || 'Not answered',
-      promoExperience || 'Not answered',
-      transport || 'Not answered',
-      gymLocation || 'Not specified',
-      otherWork || 'Not specified',
-      skills || 'Not specified',
-      'Pending' // Status column for approval
+      phone || 'Not provided',
+      subject,
+      message,
+      'Unread' // Status column
     ]];
 
-    // Append to Google Sheets JOIN_APPLICATIONS tab
-    const sheetName = 'JOIN_APPLICATIONS';
+    // Append to Google Sheets CONTACT_MESSAGES tab
+    const sheetName = 'CONTACT_MESSAGES';
     const range = `${sheetName}!A1`;
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&key=${API_KEY}`;
 
@@ -74,19 +67,16 @@ export default async (req, res) => {
     if (!fetchResponse.ok) {
       const error = await fetchResponse.text();
       console.error('Google Sheets API Error:', error);
-      return res.status(500).json({ error: 'Failed to save form submission' });
+      return res.status(500).json({ error: 'Failed to save contact message' });
     }
-
-    // Send confirmation email (optional - requires email service setup)
-    // For now, we'll just return success
 
     res.status(200).json({ 
       success: true,
-      message: 'Application submitted successfully. We will review your submission within 5 business days.'
+      message: 'Thank you for your message! We will get back to you soon.'
     });
 
   } catch (error) {
-    console.error('Form submission error:', error);
+    console.error('Contact form submission error:', error);
     res.status(500).json({ error: error.message || 'Internal server error' });
   }
 };

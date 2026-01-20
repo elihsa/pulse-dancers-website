@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gallery - Pulse Male Revue</title>
+  <meta name="description" content="View photos from Pulse Male Revue events, shows, and performances across South Africa.">
+  <meta name="keywords" content="pulse dancers photos, male revue gallery, entertainment photos south africa, male dancers gallery">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://pulse-dancers-website.vercel.app/gallery.html">
+  
+  <!-- Open Graph (Facebook/Social) -->
+  <meta property="og:title" content="Gallery - Pulse Male Revue">
+  <meta property="og:description" content="Photos from our events and performances">
+  <meta property="og:url" content="https://pulse-dancers-website.vercel.app/gallery.html">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Gallery - Pulse Male Revue">
+  <meta name="twitter:description" content="Photos from our events and performances">
+  
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  
+  <!-- Preload critical assets -->
+  <link rel="preload" href="assets/css/styles.css" as="style">
+  <link rel="preload" href="assets/js/app.js" as="script">
+  
+  <style>
+    .gallery-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      background-color: rgba(26, 26, 31, 0.95);
+      border: 1px solid rgba(255, 45, 85, 0.2);
+    }
+    
+    .gallery-item:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 45, 85, 0.5);
+      box-shadow: 0 8px 24px rgba(255, 45, 85, 0.3);
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      display: block;
+    }
+    
+    .gallery-item-info {
+      padding: 1rem;
+    }
+    
+    .gallery-item-title {
+      color: #FF2D55;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .gallery-item-description {
+      color: #E5E5E5;
+      font-size: 0.9rem;
+    }
+    
+    /* Lightbox styles */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.95);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    
+    .lightbox.active {
+      display: flex;
+    }
+    
+    .lightbox-content {
+      position: relative;
+      max-width: 90%;
+      max-height: 90%;
+    }
+    
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+    
+    .lightbox-close {
+      position: absolute;
+      top: -3rem;
+      right: 0;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      line-height: 1;
+    }
+    
+    .lightbox-close:hover {
+      color: #FF2D55;
+    }
+    
+    .gallery-upload-section {
+      background-color: rgba(255, 45, 85, 0.1);
+      padding: 2rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 45, 85, 0.2);
+      margin-bottom: 3rem;
+    }
+    
+    @media (max-width: 768px) {
+      .gallery-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+      
+      .gallery-item img {
+        height: 200px;
+      }
+    }
+  </style>
+</head>
+<body class="page">
+  <img src="assets/images/top.png" alt="Pulse Male Revue Top Banner" class="top-banner" style="width: 50%; display: block; margin: 0 auto;">
+  <script src="assets/js/banner.js" defer></script>
+  
+  <header>
+    <div class="nav-inner">
+      <div class="logo-wrap">
+        <a href="index.html">
+          <img src="assets/images/logo.png" alt="Pulse Male Revue International" class="logo">
+          <div class="brand" style="display: none;">PULSE</div>
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="events.html" class="nav-link">Events & Socials</a></li>
+        <li><a href="prices.html" class="nav-link">Prices</a></li>
+        <li><a href="faq.html" class="nav-link">FAQ</a></li>
+        <li><a href="meet-the-guys.html" class="nav-link">Meet The Guys</a></li>
+        <li><a href="join.html" class="nav-link">Join</a></li>
+        <li><a href="gallery.html" class="nav-link active">Gallery</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+        <li><a href="book.html" class="btn">Book Now</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="block">
+      <h1 id="gallery-page-title">Photo Gallery</h1>
+      <p id="gallery-page-description">Browse through our collection of photos from events, performances, and behind-the-scenes moments.</p>
+
+      <!-- Gallery Upload Section (for admin use) -->
+      <div class="gallery-upload-section">
+        <h3 style="color: #FF2D55; margin-bottom: 1rem;">📸 Gallery Management</h3>
+        <p style="color: #E5E5E5; margin-bottom: 1rem;">To manage gallery photos, add them to the GALLERY tab in your Google Sheets CMS with columns: Title, Description, ImageURL, Category, Date. Photos will automatically appear here once added to the sheet.</p>
+        <p style="color: #E5E5E5;"><strong>Note:</strong> Upload images to your web hosting (e.g., assets/images/gallery/) and reference the URLs in the sheet.</p>
+      </div>
+
+      <!-- Gallery Grid -->
+      <div id="gallery-container" class="gallery-container">
+        <p style="color: #b0b0b0; text-align: center; padding: 2rem;">Loading gallery...</p>
+      </div>
+
+      <!-- Social Media Call to Action -->
+      <div style="text-align: center; margin-top: 4rem; padding: 3rem 2rem; background-color: rgba(255, 45, 85, 0.05); border-radius: 8px;">
+        <h2 style="color: #FF2D55; margin-bottom: 1rem;">Follow Us for More</h2>
+        <p style="margin-bottom: 2rem; color: #E5E5E5;">See our latest photos and updates on Instagram!</p>
+        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" class="btn">Follow @pulsesouthafrica</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox">
+    <div class="lightbox-content">
+      <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+      <img id="lightbox-img" src="" alt="">
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div id="footer-copyright">© 2025 Pulse Male Revue - South Africa.</div>
+      <div class="footer-links">
+        <a href="mailto:info@pulsedancers.com" id="footer-email">info@pulsedancers.com</a>
+        <span>·</span>
+        <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener" id="footer-facebook">Facebook</a>
+        <span>·</span>
+        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" id="footer-instagram">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/sheets-cms.js" defer></script>
+  <script src="assets/js/cms-loader.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+  
+  <script>
+    // Lightbox functions
+    function openLightbox(imageSrc) {
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      lightboxImg.src = imageSrc;
+      lightbox.classList.add('active');
+    }
+    
+    function closeLightbox() {
+      const lightbox = document.getElementById('lightbox');
+      lightbox.classList.remove('active');
+    }
+    
+    // Close lightbox on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeLightbox();
+      }
+    });
+    
+    // Close lightbox on click outside image
+    document.getElementById('lightbox').addEventListener('click', (e) => {
+      if (e.target.id === 'lightbox') {
+        closeLightbox();
+      }
+    });
+
+    // Load gallery from CMS
+    async function loadGallery() {
+      const container = document.getElementById('gallery-container');
+      
+      try {
+        // Fetch gallery data from GALLERY sheet
+        const response = await fetch('/api/sheets?sheetName=GALLERY&startRow=1&endRow=100');
+        
+        if (!response.ok) {
+          throw new Error('Failed to load gallery');
+        }
+        
+        const data = await response.json();
+        const rows = data.values || [];
+        
+        // Check if we have data (skip header row)
+        if (rows.length <= 1) {
+          container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+              <h3 style="color: #FF2D55; margin-bottom: 1rem;">Gallery Coming Soon</h3>
+              <p style="color: #E5E5E5;">We're building our gallery! Check back soon for photos from our events.</p>
+              <p style="color: #E5E5E5; margin-top: 1rem;">In the meantime, follow us on Instagram for the latest photos!</p>
+            </div>
+          `;
+          return;
+        }
+        
+        // Parse gallery items (assuming columns: Title, Description, ImageURL, Category, Date)
+        const galleryItems = [];
+        for (let i = 1; i < rows.length; i++) {
+          const row = rows[i];
+          if (row[2]) { // Check if ImageURL exists
+            galleryItems.push({
+              title: row[0] || 'Untitled',
+              description: row[1] || '',
+              imageUrl: row[2],
+              category: row[3] || 'General',
+              date: row[4] || ''
+            });
+          }
+        }
+        
+        if (galleryItems.length === 0) {
+          container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+              <h3 style="color: #FF2D55; margin-bottom: 1rem;">Gallery Coming Soon</h3>
+              <p style="color: #E5E5E5;">We're building our gallery! Check back soon for photos from our events.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        // Render gallery items
+        container.innerHTML = galleryItems.map(item => `
+          <div class="gallery-item" onclick="openLightbox('${item.imageUrl}')">
+            <img src="${item.imageUrl}" alt="${item.title}" loading="lazy">
+            <div class="gallery-item-info">
+              <div class="gallery-item-title">${item.title}</div>
+              ${item.description ? `<div class="gallery-item-description">${item.description}</div>` : ''}
+            </div>
+          </div>
+        `).join('');
+        
+      } catch (error) {
+        console.error('Error loading gallery:', error);
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <h3 style="color: #FF2D55; margin-bottom: 1rem;">Gallery Coming Soon</h3>
+            <p style="color: #E5E5E5;">We're currently setting up our photo gallery. Check back soon!</p>
+            <p style="color: #E5E5E5; margin-top: 1rem;">Follow us on <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" style="color: #FF2D55;">Instagram</a> to see our latest photos!</p>
+          </div>
+        `;
+      }
+    }
+
+    // Load gallery page content from CMS
+    async function loadGalleryPageContent() {
+      try {
+        const pageContent = await PulseSheetsCMS.getPageContent('GALLERY');
+        
+        if (pageContent.pageTitle) document.getElementById('gallery-page-title').textContent = pageContent.pageTitle;
+        if (pageContent.pageDescription) document.getElementById('gallery-page-description').textContent = pageContent.pageDescription;
+      } catch (error) {
+        console.error('Error loading gallery page content:', error);
+        // Keep default content if CMS fails
+      }
+    }
+
+    // Load gallery when page loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        loadGallery();
+        loadGalleryPageContent();
+      });
+    } else {
+      loadGallery();
+      loadGalleryPageContent();
+    }
+  </script>
+</body>
+</html>
