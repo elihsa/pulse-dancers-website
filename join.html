@@ -328,6 +328,12 @@
       const daySelect = document.getElementById('birthDay');
       const yearSelect = document.getElementById('birthYear');
       
+      // Validate that all required elements exist
+      if (!monthSelect || !daySelect || !yearSelect) {
+        console.error('Birth date form elements not found');
+        return;
+      }
+      
       const month = parseInt(monthSelect.value);
       const year = parseInt(yearSelect.value);
       
@@ -359,7 +365,7 @@
       // Add day options
       for (let i = 1; i <= daysInMonth; i++) {
         const option = document.createElement('option');
-        const dayValue = i < 10 ? '0' + i : '' + i;
+        const dayValue = i.toString().padStart(2, '0');
         option.value = dayValue;
         option.textContent = i;
         daySelect.appendChild(option);
