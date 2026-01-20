@@ -157,19 +157,19 @@ const PulseSheetsCMS = {
     
     return rows
       .slice(startIdx)
+      // Filter first for better performance - only process approved testimonials
       .filter((row) => {
         // Only show approved testimonials (column G, index 6)
         // Handle case-insensitive matching and trim whitespace
         const status = (row[6] || '').toString().trim().toLowerCase();
-        return status === 'approved';
+        return status === 'approved' && row[0] && row[2]; // Must also have name and text
       })
       .map((row) => ({
         name: row[0] || '',
         rating: parseInt(row[1]) || 5,
         text: row[2] || '',
         area: row[3] || '',
-      }))
-      .filter((t) => t.name && t.text); // Must have name and text
+      }));
   },
 
   async getInstagramPosts() {

@@ -122,11 +122,11 @@ async function loadEventsPageContent() {
 function isInstagramPostKey(key) {
   const lowerKey = key.toLowerCase();
   // Match keys containing 'instagram' and either:
-  // - ending with a number (instagram1, instagram_post_1)
+  // - ending with separator and number (instagram_1, instagram-1, instagram1)
   // - containing 'post' (instagram_post)
   // - containing 'url' (instagram_url)
   return lowerKey.includes('instagram') && 
-         (lowerKey.match(/\d+$/) || lowerKey.includes('post') || lowerKey.includes('url'));
+         (lowerKey.match(/[_-]?\d+$/) || lowerKey.includes('post') || lowerKey.includes('url'));
 }
 
 // Helper function to validate Instagram URL
