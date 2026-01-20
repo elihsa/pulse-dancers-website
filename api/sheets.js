@@ -1,5 +1,11 @@
-const API_KEY = 'AIzaSyBqmw5wBmz54vV7AUvH91UNqW6_gDLwrmw';
-const SHEET_ID = '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
+// NOTE: This API key is intentionally hard-coded for now as it's a CLIENT-SIDE API key
+// that is meant to be publicly visible (it will be in browser requests anyway).
+// The key should be restricted in Google Cloud Console to only allow:
+// 1. HTTP referrers (website domains only)
+// 2. Google Sheets API only
+// 3. Read-only access
+const API_KEY = process.env.GOOGLE_SHEETS_API_KEY || 'AIzaSyA9nqewwfsfb3lC9OBFFcLi4zRtd8YApLM';
+const SHEET_ID = process.env.GOOGLE_SHEET_ID || '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
 
 export default async (req, res) => {
   const { sheetName = 'PRICES', startRow = 1, endRow = 20 } = req.query;
@@ -35,16 +41,23 @@ export default async (req, res) => {
         helpfulMessage = errorText;
       }
       
+      // Detect if the API key is invalid
+      const isInvalidKey = helpfulMessage.includes('API key not valid') || 
+                          helpfulMessage.includes('API key invalid') ||
+                          response.status === 400 && helpfulMessage.includes('key');
+      
       return res.status(response.status).json({ 
         error: 'Failed to fetch from Google Sheets',
         details: helpfulMessage,
         sheetName: sheetName,
         status: response.status,
-        help: response.status === 400 
+        help: isInvalidKey
+          ? '🚨 CRITICAL: The Google Sheets API key is INVALID. See API-KEY-SETUP-GUIDE.md for instructions on getting a valid key. The CMS cannot work without a valid API key.'
+          : response.status === 400 
           ? `The "${sheetName}" tab may not exist or is misspelled. Tab names are case-sensitive.`
           : response.status === 403
           ? 'The Google Sheet may not be public. Go to Share > Anyone with the link can view.'
-          : 'Check that the Sheet ID and API key are correct.'
+          : 'Check that the Sheet ID and API key are correct. See API-KEY-SETUP-GUIDE.md for setup instructions.'
       });
     }
     

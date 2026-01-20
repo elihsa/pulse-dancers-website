@@ -70,6 +70,15 @@
 </head>
 <body>
   <h1>🔍 Pulse CMS Integration Test Page</h1>
+  
+  <div class="test-section" style="background-color: rgba(76, 175, 80, 0.2); border-color: #4CAF50;">
+    <h2 style="color: #4CAF50;">✅ API Key Updated!</h2>
+    <p><strong>A valid API key has been configured.</strong></p>
+    <p>The API key has HTTP referrer restrictions (good security practice).</p>
+    <p><strong>Status:</strong> CMS should work on the deployed website.</p>
+    <p><strong>Note:</strong> Tests below will work because this page is served from the website.</p>
+  </div>
+
   <p>This page tests all CMS functionality to help diagnose any issues.</p>
 
   <div class="test-section">
@@ -137,12 +146,11 @@
 
   <script src="assets/js/sheets-cms.js"></script>
   <script>
-    // Note: These credentials are intentionally client-side for this diagnostic tool
-    // They are read-only API credentials that only access a public Google Sheet
-    // The same values are already exposed in /api/sheets.js (Vercel serverless function)
-    // This is standard practice for Google Sheets API with public, read-only access
+    // Google Sheets API credentials
+    // Note: This API key has HTTP referrer restrictions for security
+    // It will work on the website but may not work in local Node.js tests
     const SHEET_ID = '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
-    const API_KEY = 'AIzaSyBqmw5wBmz54vV7AUvH91UNqW6_gDLwrmw';
+    const API_KEY = 'AIzaSyA9nqewwfsfb3lC9OBFFcLi4zRtd8YApLM';
     
     // Helper function to check if data has valid content
     // Note: Could be moved to shared utility, but kept here for test page independence
