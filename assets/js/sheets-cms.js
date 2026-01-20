@@ -146,9 +146,13 @@ const PulseSheetsCMS = {
     const rows = await this.fetchSheet(SHEET_NAMES.TESTIMONIALS, 1, 20);
     if (!rows || rows.length === 0) return [];
     
-    // Check if first row is a header (contains 'Name' or 'ID')
-    const hasHeader = rows[0]?.[0]?.toLowerCase()?.includes('name') || 
-                     rows[0]?.[0]?.toLowerCase() === 'id';
+    // Check if first row is a header by looking for common header patterns
+    const hasHeader = rows[0] && rows[0].length > 0 && (
+      rows[0][0]?.toLowerCase()?.includes('name') ||
+      rows[0][0]?.toLowerCase() === 'id' ||
+      rows[0][1]?.toLowerCase()?.includes('rating') ||
+      rows[0][1]?.toLowerCase()?.includes('star')
+    );
     const startIdx = hasHeader ? 1 : 0;
     
     return rows

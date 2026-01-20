@@ -60,21 +60,9 @@ window.addEventListener('load', () => {
 });
 
 // ===== HERO PARALLAX EFFECT =====
-// Throttle function to limit scroll event frequency
-function throttle(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
-
-// Throttled scroll handler to prevent performance issues
-const handleScroll = throttle(() => {
+// Throttle function to limit scroll event frequency using requestAnimationFrame
+let ticking = false;
+const handleScrollParallax = () => {
   const scrolled = window.pageYOffset;
   const heroContent = document.querySelector('.hero-content');
   
@@ -82,9 +70,16 @@ const handleScroll = throttle(() => {
     heroContent.style.transform = `translateY(${scrolled * 0.5}px)`;
     heroContent.style.opacity = 1 - (scrolled / 500);
   }
-}, 16); // ~60fps
+  ticking = false;
+};
 
-window.addEventListener('scroll', handleScroll, { passive: true });
+// Use requestAnimationFrame for smooth, optimized scroll handling
+window.addEventListener('scroll', () => {
+  if (!ticking) {
+    window.requestAnimationFrame(handleScrollParallax);
+    ticking = true;
+  }
+}, { passive: true });
 
 // ===== INTERSECTION OBSERVER FOR FADE-IN =====
 const observerOptions = {

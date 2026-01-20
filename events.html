@@ -118,6 +118,28 @@ async function loadEventsPageContent() {
   }
 }
 
+// Helper function to check if a key represents an Instagram post
+function isInstagramPostKey(key) {
+  const lowerKey = key.toLowerCase();
+  // Match keys containing 'instagram' and either:
+  // - ending with a number (instagram1, instagram_post_1)
+  // - containing 'post' (instagram_post)
+  // - containing 'url' (instagram_url)
+  return lowerKey.includes('instagram') && 
+         (lowerKey.match(/\d+$/) || lowerKey.includes('post') || lowerKey.includes('url'));
+}
+
+// Helper function to validate Instagram URL
+function isValidInstagramUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  const trimmedUrl = url.trim();
+  // Check if URL is valid and not a placeholder
+  return trimmedUrl !== '' &&
+         trimmedUrl !== '[Paste Instagram post URL]' &&
+         !trimmedUrl.includes('[') &&
+         (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://'));
+}
+
 // Populate Instagram posts
 async function populateInstagram() {
   const social = await PulseSheetsCMS.getSocial();
@@ -129,20 +151,11 @@ async function populateInstagram() {
   }
   
   // Extract Instagram post URLs from the social object
-  // Look for any key containing 'instagram' (more flexible matching)
   const instagramPosts = [];
   Object.keys(social).forEach(key => {
-    const lowerKey = key.toLowerCase();
-    // Match any key containing 'instagram' and ending with a number or containing 'post'/'url'
-    if (lowerKey.includes('instagram') && 
-        (lowerKey.match(/\d+$/) || lowerKey.includes('post') || lowerKey.includes('url'))) {
+    if (isInstagramPostKey(key)) {
       const url = social[key];
-      // Check if the URL is valid and not a placeholder
-      if (url && 
-          url.trim() !== '' && 
-          url !== '[Paste Instagram post URL]' &&
-          !url.includes('[') &&
-          (url.startsWith('http://') || url.startsWith('https://'))) {
+      if (isValidInstagramUrl(url)) {
         instagramPosts.push({ uri: url });
       }
     }
