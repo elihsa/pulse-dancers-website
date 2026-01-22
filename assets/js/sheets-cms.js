@@ -246,9 +246,6 @@ const PulseSheetsCMS = {
       dancers.forEach(dancer => {
         const card = document.createElement('div');
         card.className = 'performer-card';
-        // Add opacity: 0 initially to prevent flash
-        card.style.opacity = '0';
-        card.style.transition = 'opacity 0.3s ease-in';
         
         // Handle both full path and filename
         let imageUrl = 'assets/images/performers/placeholder.jpg';
@@ -264,15 +261,11 @@ const PulseSheetsCMS = {
         img.style.backgroundColor = 'rgba(26, 26, 31, 0.5)';
         img.style.minHeight = '300px';
         
-        // Load image properly to prevent flash
         img.onload = function() {
-          // Fade in the card once image is loaded
-          card.style.opacity = '1';
         };
         
         img.onerror = function() {
           this.src = 'assets/images/performers/placeholder.jpg';
-          card.style.opacity = '1';
         };
         
         // Set src after onload handler is attached
