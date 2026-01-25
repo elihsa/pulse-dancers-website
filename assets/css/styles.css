@@ -806,3 +806,43 @@ form textarea {
     padding: 1rem;
   }
 }
+
+/* ===== GOOGLE FORMS STYLING ===== */
+/* Floating Google Form Container */
+.google-form-container {
+  margin: 2rem auto;
+  max-width: 900px;
+  text-align: center;
+}
+
+/* Google Form iframe with floating effect */
+iframe[src*="google.com/forms"] {
+  max-width: 100%;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  background: transparent;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+iframe[src*="google.com/forms"]:hover,
+iframe[src*="google.com/forms"]:focus,
+iframe[src*="google.com/forms"]:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 48px rgba(255, 45, 85, 0.2);
+  outline: 2px solid rgba(255, 45, 85, 0.5);
+  outline-offset: 2px;
+}
+
+/* Responsive iframe styling */
+@media (max-width: 900px) {
+  iframe[src*="google.com/forms"] {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+}
+
+@media (max-width: 600px) {
+  iframe[src*="google.com/forms"] {
+    border-radius: 8px;
+  }
+}
