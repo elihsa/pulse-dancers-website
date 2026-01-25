@@ -112,7 +112,8 @@
      
      img.onerror = function() {
        this.style.display = 'none';
-       this.nextElementSibling.style.paddingTop = '2rem';
+       const content = this.parentElement.querySelector('.performer-info');
+       if (content) content.style.paddingTop = '2rem';
      };
      
      img.src = dancer.image;
@@ -133,8 +134,8 @@
      bio.textContent = dancer.bio || dancer.description || '';
      
      content.appendChild(name);
-     if (dancer.specialties || dancer.genres) content.appendChild(specialties);
-     if (dancer.bio || dancer.description) content.appendChild(bio);
+     content.appendChild(specialties);
+     content.appendChild(bio);
      
      card.appendChild(img);
      card.appendChild(content);
@@ -153,7 +154,7 @@
          displayPerformers(fallbackPerformers);
        }
      }).catch(error => {
-       console.log('CMS unavailable, using static data:', error);
+       console.warn('CMS unavailable, using static data:', error);
        displayPerformers(fallbackPerformers);
      });
    } else {
