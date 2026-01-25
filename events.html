@@ -144,34 +144,25 @@ function isValidInstagramUrl(url) {
          (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://'));
 }
 
-// Fetch Instagram post embed using oEmbed API
+// Create Instagram embed using blockquote method
+// Instagram's embed.js automatically processes blockquote elements with class "instagram-media"
 async function fetchInstagramEmbed(postUrl) {
-  try {
-    // Instagram oEmbed API endpoint
-    const oembedUrl = `https://graph.facebook.com/v18.0/instagram_oembed?url=${encodeURIComponent(postUrl)}&access_token=&omitscript=true&hidecaption=false`;
-    
-    // Try using a CORS proxy or fall back to direct embed
-    const response = await fetch(oembedUrl).catch(() => null);
-    
-    if (response && response.ok) {
-      const data = await response.json();
-      return data.html;
-    }
-  } catch (error) {
-    console.log('Using direct embed method for:', postUrl);
-  }
-  
-  // Fallback: Create Instagram embed using blockquote method (official Instagram embed)
-  // This method doesn't require API access and uses Instagram's embed.js
-  const postId = postUrl.match(/\/p\/([^\/\?]+)/)?.[1] || postUrl.match(/\/reel\/([^\/\?]+)/)?.[1];
+  // Extract post ID from URL (supports both /p/ posts and /reel/ reels)
+  const postId = postUrl.match(/\/(p|reel)\/([^\/\?]+)/)?.[2];
   if (postId) {
+    // Sanitize the URL to prevent XSS
+    const sanitizedUrl = postUrl.replace(/[<>"']/g, '');
+    if (!sanitizedUrl.startsWith('https://www.instagram.com/')) {
+      console.warn('Invalid Instagram URL:', postUrl);
+      return null;
+    }
     return `
       <blockquote class="instagram-media" 
-        data-instgrm-permalink="${postUrl}" 
+        data-instgrm-permalink="${sanitizedUrl}" 
         data-instgrm-version="14"
         style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
         <div style="padding:16px;">
-          <a href="${postUrl}" style="background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank">
+          <a href="${sanitizedUrl}" style="background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank">
             <div style="display: flex; flex-direction: row; align-items: center;">
               <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div>
               <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;">
@@ -249,10 +240,15 @@ async function populateInstagram() {
       const script = document.createElement('script');
       script.async = true;
       script.src = 'https://www.instagram.com/embed.js';
+      script.onerror = () => {
+        console.error('Failed to load Instagram embed script');
+      };
       document.body.appendChild(script);
     } else {
-      // If script already loaded, process embeds
-      window.instgrm.Embeds.process();
+      // If script already loaded, process embeds (check if Embeds object exists)
+      if (window.instgrm && window.instgrm.Embeds && typeof window.instgrm.Embeds.process === 'function') {
+        window.instgrm.Embeds.process();
+      }
     }
   } else {
     container.innerHTML = '<p style="color: #E5E5E5;">Follow us on Instagram @pulsesouthafrica for the latest updates!</p>';
