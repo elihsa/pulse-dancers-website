@@ -1,0 +1,40 @@
+name: Auto-merge Copilot PRs
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_review_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-apply-suggestions:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login == 'copilot' || github.event.comment.user.login == 'copilot'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Apply suggestions
+        if: github.event_name == 'pull_request_review_comment'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Apply any suggestions from copilot
+          gh pr review ${{ github.event.pull_request.number }} --approve --body "Auto-applying Copilot suggestions"
+
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login == 'copilot'
+    steps:
+      - name: Enable auto-merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge ${{ github.event.pull_request.number }} --auto --squash
