@@ -826,9 +826,12 @@ iframe[src*="google.com/forms"] {
 }
 
 iframe[src*="google.com/forms"]:hover,
+iframe[src*="google.com/forms"]:focus,
 iframe[src*="google.com/forms"]:focus-within {
   transform: translateY(-4px);
   box-shadow: 0 12px 48px rgba(255, 45, 85, 0.2);
+  outline: 2px solid rgba(255, 45, 85, 0.5);
+  outline-offset: 2px;
 }
 
 /* Responsive iframe styling */
