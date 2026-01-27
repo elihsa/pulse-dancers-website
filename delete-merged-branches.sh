@@ -41,7 +41,8 @@ fail_count=0
 
 for branch in "${branches[@]}"; do
   echo "Deleting: $branch"
-  if git push origin --delete "$branch" 2>&1; then
+  git push origin --delete "$branch" 2>&1
+  if [ $? -eq 0 ]; then
     ((success_count++))
     echo "✅ Deleted: $branch"
   else
