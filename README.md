@@ -2,6 +2,12 @@
 
 Professional male entertainment booking website for South Africa.
 
+## 📅 Version Information
+
+**Last Updated:** January 27, 2026  
+**Version:** 1.0.0  
+**Status:** Production
+
 ## 🚀 Live Site
 
 https://pulse-dancers-website.vercel.app
