@@ -75,15 +75,24 @@ These branches:
 
 ### Option 2: Command Line (Bulk Delete)
 
-If you prefer using the command line, save this script and run it:
+If you prefer using the command line, use the included `delete-merged-branches.sh` script:
 
-**delete-merged-branches.sh**:
 ```bash
-#!/bin/bash
-# Script to delete all 26 merged branches
+chmod +x delete-merged-branches.sh
+./delete-merged-branches.sh
+```
 
-echo "🗑️  Deleting 26 merged branches from GitHub..."
+The script will:
+- Delete all 26 merged branches one by one
+- Show progress for each branch
+- Report success/failure count at the end
+- Provide a final summary
 
+**Alternative: Simple One-Command Approach**
+
+If you prefer a simpler approach without a script, you can delete all branches in one command:
+
+```bash
 git push origin --delete \
   copilot/add-netlify-functions-booking \
   copilot/center-google-forms-embed \
@@ -111,14 +120,6 @@ git push origin --delete \
   copilot/update-booking-form-ui \
   copilot/update-join-and-contact-html \
   copilot/update-website-with-cms
-
-echo "✅ Branch cleanup complete!"
-```
-
-To use:
-```bash
-chmod +x delete-merged-branches.sh
-./delete-merged-branches.sh
 ```
 
 ### Option 3: Command Line (Individual)
