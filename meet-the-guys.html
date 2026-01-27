@@ -57,25 +57,109 @@
       <h1 id="meet-page-title">Meet The Guys</h1>
       <p id="meet-page-description">Our team consists of professional, hand-picked performers who are screened for personality, professionalism, and crowd control. Each performer brings unique energy and expertise to create an unforgettable experience.</p>
 
-      <!-- Performers Grid (CMS-managed) -->
+      <!-- Performers Grid (CMS-managed with static fallback) -->
       <div id="performers-grid" class="performers-grid">
         <p id="performers-loading" style="text-align: center; color: #b0b0b0;">Loading performers...</p>
         <!-- Performers will be dynamically loaded here -->
       </div>
       <script>
+ // Static fallback data for performers when CMS is unavailable
+ const fallbackPerformers = [
+   {
+     name: 'Eli',
+     bio: 'Professional dancer and entertainer with years of experience in crowd engagement.',
+     specialties: 'High-energy performances, Crowd interaction',
+     image: 'assets/images/performers/eli.jpg'
+   },
+   {
+     name: 'Brendan',
+     bio: 'Dynamic performer specializing in themed entertainment and choreographed routines.',
+     specialties: 'Themed shows, Choreography',
+     image: 'assets/images/performers/brendan.jpg'
+   },
+   {
+     name: 'Jarod',
+     bio: 'Versatile entertainer known for engaging personality and professional demeanor.',
+     specialties: 'Versatile performances, Professional hosting',
+     image: 'assets/images/performers/jarod.jpg'
+   },
+   {
+     name: 'Jaryd',
+     bio: 'Experienced performer bringing energy and excitement to every event.',
+     specialties: 'Interactive entertainment, Event hosting',
+     image: 'assets/images/performers/jaryd.jpg'
+   }
+ ];
+
+ function displayPerformers(performers) {
+   const container = document.getElementById('performers-grid');
+   if (!container) return;
+   
+   const loading = document.getElementById('performers-loading');
+   if (loading) loading.remove();
+   
+   container.innerHTML = '';
+   
+   performers.forEach(dancer => {
+     const card = document.createElement('div');
+     card.className = 'performer-card';
+     
+     const img = document.createElement('img');
+     img.className = 'performer-photo';
+     img.alt = dancer.name || 'Performer';
+     img.style.backgroundColor = 'rgba(26, 26, 31, 0.5)';
+     img.style.minHeight = '300px';
+     
+     img.onerror = function() {
+       this.style.display = 'none';
+       const content = this.parentElement.querySelector('.performer-info');
+       if (content) content.style.paddingTop = '2rem';
+     };
+     
+     img.src = dancer.image;
+     
+     const content = document.createElement('div');
+     content.className = 'performer-info';
+     
+     const name = document.createElement('h3');
+     name.className = 'performer-name';
+     name.textContent = dancer.name || '';
+     
+     const specialties = document.createElement('p');
+     specialties.className = 'performer-specialties';
+     specialties.textContent = dancer.specialties || dancer.genres || '';
+     
+     const bio = document.createElement('p');
+     bio.className = 'performer-bio';
+     bio.textContent = dancer.bio || dancer.description || '';
+     
+     content.appendChild(name);
+     content.appendChild(specialties);
+     content.appendChild(bio);
+     
+     card.appendChild(img);
+     card.appendChild(content);
+     container.appendChild(card);
+   });
+ }
+
  document.addEventListener('DOMContentLoaded', () => {
-   try {
-     PulseSheetsCMS.loadDancers('performers-grid');
-     setTimeout(() => {
-       const loading = document.getElementById('performers-loading');
-       const grid = document.getElementById('performers-grid');
-       if (grid.children.length === 1 && loading) {
-         loading.textContent = 'Performer profiles coming soon. Check back soon!';
+   // Try to load from CMS first, use fallback if it fails
+   if (typeof PulseSheetsCMS !== 'undefined') {
+     PulseSheetsCMS.getDancers().then(dancers => {
+       if (dancers && dancers.length > 0) {
+         displayPerformers(dancers);
+       } else {
+         // CMS returned empty, use fallback
+         displayPerformers(fallbackPerformers);
        }
-     }, 3000);
-   } catch (error) {
-     console.error('Error loading performers:', error);
-     document.getElementById('performers-loading').textContent = 'Unable to load performers. Please contact us for more information.';
+     }).catch(error => {
+       console.warn('CMS unavailable, using static data:', error);
+       displayPerformers(fallbackPerformers);
+     });
+   } else {
+     // CMS not loaded, use fallback immediately
+     displayPerformers(fallbackPerformers);
    }
  });
 </script>
