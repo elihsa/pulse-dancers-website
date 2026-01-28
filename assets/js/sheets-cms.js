@@ -129,13 +129,13 @@ const PulseSheetsCMS = {
       .map((row) => {
       // Handle format: ID | Name | Specialties | Experience | Location | Bio | Image filename | Image path        return {
           name: row[1],
-          bio: row[5] || '',
-          specialties: row[2] || '',
+          bio: row[6] || '',
+          specialties: row[3] || '',
           image: row[7] || 'assets/images/performers/placeholder.jpg',
           active: row[4],
           // Keep legacy fields for compatibility
-          description: row[5] || '', // bio as description
-          genres: row[2] || '', // specialties as genres
+          description: row[6] || '', // bio as description
+          genres: row3] || '', // specialties as genres
         };
       })
       .filter((d) => d.name && d.active !== 'FALSE');
