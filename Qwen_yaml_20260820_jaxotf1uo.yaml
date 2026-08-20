@@ -1,0 +1,153 @@
+# ===== FILE: admin/config.yml  (REPLACE ENTIRE FILE) =====
+# Verified YAML. Field names match the data/*.json files exactly.
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "assets/images/uploads"
+public_folder: "/assets/images/uploads"
+
+collections:
+
+  - name: "home"
+    label: "Home Page"
+    files:
+      - name: "home"
+        label: "Home Page Content"
+        file: "data/home.json"
+        fields:
+          - { label: "Hero Title (HTML allowed)", name: "heroTitle", widget: "string" }
+          - { label: "Hero Subtitle", name: "heroSub", widget: "text" }
+          - { label: "Tagline (under logo)", name: "tagline", widget: "string" }
+          - { label: "Logo Image (optional)", name: "logoUrl", widget: "image", required: false }
+          - { label: "Masthead Background Photo", name: "mastheadBg", widget: "image" }
+          - label: "Services"
+            name: "services"
+            widget: "list"
+            fields:
+              - { label: "Icon (emoji)", name: "icon", widget: "string" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Description", name: "desc", widget: "text" }
+          - { label: "Venue Section Title (HTML allowed)", name: "venueTitle", widget: "string" }
+          - { label: "Venue Paragraph 1", name: "venueP1", widget: "text" }
+          - { label: "Venue Paragraph 2", name: "venueP2", widget: "text" }
+          - { label: "Venue Paragraph 3", name: "venueP3", widget: "text" }
+          - { label: "Venue Photo", name: "venueImage", widget: "image" }
+          - { label: "Tour Locations", name: "locations", widget: "list" }
+          - label: "Stats"
+            name: "stats"
+            widget: "list"
+            fields:
+              - { label: "Value", name: "value", widget: "string" }
+              - { label: "Label", name: "label", widget: "string" }
+          - { label: "Welcome Title", name: "welcomeTitle", widget: "string" }
+
+  - name: "prices"
+    label: "Prices"
+    files:
+      - name: "prices"
+        label: "Price List"
+        file: "data/prices.json"
+        fields:
+          - label: "Price Items"
+            name: "items"
+            widget: "list"
+            fields:
+              - { label: "Group", name: "group", widget: "select", options: ["shows", "waiters", "other"] }
+              - { label: "Service Name", name: "name", widget: "string" }
+              - { label: "Duration / Note", name: "duration", widget: "string" }
+              - { label: "Price (R)", name: "price", widget: "number" }
+              - { label: "Unit", name: "unit", widget: "select", options: ["flat", "hourly", "each", "event"] }
+              - { label: "Quote Key", name: "quoteKey", widget: "string", required: false }
+          - { label: "Note Under Table", name: "note", widget: "text" }
+
+  - name: "faq"
+    label: "FAQ"
+    files:
+      - name: "faq"
+        label: "FAQ Items"
+        file: "data/faq.json"
+        fields:
+          - label: "FAQ Items"
+            name: "items"
+            widget: "list"
+            fields:
+              - { label: "Group", name: "group", widget: "string" }
+              - { label: "Question", name: "q", widget: "string" }
+              - { label: "Answer", name: "a", widget: "markdown" }
+
+  - name: "booking"
+    label: "Booking Settings"
+    files:
+      - name: "booking"
+        label: "Booking Config & Services"
+        file: "data/booking.json"
+        fields:
+          - { label: "Base Location (travel origin)", name: "baseLocation", widget: "string" }
+          - { label: "Free Km Allowance", name: "freeKm", widget: "number" }
+          - { label: "Rand Per Km", name: "randPerKm", widget: "number" }
+          - { label: "WhatsApp Number (digits only)", name: "whatsapp", widget: "string" }
+          - { label: "Business Email", name: "email", widget: "string" }
+          - { label: "EmailJS Public Key", name: "emailjsPublicKey", widget: "string", required: false }
+          - { label: "EmailJS Service ID", name: "emailjsServiceId", widget: "string", required: false }
+          - { label: "EmailJS Template ID", name: "emailjsTemplateId", widget: "string", required: false }
+          - { label: "Google Apps Script URL (calendar)", name: "appsScriptUrl", widget: "string", required: false }
+          - label: "Booking Services"
+            name: "services"
+            widget: "list"
+            fields:
+              - { label: "Key", name: "key", widget: "string" }
+              - { label: "Label", name: "label", widget: "string" }
+              - { label: "Emoji", name: "emoji", widget: "string" }
+              - label: "Type Options (leave empty for fixed price)"
+                name: "typeOptions"
+                widget: "list"
+                required: false
+                fields:
+                  - { label: "Type Name", name: "name", widget: "string" }
+                  - { label: "Price", name: "price", widget: "number" }
+              - { label: "Fixed Price (if no type options)", name: "price", widget: "number", required: false }
+              - { label: "Unit Note", name: "unitNote", widget: "string", required: false }
+              - { label: "Hourly?", name: "hourly", widget: "boolean", required: false, default: false }
+
+  - name: "testimonials"
+    label: "Testimonials"
+    files:
+      - name: "testimonials"
+        label: "Testimonials"
+        file: "data/testimonials.json"
+        fields:
+          - label: "Testimonials"
+            name: "items"
+            widget: "list"
+            fields:
+              - { label: "Name", name: "name", widget: "string" }
+              - { label: "Location / Event", name: "location", widget: "string" }
+              - { label: "Rating (1-5)", name: "rating", widget: "number", min: 1, max: 5 }
+              - { label: "Review Text", name: "text", widget: "text" }
+
+  - name: "social"
+    label: "Social Links"
+    files:
+      - name: "social"
+        label: "Social Links"
+        file: "data/social.json"
+        fields:
+          - { label: "Instagram Handle", name: "instagram", widget: "string" }
+          - { label: "Facebook URL", name: "facebook", widget: "string" }
+          - { label: "Instagram Post URLs", name: "instagramPosts", widget: "list", required: false }
+
+  - name: "dancers"
+    label: "The Guys"
+    files:
+      - name: "dancers"
+        label: "Dancer Profiles"
+        file: "data/dancers.json"
+        fields:
+          - label: "Dancers"
+            name: "items"
+            widget: "list"
+            fields:
+              - { label: "Name", name: "name", widget: "string" }
+              - { label: "City", name: "city", widget: "select", options: ["Johannesburg", "Cape Town", "Durban"] }
+              - { label: "Photo", name: "image", widget: "image", required: false }

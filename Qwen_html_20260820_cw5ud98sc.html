@@ -1,0 +1,61 @@
+<!-- ===== FILE: admin/index.html  (REPLACE ENTIRE FILE) =====
+     FIX: adds the Netlify Identity widget (required for git-gateway),
+     loads Decap correctly, and shows a clear diagnosis if it still fails. -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pulse Dancers — Content Manager</title>
+
+  <!-- REQUIRED for the git-gateway backend -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+  <style>
+    body{margin:0;background:#f7f8fa}
+    #loading,#fallback{font-family:system-ui,-apple-system,sans-serif;max-width:620px;margin:60px auto;padding:0 24px;color:#222;line-height:1.7}
+    #loading{color:#666;text-align:center}
+    #fallback h1{font-size:1.3rem;color:#FF2D55;margin-bottom:12px}
+    #fallback ol{padding-left:20px}
+    #fallback li{margin-bottom:10px}
+    #fallback code{background:#eceef1;padding:2px 6px;border-radius:4px;font-size:.9em}
+  </style>
+</head>
+<body>
+  <div id="loading">Loading Content Manager…</div>
+
+  <div id="fallback" hidden>
+    <h1>The Content Manager didn't load</h1>
+    <p>Open the browser console (<b>F12 → Console</b>) and look for a red error. Most common causes:</p>
+    <ol>
+      <li><b>Site deployed by drag &amp; drop</b> — the <code>git-gateway</code> backend only works when the site is connected to <b>GitHub</b>. Re-deploy from Git.</li>
+      <li><b>Netlify Identity / Git Gateway not enabled</b> — Netlify → Site configuration → Identity → <b>Enable</b>; then Identity → Services → Git Gateway → <b>Enable</b>; then Identity → <b>Invite users</b> → add your email.</li>
+      <li><b><code>admin/config.yml</code> missing or invalid YAML</b> — the file must exist and parse cleanly.</li>
+      <li><b><code>unpkg.com</code> blocked</b> — a firewall or ad-blocker may be blocking the CMS script. Try another browser/network.</li>
+    </ol>
+  </div>
+
+  <script>
+    (function(){
+      var fallback = document.getElementById('fallback');
+      var loading  = document.getElementById('loading');
+      var cmsMounted = false;
+      var observer = new MutationObserver(function(){
+        var kids = document.body.children;
+        for (var i = 0; i < kids.length; i++) {
+          var el = kids[i];
+          if (el.tagName === 'DIV' && el.id !== 'loading' && el.id !== 'fallback') { cmsMounted = true; break; }
+        }
+        if (cmsMounted) { if (loading) loading.hidden = true; observer.disconnect(); }
+      });
+      observer.observe(document.body, { childList: true });
+      setTimeout(function(){
+        if (!cmsMounted) { if (loading) loading.hidden = true; fallback.hidden = false; }
+      }, 10000);
+    })();
+  </script>
+
+  <!-- Decap CMS -->
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+</body>
+</html>
