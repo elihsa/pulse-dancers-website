@@ -127,7 +127,8 @@ const PulseSheetsCMS = {
     return rows
       .slice(startIdx)
       .map((row) => {
-      // Handle format: ID | Name | Specialties | Experience | Location | Bio | Image filename | Image path        return {
+        // Handle format: ID | Name | Specialties | Experience | Location | Bio | Image filename | Image path
+        return {
           name: row[1],
           bio: row[6] || '',
           specialties: row[3] || '',
@@ -135,7 +136,7 @@ const PulseSheetsCMS = {
           active: row[4],
           // Keep legacy fields for compatibility
           description: row[6] || '', // bio as description
-          genres: row3] || '', // specialties as genres
+          genres: row[3] || '', // specialties as genres
         };
       })
       .filter((d) => d.name && d.active !== 'FALSE');
@@ -173,7 +174,18 @@ const PulseSheetsCMS = {
 
   async getInstagramPosts() {
     const rows = await this.fetchSheet(SHEET_NAMES.SOCIAL, 1, 10);
-    const startIdx = rows[0]?.[0] === 'Platform' ? 1 : 0;
+    // Support both formats:
+    // Format 1 (CMS Guide): Field | Value - with instagramPost1, instagramPost2 fields
+    // Format 2 (Legacy): Platform | URL | Caption - with Platform = 'Instagram'
+    const startIdx = rows[0]?.[0] === 'Field' ? 1 : (rows[0]?.[0] === 'Platform' ? 1 : 0);
+    
+    // Try Format 1 first (Field/Value with instagramPost fields)
+    const fieldValueRows = rows.slice(startIdx).filter(row => row[0] && row[0].startsWith('instagramPost'));
+    if (fieldValueRows.length > 0) {
+      return fieldValueRows.map(row => ({ url: row[1], caption: '' }));
+    }
+    
+    // Fallback to Format 2 (Platform/URL/Caption)
     return rows
       .slice(startIdx)
       .filter((row) => row[0] === 'Instagram')
