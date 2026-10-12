@@ -194,43 +194,73 @@
     }
 
     // Load home page content from CMS
-    async function loadHomeContent() {
-      try {
-        const homeData = await PulseSheetsCMS.getHome();
+        async function loadHomeContent() {
+          try {
+            const homeData = await PulseSheetsCMS.getHome();
         
-        // Update hero section
-        if (homeData.heroKickerText) document.getElementById('hero-kicker-text').textContent = homeData.heroKickerText;
-        if (homeData.heroTitle) document.getElementById('hero-title').textContent = homeData.heroTitle;
-        if (homeData.heroSubtitle) document.getElementById('hero-subtitle').textContent = homeData.heroSubtitle;
-        if (homeData.heroCTA1) document.getElementById('hero-cta1').textContent = homeData.heroCTA1;
-        if (homeData.heroCTA2) document.getElementById('hero-cta2').textContent = homeData.heroCTA2;
-        if (homeData.heroCTA3) document.getElementById('hero-cta3').textContent = homeData.heroCTA3;
-        if (homeData.heroSideTitle) document.getElementById('hero-side-title').textContent = homeData.heroSideTitle;
-        if (homeData.heroSideDescription) document.getElementById('hero-side-description').textContent = homeData.heroSideDescription;
-        if (homeData.heroTagline) document.getElementById('hero-tagline').textContent = homeData.heroTagline;
+            // Update hero section
+            if (homeData.heroKickerText) document.getElementById('hero-kicker-text').textContent = homeData.heroKickerText;
+            if (homeData.heroTitle) document.getElementById('hero-title').textContent = homeData.heroTitle;
+            if (homeData.heroSubtitle) document.getElementById('hero-subtitle').textContent = homeData.heroSubtitle;
+            if (homeData.heroCTA1) document.getElementById('hero-cta1').textContent = homeData.heroCTA1;
+            if (homeData.heroCTA2) document.getElementById('hero-cta2').textContent = homeData.heroCTA2;
+            if (homeData.heroCTA3) document.getElementById('hero-cta3').textContent = homeData.heroCTA3;
+            if (homeData.heroSideTitle) document.getElementById('hero-side-title').textContent = homeData.heroSideTitle;
+            if (homeData.heroSideDescription) document.getElementById('hero-side-description').textContent = homeData.heroSideDescription;
+            if (homeData.heroTagline) document.getElementById('hero-tagline').textContent = homeData.heroTagline;
         
-        // Update about section
-        if (homeData.aboutTitle) document.getElementById('about-title').textContent = homeData.aboutTitle;
-        if (homeData.aboutDescription) document.getElementById('about-description').textContent = homeData.aboutDescription;
-        if (homeData.servicesTitle) document.getElementById('services-title').textContent = homeData.servicesTitle;
+            // Update about section
+            if (homeData.aboutTitle) document.getElementById('about-title').textContent = homeData.aboutTitle;
+            if (homeData.aboutDescription) document.getElementById('about-description').textContent = homeData.aboutDescription;
+            if (homeData.servicesTitle) document.getElementById('services-title').textContent = homeData.servicesTitle;
         
-        // Update services list if provided
-        if (homeData.servicesList) {
-          const servicesList = document.getElementById('services-list');
-          const services = homeData.servicesList.split('|').map(s => s.trim());
-          // Use textContent to prevent XSS
-          servicesList.innerHTML = '';
-          services.forEach(serviceText => {
-            const li = document.createElement('li');
-            li.textContent = serviceText;
-            servicesList.appendChild(li);
-          });
+            // Update services list if provided (from HOME sheet)
+            if (homeData.servicesList) {
+              const servicesList = document.getElementById('services-list');
+              const services = homeData.servicesList.split('|').map(s => s.trim());
+              // Use textContent to prevent XSS
+              servicesList.innerHTML = '';
+              services.forEach(serviceText => {
+                const li = document.createElement('li');
+                li.textContent = serviceText;
+                servicesList.appendChild(li);
+              });
+            }
+          } catch (error) {
+            console.error('Error loading home content:', error);
+            // Keep default content if CMS fails
+          }
+      
+          // Also load services from SERVICES sheet as fallback/additional
+          try {
+            const services = await PulseSheetsCMS.getServicesList();
+            if (services && services.length > 0) {
+              const servicesList = document.getElementById('services-list');
+              // Only replace if we don't have a custom servicesList from HOME sheet
+              // Check if the list only has the default hardcoded items
+              const currentItems = Array.from(servicesList.querySelectorAll('li')).map(li => li.textContent);
+              const defaultItems = [
+                'Choreographed strip shows (1-man, multi-man)',
+                'Topless and bottomless waiters',
+                'Naughty games with a host',
+                'Custom appearances and brand activations'
+              ];
+              const isDefault = currentItems.length === defaultItems.length && 
+                currentItems.every((item, i) => item === defaultItems[i]);
+          
+              if (isDefault) {
+                servicesList.innerHTML = '';
+                services.forEach(serviceText => {
+                  const li = document.createElement('li');
+                  li.textContent = serviceText;
+                  servicesList.appendChild(li);
+                });
+              }
+            }
+          } catch (error) {
+            console.error('Error loading services list:', error);
+          }
         }
-      } catch (error) {
-        console.error('Error loading home content:', error);
-        // Keep default content if CMS fails
-      }
-    }
 
     // Load testimonials when page loads
     if (document.readyState === 'loading') {

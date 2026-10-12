@@ -108,7 +108,9 @@ const PulseSheetsCMS = {
 
   async getFAQs() {
     const rows = await this.fetchSheet(SHEET_NAMES.FAQS, 1, 50);
-    const startIdx = rows[0]?.[0] === 'Questions' ? 1 : 0;
+    // Handle header row - can be "Question" (singular) or "Questions" (plural)
+    const firstCell = rows[0]?.[0]?.toLowerCase();
+    const startIdx = (firstCell === 'question' || firstCell === 'questions') ? 1 : 0;
     return rows
       .slice(startIdx)
       .map((row) => ({
@@ -212,6 +214,15 @@ const PulseSheetsCMS = {
       }
     });
     return result;
+  },
+
+  async getServicesList() {
+    const rows = await this.fetchSheet(SHEET_NAMES.SERVICES, 1, 20);
+    const startIdx = rows[0]?.[0]?.toLowerCase() === 'service' ? 1 : 0;
+    return rows
+      .slice(startIdx)
+      .map((row) => row[0])
+      .filter((s) => s);
   },
 
   async getPageContent(pageName) {
