@@ -45,6 +45,11 @@ All content is managed via **Google Sheets CMS**:
   - SERVICES (service offerings)
   - TESTIMONIALS (client reviews with approval status)
   - SOCIAL (Instagram and social media links)
+- **PAGE_CONTENT** (key-value settings per page):
+  - **PRICES** page: display labels (baseRateTitle, baseRateText, travelTitle, customTitle, customText, ctaTitle, ctaDescription, ctaButton)
+  - **BOOKING** page: travel settings (travelRatePerKm, freeRadiusKm, baseLocationName, googleMapsApiKey)
+
+> **Single source of truth:** All **service prices** live in the **PRICES tab** only — both the Prices page and the booking quote read from the same table. The `travelText` sentence is auto-generated from the BOOKING travel variables (`travelRatePerKm`, `freeRadiusKm`, `baseLocationName`) so the displayed rate can never drift from the charged rate.
 
 ### CMS Integration
 

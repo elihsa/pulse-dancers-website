@@ -130,7 +130,7 @@ Home | Prices | FAQ | Meet The Guys | Join | Book Now
 **Live Quote Display:**
 - Performance Fee (calculated from service × performers)
 - Distance (round trip km, from Sandton City)
-- Travel Fee (R4/km beyond 50km free radius)
+- Travel Fee (R5/km beyond 50km free radius)
 - **Estimated Total**
 
 **Additional:**
@@ -143,7 +143,7 @@ Home | Prices | FAQ | Meet The Guys | Join | Book Now
 - API Key: AIzaSyDmIhz0iWcB8R-BBXkFFGi36bCQIm7fgA8
 - Base Location: Sandton City, Johannesburg
 - Free Radius: 50km
-- Rate: R4/km (round trip)
+- Rate: R5/km (round trip)
 
 **Form Submission:**
 - Form handler: Web3Forms API
@@ -193,7 +193,7 @@ Home | Prices | FAQ | Meet The Guys | Join | Book Now
 - General notes (CMS-editable)
 - "How Pricing Works" section
   - Base Rate
-  - Travel (R4/km outside 50km)
+  - Travel (R5/km outside 50km)
   - Custom Packages
 - "Ready to Book?" CTA section
 
@@ -1072,7 +1072,7 @@ Owner confirms with customer
 
 **Quote Calculation:**
 - Performance Fee = Sum of selected services
-- Travel Fee = (distance - 50km) × R4/km
+- Travel Fee = (distance - 50km) × R5/km
 - Total = Performance Fee + Travel Fee
 
 ### Cost Structure

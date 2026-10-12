@@ -62,7 +62,7 @@ The Pulse Dancers website has been successfully audited and all issues have been
 - Implemented event delegation for dynamic checkboxes
 - Added live quote calculation
 - Distance calculator ready (Google Maps API)
-- Travel fee calculation (R4/km beyond 50km)
+- Travel fee calculation (R5/km beyond 50km)
 - Fixed race conditions with initialization flag
 
 **Result**: Live quote calculator works with service selection

@@ -110,6 +110,7 @@
         async function loadPricesPageContent() {
           try {
             const pageContent = await PulseSheetsCMS.getPageContent('PRICES');
+            const booking = await PulseSheetsCMS.getPageContent('BOOKING');
             
             // Update all editable text elements
             if (pageContent.pageTitle) document.getElementById('prices-page-title').textContent = pageContent.pageTitle;
@@ -118,12 +119,21 @@
             if (pageContent.baseRateTitle) document.getElementById('pricing-base-title').textContent = pageContent.baseRateTitle;
             if (pageContent.baseRateText) document.getElementById('pricing-base-text').textContent = pageContent.baseRateText;
             if (pageContent.travelTitle) document.getElementById('pricing-travel-title').textContent = pageContent.travelTitle;
-            if (pageContent.travelText) document.getElementById('pricing-travel-text').textContent = pageContent.travelText;
             if (pageContent.customTitle) document.getElementById('pricing-custom-title').textContent = pageContent.customTitle;
             if (pageContent.customText) document.getElementById('pricing-custom-text').textContent = pageContent.customText;
             if (pageContent.ctaTitle) document.getElementById('pricing-cta-title').textContent = pageContent.ctaTitle;
             if (pageContent.ctaDescription) document.getElementById('pricing-cta-description').textContent = pageContent.ctaDescription;
             if (pageContent.ctaButton) document.getElementById('pricing-cta-button').textContent = pageContent.ctaButton;
+
+            // The travel sentence is GENERATED from the same BOOKING variables
+            // the booking form charges (PAGE_CONTENT: travelRatePerKm /
+            // freeRadiusKm / baseLocationName) — one source of truth, so the
+            // displayed rate can never drift from the quoted rate.
+            const rate = booking.travelRatePerKm ? parseFloat(booking.travelRatePerKm) : 5;
+            const radius = booking.freeRadiusKm ? parseFloat(booking.freeRadiusKm) : 50;
+            const base = booking.baseLocationName || 'Sandton City';
+            document.getElementById('pricing-travel-text').textContent =
+              `R${rate} per km outside ${radius}km radius from ${base} (round trip).`;
           } catch (error) {
             console.error('Error loading prices page content:', error);
             // Keep default content if CMS fails

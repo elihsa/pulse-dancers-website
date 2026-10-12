@@ -68,7 +68,7 @@ This controls all FAQ questions and answers.
 
 | Question | Answer |
 |----------|--------|
-| Are rates inclusive of travel? | No, our rates do not include travel. Travel is calculated at R4 per kilometer (round trip) outside a 50km radius from Sandton City, Johannesburg. |
+|| Are rates inclusive of travel? | No, our rates do not include travel. Travel is calculated at R5 per kilometer (round trip) outside a 50km radius from Sandton City, Johannesburg. |
 | What's included in a show? | A full show includes choreographed performance, music, costume, and audience interaction. Duration varies by package (typically 20 minutes for stripper shows). |
 | How do we book? | Fill out our booking form with your event details. We'll calculate a quote including performance fee and travel. Once confirmed, we lock in your chosen performers. |
 | Do you operate outside Gauteng? | Yes! We service all of South Africa. Travel fees apply based on distance from Johannesburg. |
@@ -164,9 +164,10 @@ Format: | Page | Key | Value |
 | PRICES | baseRateTitle | Base Rate |
 | PRICES | baseRateText | Show or service price above. |
 | PRICES | travelTitle | Travel |
-| PRICES | travelText | R4 per km outside 50km radius from Sandton City (round trip). |
 | PRICES | customTitle | Custom Packages |
 | PRICES | customText | Multi-day events, VIP add-ons, theme packages - contact us for a tailored quote. |
+
+> **Note:** The travel sentence ("R5 per km outside 50km radius from Sandton City (round trip)") is **auto-generated** from the BOOKING travel settings (`travelRatePerKm`, `freeRadiusKm`, `baseLocationName` in the PAGE_CONTENT tab). Do not edit it manually — change the BOOKING keys instead.
 | PRICES | ctaTitle | Ready to Book? |
 | PRICES | ctaDescription | Get a personalized quote based on your event details with automatic distance calculation. |
 | PRICES | ctaButton | Get a Quote |

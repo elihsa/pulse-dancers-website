@@ -1,24 +1,23 @@
 /**
  * Pulse Booking Form — custom form with conditional service fields and live quote.
  *
- * Rates are loaded from the CMS (PAGE_CONTENT tab) so they can be changed without
- * touching code. Fallback defaults live in DEFAULTS below — update those when the
- * Jotform replacement numbers are confirmed.
+ * SINGLE SOURCE OF TRUTH: every service price is read from the PRICES tab of
+ * the CMS (Service | Price | Duration | Description) — the exact same table
+ * the Prices page renders. A price is edited in ONE place and both the page
+ * and the quote update. Travel settings live in the PAGE_CONTENT tab
+ * (Page = BOOKING) and drive BOTH the quote math and the displayed sentence:
  *
- * CMS keys (PAGE_CONTENT tab, key | value):
+ * CMS keys (PAGE_CONTENT tab, Page=BOOKING):
  *   travelRatePerKm   - travel fee per km beyond the free radius (default 5)
  *   freeRadiusKm      - free travel radius in km (default 50)
  *   baseLocationName  - display name of the base location (default "Sandton City")
- *   rateMaleXpress    - R per male stripper, xpress 13-min show (default 1800)
- *   rateMaleFull      - R per male stripper, full 20-min show (default 2500)
- *   rateFemale        - R per female stripper (default null -> POA)
- *   rateWaiter1h      - R per topless waiter, 1 hour (default 850)
- *   rateWaiterMulti   - R per topless waiter per hour when >1h (default 750)
- *   rateButler1h      - R per bottomless butler, 1 hour (default 950)
- *   rateButlerMulti   - R per bottomless butler per hour when >1h (default 850)
- *   rateGames         - R per games package (default null -> POA)
- *   ratePoleDancer    - R per pole dancer (default null -> POA)
  *   googleMapsApiKey  - Google Maps JS API key (enables address autocomplete)
+ *
+ * Service prices (PRICES tab, matched by Service name — quote looks these up):
+ *   "1 Man Xpress Show", "1 Man Show", "2 Man Show" ... "6 Man Show",
+ *   "Female Stripper", "Topless Waiter", "Bottomless Waiter",
+ *   "Fun Games", "Pole Dancer"
+ * Missing price -> the item shows as POA (price on application).
  */
 
 const BookingSettings = {
@@ -26,15 +25,7 @@ const BookingSettings = {
   freeRadiusKm: 50,
   baseLocationName: 'Sandton City',
   baseCoords: { lat: -26.1086, lng: 28.0567 }, // Sandton City
-  rateMaleXpress: 1800,
-  rateMaleFull: 2500,
-  rateFemale: null,
-  rateWaiter1h: 850,
-  rateWaiterMulti: 750,
-  rateButler1h: 950,
-  rateButlerMulti: 850,
-  rateGames: null,
-  ratePoleDancer: null,
+  prices: {}, // Service name -> { price, duration, description } from PRICES tab
   googleMapsApiKey: null,
 };
 
@@ -73,33 +64,59 @@ const BookingForm = {
   },
 
   async loadSettings() {
+    // Travel settings from the PAGE_CONTENT tab (Page = BOOKING).
+    // NOTE: the map is keyed by the Key column. An earlier version keyed it by
+    // the Page column, so no CMS setting ever actually loaded — the form always
+    // ran on the hardcoded defaults below.
     try {
       const rows = await PulseSheetsCMS.fetchSheet('PAGE_CONTENT', 1, 100);
       const map = {};
-      rows.forEach(r => { if (r[0]) map[String(r[0]).trim()] = r[1]; });
+      rows.forEach(r => { if (r[0] && String(r[0]).trim() === 'BOOKING' && r[1]) map[String(r[1]).trim()] = r[2]; });
       const num = (v, d) => { const n = parseFloat(v); return isNaN(n) ? d : n; };
       if (map.travelRatePerKm) BookingSettings.travelRatePerKm = num(map.travelRatePerKm, 5);
       if (map.freeRadiusKm) BookingSettings.freeRadiusKm = num(map.freeRadiusKm, 50);
       if (map.baseLocationName) BookingSettings.baseLocationName = String(map.baseLocationName).trim();
-      if (map.rateMaleXpress) BookingSettings.rateMaleXpress = num(map.rateMaleXpress, 1800);
-      if (map.rateMaleFull) BookingSettings.rateMaleFull = num(map.rateMaleFull, 2500);
-      if (map.rateFemale) BookingSettings.rateFemale = num(map.rateFemale, null);
-      if (map.rateWaiter1h) BookingSettings.rateWaiter1h = num(map.rateWaiter1h, 850);
-      if (map.rateWaiterMulti) BookingSettings.rateWaiterMulti = num(map.rateWaiterMulti, 750);
-      if (map.rateButler1h) BookingSettings.rateButler1h = num(map.rateButler1h, 950);
-      if (map.rateButlerMulti) BookingSettings.rateButlerMulti = num(map.rateButlerMulti, 850);
-      if (map.rateGames) BookingSettings.rateGames = num(map.rateGames, null);
-      if (map.ratePoleDancer) BookingSettings.ratePoleDancer = num(map.ratePoleDancer, null);
       if (map.googleMapsApiKey) BookingSettings.googleMapsApiKey = String(map.googleMapsApiKey).trim();
     } catch (e) {
       console.warn('[Booking] Could not load settings from CMS, using defaults:', e.message);
+    }
+    // Service prices — single source of truth: the PRICES tab (the same table
+    // the Prices page renders). Services missing a price quote as POA.
+    try {
+      const rows = await PulseSheetsCMS.fetchSheet('PRICES', 1, 50);
+      rows.forEach(r => {
+        const name = r[0] ? String(r[0]).trim() : '';
+        if (!name || name.toLowerCase().includes('service')) return; // skip header row
+        const price = parseFloat(String(r[1] || '').replace(/[^0-9.]/g, ''));
+        BookingSettings.prices[name] = {
+          price: isNaN(price) ? null : price,
+          duration: r[2] || '',
+          description: r[3] || '',
+        };
+      });
+    } catch (e) {
+      console.warn('[Booking] Could not load prices from CMS, using POA fallbacks:', e.message);
     }
     // Populate area datalist
     const dl = document.getElementById('bf-area-list');
     if (dl) dl.innerHTML = Object.keys(AREA_COORDS).map(a => `<option value="${a}">`).join('');
     // Load Maps if key present
-    if (BookingSettings.googleMapsApiKey) this.loadGoogleMaps();
+    if (BookingSettings.googleMapsApiKey) {
+      this.loadGoogleMaps();
+    } else {
+      // No Maps key: the exact-address path can't compute distance, so offer
+      // the area list only. Adding BOOKING|googleMapsApiKey to the CMS
+      // re-enables address autocomplete automatically.
+      const exact = document.querySelector('input[name="locType"][value="exact"]');
+      if (exact && exact.closest('label')) exact.closest('label').hidden = true;
+    }
     this.updateRateNotes();
+  },
+
+  // Look up a service price from the PRICES tab; null -> POA.
+  priceOf(name) {
+    const p = BookingSettings.prices[name];
+    return p && p.price ? p.price : null;
   },
 
   loadGoogleMaps() {
@@ -192,12 +209,18 @@ const BookingForm = {
   fmt(n) { return 'R' + Math.round(n).toLocaleString('en-ZA'); },
 
   updateRateNotes() {
-    const S = BookingSettings;
+    const P = BookingSettings.prices;
     const set = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
-    set('bf-waiter-rate-note', `R${S.rateWaiter1h} for 1 hour · R${S.rateWaiterMulti}/h thereafter (per waiter)`);
-    set('bf-butler-rate-note', `R${S.rateButler1h} for 1 hour · R${S.rateButlerMulti}/h thereafter (per butler)`);
-    set('bf-games-rate-note', S.rateGames ? `R${S.rateGames} per package` : 'Price on application');
-    set('bf-pole-rate-note', S.ratePoleDancer ? `R${S.ratePoleDancer} per dancer` : 'Price on application');
+    // Notes are generated from the PRICES tab — no rates live in this file.
+    const note = (name) => {
+      const p = P[name];
+      if (!p || !p.price) return 'Price on application';
+      return p.duration ? `R${p.price} · ${p.duration}` : `R${p.price}`;
+    };
+    set('bf-waiter-rate-note', note('Topless Waiter'));
+    set('bf-butler-rate-note', note('Bottomless Waiter'));
+    set('bf-games-rate-note', note('Fun Games'));
+    set('bf-pole-rate-note', note('Pole Dancer'));
   },
 
   val(id) { const el = document.getElementById(id); return el ? parseFloat(el.value) || 0 : 0; },
@@ -208,33 +231,33 @@ const BookingForm = {
     let performance = 0;
     let hasPOA = false;
 
+    // Male strippers: package price from the PRICES tab ("1 Man Xpress Show",
+    // "1 Man Show", "2 Man Show" ... "6 Man Show"). Multi-man shows have no
+    // xpress tier, so the package price applies regardless of show length.
     if (this.checked('input[name="service"][value="male"]').length) {
-      const count = this.val('bf-male-count');
-      const rate = document.getElementById('bf-show-type').value === 'xpress' ? S.rateMaleXpress : S.rateMaleFull;
-      performance += count * rate;
+      const count = this.val('bf-male-count') || 1;
+      const xpress = document.getElementById('bf-show-type').value === 'xpress';
+      const price = count === 1
+        ? this.priceOf(xpress ? '1 Man Xpress Show' : '1 Man Show')
+        : (this.priceOf(`${count} Man Show`) || count * this.priceOf('1 Man Show'));
+      if (price) performance += price; else hasPOA = true;
     }
-    if (this.checked('input[name="service"][value="female"]').length) {
-      const count = this.val('bf-female-count');
-      if (S.rateFemale) performance += count * S.rateFemale; else hasPOA = true;
-    }
-    if (this.checked('input[name="service"][value="waiter"]').length) {
-      const count = this.val('bf-waiter-count');
-      const hours = this.val('bf-waiter-hours');
-      performance += count * (hours <= 1 ? S.rateWaiter1h : S.rateWaiterMulti * hours);
-    }
-    if (this.checked('input[name="service"][value="butler"]').length) {
-      const count = this.val('bf-butler-count');
-      const hours = this.val('bf-butler-hours');
-      performance += count * (hours <= 1 ? S.rateButler1h : S.rateButlerMulti * hours);
-    }
-    if (this.checked('input[name="service"][value="games"]').length) {
-      const qty = this.val('bf-games-qty');
-      if (S.rateGames) performance += qty * S.rateGames; else hasPOA = true;
-    }
-    if (this.checked('input[name="service"][value="pole"]').length) {
-      const qty = this.val('bf-pole-qty');
-      if (S.ratePoleDancer) performance += qty * S.ratePoleDancer; else hasPOA = true;
-    }
+    // Everything else: per-unit PRICES price x count/hours/qty.
+    const line = (name, count, hours) => {
+      const p = this.priceOf(name);
+      if (!p) { hasPOA = true; return; }
+      performance += count * (hours || 1) * p;
+    };
+    if (this.checked('input[name="service"][value="female"]').length)
+      line('Female Stripper', this.val('bf-female-count') || 1);
+    if (this.checked('input[name="service"][value="waiter"]').length)
+      line('Topless Waiter', this.val('bf-waiter-count') || 1, this.val('bf-waiter-hours') || 1);
+    if (this.checked('input[name="service"][value="butler"]').length)
+      line('Bottomless Waiter', this.val('bf-butler-count') || 1, this.val('bf-butler-hours') || 1);
+    if (this.checked('input[name="service"][value="games"]').length)
+      line('Fun Games', this.val('bf-games-qty') || 1);
+    if (this.checked('input[name="service"][value="pole"]').length)
+      line('Pole Dancer', this.val('bf-pole-qty') || 1);
 
     const distance = this.distanceKm || 0;
     const travel = Math.max(0, distance - S.freeRadiusKm) * S.travelRatePerKm;

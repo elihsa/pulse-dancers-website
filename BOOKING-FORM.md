@@ -32,25 +32,19 @@ The quote box at the bottom of the form updates in real time as the customer cha
 
 ## Rate configuration (all in the CMS)
 
-Rates live in the `PAGE_CONTENT` tab of the Google Sheet (key | value). **Change them there — no code edits needed.**
+**SINGLE SOURCE OF TRUTH:** Service prices come from the **PRICES tab** (same table the Prices page renders). Travel settings live in the `PAGE_CONTENT` tab (Page = BOOKING) and drive BOTH the quote math and the displayed sentence — the rate exists in one place only.
 
-| CMS key | Default | Meaning |
-|---------|---------|---------|
-| `travelRatePerKm` | 5 | Travel fee per km beyond free radius (currently **R5/km**) |
-| `freeRadiusKm` | 50 | Free travel radius in km (Sandton City base) |
-| `baseLocationName` | Sandton City | Display name of the base location |
-| `rateMaleXpress` | 1800 | R per male stripper, xpress 13-min show |
-| `rateMaleFull` | 2500 | R per male stripper, full 20-min show |
-| `rateFemale` | *(empty = POA)* | R per female stripper |
-| `rateWaiter1h` | 850 | R per topless waiter, 1 hour |
-| `rateWaiterMulti` | 750 | R per topless waiter per hour, 2+ hours |
-| `rateButler1h` | 950 | R per bottomless butler, 1 hour |
-| `rateButlerMulti` | 850 | R per bottomless butler per hour, 2+ hours |
-| `rateGames` | *(empty = POA)* | R per games package |
-| `ratePoleDancer` | *(empty = POA)* | R per pole dancer |
-| `googleMapsApiKey` | *(empty)* | Google Maps JS API key — enables address autocomplete + exact distance |
+| CMS location | Key | Default | Meaning |
+|--------------|-----|---------|---------|
+| `PAGE_CONTENT` (Page=BOOKING) | `travelRatePerKm` | 5 | Travel fee per km beyond free radius (**R5/km**) |
+| `PAGE_CONTENT` (Page=BOOKING) | `freeRadiusKm` | 50 | Free travel radius in km (Sandton City base) |
+| `PAGE_CONTENT` (Page=BOOKING) | `baseLocationName` | Sandton City | Display name of the base location |
+| `PAGE_CONTENT` (Page=BOOKING) | `googleMapsApiKey` | *(empty)* | Google Maps JS API key — enables address autocomplete + exact distance |
+| **PRICES tab** | *Service name* | *(per row)* | Every service price: "1 Man Xpress Show", "1 Man Show", "2 Man Show"…"6 Man Show", "Female Stripper", "Topless Waiter", "Bottomless Waiter", "Fun Games", "Pole Dancer" |
 
-> **POA** = "Price on application" — when a rate is empty the quote shows "POA" for that line. Set the CMS key to a number to include it in the quote automatically.
+> **POA** = "Price on application" — when a service has no price in the PRICES tab the quote shows "POA" for that line. Add a price in the PRICES tab to include it in the quote automatically.
+
+The old `rate*` keys in `PAGE_CONTENT` have been removed — edit the **PRICES tab** for service prices. The `travelText` key in `PAGE_CONTENT` (PRICES page) is also removed; the travel sentence is generated from `travelRatePerKm` / `freeRadiusKm` / `baseLocationName` so it can never drift from the quoted rate.
 
 ## Bookings destination
 

@@ -29,7 +29,7 @@ https://docs.google.com/spreadsheets/d/12zPYBbpdDLhqTPylP0oUgPqimy5fXIfg/edit
 | Fitness Models | 800 | Per hour | Professional fitness talent |
 
 **Additional Info:**
-- Travel: R4/km (round trip) outside 50km radius from Sandton City
+- Travel: R5/km (round trip) outside 50km radius from Sandton City
 - All prices exclude travel fees
 
 ---
@@ -38,7 +38,7 @@ https://docs.google.com/spreadsheets/d/12zPYBbpdDLhqTPylP0oUgPqimy5fXIfg/edit
 
 | Question | Answer |
 |----------|--------|
-| Are rates inclusive of travel? | No, our rates do not include travel. Travel is calculated at R4 per kilometer (round trip) outside a 50km radius from Sandton City, Johannesburg. |
+|| Are rates inclusive of travel? | No, our rates do not include travel. Travel is calculated at R5 per kilometer (round trip) outside a 50km radius from Sandton City, Johannesburg. |
 | What's included in a show? | A full show includes choreographed performance, music, costume, and audience interaction. Duration varies by package (typically 20 minutes for stripper shows). |
 | How do we book? | Fill out our booking form with your event details. We'll calculate a quote including performance fee and travel. Once confirmed, we lock in your chosen performers. |
 | Do you operate outside Gauteng? | Yes! We service all of South Africa. Travel fees apply based on distance from Johannesburg. |
