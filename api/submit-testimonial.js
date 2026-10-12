@@ -72,7 +72,7 @@ export default async (req, res) => {
       range,
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
-      requestBody: { values: [values] },
+      requestBody: { values },
     });
 
     res.status(200).json({
