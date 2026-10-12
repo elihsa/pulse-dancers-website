@@ -71,10 +71,14 @@ Each page dynamically loads content from Google Sheets:
 GOOGLE_SHEETS_API_KEY=<your-api-key>
 GOOGLE_SHEETS_TESTIMONIALS_ID=1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4
 GOOGLE_SHEETS_JOIN_FORM_ID=<join-form-sheet-id>
-GOOGLE_SERVICE_ACCOUNT_EMAIL=<service-account-email>
-GOOGLE_PRIVATE_KEY=<private-key>
+GOOGLE_SERVICE_ACCOUNT_JSON=<full service account JSON, single line — parsed by api/submit-*.js>
 NOTIFICATION_EMAIL=info@pulsedancers.com
 ```
+
+> **Service account key:** never commit the key file — it contains a private key. The master backup lives in the owner's Google Drive (Pulse Dancers folder): the `pulse-dancers-cms` service account JSON. Its contents go into Vercel as `GOOGLE_SERVICE_ACCOUNT_JSON`. To re-add after a wipe:
+> ```
+> jq -c . <path-to-key.json> | npx vercel env add GOOGLE_SERVICE_ACCOUNT_JSON production
+> ```
 
 ## ✨ Features
 
