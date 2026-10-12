@@ -432,6 +432,56 @@ form {
   margin-bottom: 1rem;
 }
 
+.form-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+/* ===== BOOKING FORM: selectable option cards ===== */
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.6rem;
+  margin: 0.75rem 0 1.25rem 0;
+}
+
+.option-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.85rem 0.75rem;
+  background: rgba(11, 11, 15, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #E5E5E5;
+  min-height: 3rem;
+}
+
+.option-card:hover {
+  border-color: rgba(255, 45, 85, 0.5);
+}
+
+.option-card input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.option-card:has(input:checked) {
+  border-color: #FF2D55;
+  background: rgba(255, 45, 85, 0.12);
+  box-shadow: 0 0 0 1px #FF2D55, 0 4px 14px rgba(255, 45, 85, 0.15);
+  color: #fff;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;

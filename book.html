@@ -8,27 +8,30 @@
   <meta name="keywords" content="book male strippers, hire male dancers johannesburg, bachelorette party booking, male entertainment south africa">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://pulse-dancers-website.vercel.app/book.html">
-  
+
   <!-- Open Graph (Facebook/Social) -->
   <meta property="og:title" content="Book Pulse Male Revue">
   <meta property="og:description" content="Book professional male entertainment for your event in South Africa">
   <meta property="og:url" content="https://pulse-dancers-website.vercel.app/book.html">
   <meta property="og:type" content="website">
-  
+
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Book Pulse Male Revue">
   <meta name="twitter:description" content="Book professional male entertainment for your event">
-  
+
   <link rel="stylesheet" href="assets/css/styles.css?v=2">
-  
+
   <!-- Preload critical assets -->
   <link rel="preload" href="assets/css/styles.css?v=2" as="style">
   <link rel="preload" href="assets/js/app.js" as="script">
+  <link rel="preload" href="assets/js/sheets-cms.js" as="script">
+  <link rel="preload" href="assets/js/booking-form.js" as="script">
 </head>
 <body class="page">
-	<img src="assets/images/top.png" alt="Pulse Male Revue Top Banner" class="top-banner" style="width: 50%; display: block; margin: 0 auto;">
-      <script src="assets/js/banner.js" defer></script>
+
+<img src="assets/images/top.png" alt="Pulse Male Revue Top Banner" class="top-banner" style="width: 50%; display: block; margin: 0 auto;">
+  <script src="assets/js/banner.js" defer></script>
   <header>
     <div class="nav-inner">
       <div class="logo-wrap">
@@ -38,7 +41,7 @@
       </div>
       <ul class="nav-links">
         <li><a href="index.html" class="nav-link">Home</a></li>
-        				<li><a href="events.html" class="nav-link">Events</a></li>
+        <li><a href="events.html" class="nav-link">Events</a></li>
         <li><a href="prices.html" class="nav-link">Prices</a></li>
         <li><a href="faq.html" class="nav-link">FAQ</a></li>
         <li><a href="meet-the-guys.html" class="nav-link">Meet The Guys</a></li>
@@ -53,55 +56,290 @@
   <section class="section">
     <div class="block">
       <h2 id="book-page-title">Book Pulse for Your Event</h2>
-      <p id="book-page-description">Fill out the form below with your event details. We'll respond within 24 hours with a personalized quote.</p>
+      <p id="book-page-description">Fill out the form below with your event details. Select your services and get an instant estimated quote including travel.</p>
 
-      <!-- JotForm Embed -->
-      <div class="jotform-embed">
-        <iframe
-          id="JotFormIFrame-253636457639571"
-          title="Pulse Booking Form"
-          onload="window.parent.scrollTo(0,0)"
-          allowtransparency="true"
-          allow="geolocation; microphone; camera; fullscreen"
-          src="https://form.jotform.com/253636457639571"
-          frameborder="0"
-          style="min-width:100%;max-width:100%;height:800px;border:none;"
-          scrolling="no"
-        >
-        </iframe>
-        <script src='https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js'></script>
-        <script>window.jotformEmbedHandler("iframe[id='JotFormIFrame-253636457639571']", "https://form.jotform.com/")</script>
-      </div>
+      <form id="booking-form" novalidate>
+
+        <!-- ===== YOUR DETAILS ===== -->
+        <h3 style="color:#FF2D55; margin-top:2rem;">Your Details</h3>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="bf-name">Full Name *</label>
+            <input type="text" id="bf-name" name="name" required placeholder="Your name">
+          </div>
+          <div class="form-field">
+            <label for="bf-phone">Phone Number *</label>
+            <input type="tel" id="bf-phone" name="phone" required placeholder="e.g. 082 123 4567">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="bf-email">Email *</label>
+            <input type="email" id="bf-email" name="email" required placeholder="you@example.com">
+          </div>
+        </div>
+
+        <!-- ===== EVENT DETAILS ===== -->
+        <h3 style="color:#FF2D55; margin-top:2rem;">Event Details</h3>
+        <div class="form-field">
+          <label>Type of Event *</label>
+          <div class="option-grid" id="bf-event-type">
+            <label class="option-card"><input type="radio" name="eventType" value="Bachelorette"><span>Bachelorette</span></label>
+            <label class="option-card"><input type="radio" name="eventType" value="Birthday"><span>Birthday</span></label>
+            <label class="option-card"><input type="radio" name="eventType" value="Ladies night"><span>Ladies night</span></label>
+            <label class="option-card"><input type="radio" name="eventType" value="Divorce party"><span>Divorce party</span></label>
+            <label class="option-card"><input type="radio" name="eventType" value="Hen party"><span>Hen party</span></label>
+            <label class="option-card"><input type="radio" name="eventType" value="Kitchen tea"><span>Kitchen tea</span></label>
+            <label class="option-card"><input type="radio" name="eventType" value="Stalk party"><span>Stalk party</span></label>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label>Are you managing the event? *</label>
+          <div class="option-grid">
+            <label class="option-card"><input type="radio" name="managing" value="No"><span>Yes, I'm managing it</span></label>
+            <label class="option-card"><input type="radio" name="managing" value="Yes, but im not managing it."><span>No, someone else is managing it</span></label>
+          </div>
+        </div>
+
+        <!-- Conditional: manager details -->
+        <div id="bf-manager-fields" hidden>
+          <h4 style="color:#E5E5E5; margin-top:1rem;">Person Managing the Event</h4>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="bf-manager-name">Manager Name</label>
+              <input type="text" id="bf-manager-name" name="managerName" placeholder="Their name">
+            </div>
+            <div class="form-field">
+              <label for="bf-manager-phone">Manager Phone</label>
+              <input type="tel" id="bf-manager-phone" name="managerPhone" placeholder="Their number">
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="bf-manager-email">Manager Email</label>
+            <input type="email" id="bf-manager-email" name="managerEmail" placeholder="Their email">
+          </div>
+        </div>
+
+        <!-- ===== LOCATION ===== -->
+        <h3 style="color:#FF2D55; margin-top:2rem;">Event Location</h3>
+        <div class="form-field">
+          <label>Do you have the exact address? *</label>
+          <div class="option-grid">
+            <label class="option-card"><input type="radio" name="locType" value="exact"><span>I know the exact address</span></label>
+            <label class="option-card"><input type="radio" name="locType" value="area"><span>Still working that out, but I know the area</span></label>
+          </div>
+        </div>
+
+        <!-- Conditional: exact address -->
+        <div id="bf-exact-fields" hidden>
+          <div class="form-field">
+            <label for="bf-address">Event Address *</label>
+            <input type="text" id="bf-address" name="address" placeholder="Start typing your address...">
+            <small style="color:#b0b0b0;">Distance from our Sandton City base is calculated automatically.</small>
+          </div>
+        </div>
+
+        <!-- Conditional: area only -->
+        <div id="bf-area-fields" hidden>
+          <div class="form-field">
+            <label for="bf-area">Area of Event *</label>
+            <input type="text" id="bf-area" name="area" placeholder="e.g. Sandton, Rosebank, Cape Town CBD" list="bf-area-list">
+            <datalist id="bf-area-list"></datalist>
+            <small style="color:#b0b0b0;">Distance is estimated from your area to our Sandton City base.</small>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <div id="bf-distance-display" style="display:none; color:#E5E5E5; font-size:0.95rem;">
+            Estimated distance from Sandton City: <strong id="bf-distance-km" style="color:#FF2D55;">—</strong>
+            <span id="bf-travel-note" style="color:#b0b0b0; font-size:0.85rem;"></span>
+          </div>
+        </div>
+
+        <!-- ===== SERVICES ===== -->
+        <h3 style="color:#FF2D55; margin-top:2rem;">Services</h3>
+        <p style="color:#b0b0b0; font-size:0.9rem;">Select the services you want — only the fields for your selected services will appear.</p>
+        <div class="option-grid" id="bf-services">
+          <label class="option-card"><input type="checkbox" name="service" value="male"><span>Male Stripper</span></label>
+          <label class="option-card"><input type="checkbox" name="service" value="female"><span>Female Stripper</span></label>
+          <label class="option-card"><input type="checkbox" name="service" value="waiter"><span>Topless Waiter</span></label>
+          <label class="option-card"><input type="checkbox" name="service" value="butler"><span>Bottomless Butler</span></label>
+          <label class="option-card"><input type="checkbox" name="service" value="games"><span>Games</span></label>
+          <label class="option-card"><input type="checkbox" name="service" value="pole"><span>Pole Dancer</span></label>
+          <label class="option-card"><input type="checkbox" name="service" value="other"><span>Something else</span></label>
+        </div>
+
+        <!-- Conditional: Male Stripper -->
+        <div id="bf-male-fields" hidden style="margin-top:1rem; padding:1.25rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px;">
+          <h4 style="color:#E5E5E5; margin:0 0 1rem 0;">Male Stripper</h4>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="bf-male-count">How many Male Strippers? *</label>
+              <input type="number" id="bf-male-count" name="maleCount" min="1" value="1">
+            </div>
+            <div class="form-field">
+              <label for="bf-show-type">Show Length *</label>
+              <select id="bf-show-type" name="showType">
+                <option value="xpress">Xpress show (13 mins)</option>
+                <option value="full" selected>Full show (20 mins)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="bf-race">Preferred race of performer</label>
+              <select id="bf-race" name="race">
+                <option value="">No preference</option>
+                <option value="Any">Any</option>
+                <option value="Black">Black</option>
+                <option value="Coloured">Coloured</option>
+                <option value="White">White</option>
+                <option value="Indian">Indian</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="bf-costume">Costume preference</label>
+              <select id="bf-costume" name="costume">
+                <option value="None yet">None yet</option>
+                <option value="Cop">Cop</option>
+                <option value="Cowboy">Cowboy</option>
+                <option value="Sailor">Sailor</option>
+                <option value="Businessman">Businessman</option>
+                <option value="Shower">Shower</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conditional: Female Stripper -->
+        <div id="bf-female-fields" hidden style="margin-top:1rem; padding:1.25rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px;">
+          <h4 style="color:#E5E5E5; margin:0 0 1rem 0;">Female Stripper</h4>
+          <div class="form-field">
+            <label for="bf-female-count">How many Female Strippers? *</label>
+            <input type="number" id="bf-female-count" name="femaleCount" min="1" value="1">
+          </div>
+        </div>
+
+        <!-- Conditional: Topless Waiter -->
+        <div id="bf-waiter-fields" hidden style="margin-top:1rem; padding:1.25rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px;">
+          <h4 style="color:#E5E5E5; margin:0 0 1rem 0;">Topless Waiter</h4>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="bf-waiter-count">How many Topless Waiters? *</label>
+              <input type="number" id="bf-waiter-count" name="waiterCount" min="1" value="1">
+            </div>
+            <div class="form-field">
+              <label for="bf-waiter-hours">How many hours? *</label>
+              <input type="number" id="bf-waiter-hours" name="waiterHours" min="1" value="1">
+              <small style="color:#b0b0b0;" id="bf-waiter-rate-note"></small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conditional: Bottomless Butler -->
+        <div id="bf-butler-fields" hidden style="margin-top:1rem; padding:1.25rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px;">
+          <h4 style="color:#E5E5E5; margin:0 0 1rem 0;">Bottomless Butler</h4>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="bf-butler-count">How many Bottomless Butlers? *</label>
+              <input type="number" id="bf-butler-count" name="butlerCount" min="1" value="1">
+            </div>
+            <div class="form-field">
+              <label for="bf-butler-hours">How many hours? *</label>
+              <input type="number" id="bf-butler-hours" name="butlerHours" min="1" value="1">
+              <small style="color:#b0b0b0;" id="bf-butler-rate-note"></small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conditional: Games -->
+        <div id="bf-games-fields" hidden style="margin-top:1rem; padding:1.25rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px;">
+          <h4 style="color:#E5E5E5; margin:0 0 1rem 0;">Games</h4>
+          <div class="form-field">
+            <label for="bf-games-qty">How many game packages? *</label>
+            <input type="number" id="bf-games-qty" name="gamesQty" min="1" value="1">
+            <small style="color:#b0b0b0;" id="bf-games-rate-note"></small>
+          </div>
+        </div>
+
+        <!-- Conditional: Pole Dancer -->
+        <div id="bf-pole-fields" hidden style="margin-top:1rem; padding:1.25rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px;">
+          <h4 style="color:#E5E5E5; margin:0 0 1rem 0;">Pole Dancer</h4>
+          <div class="form-field">
+            <label for="bf-pole-qty">How many pole dancers? *</label>
+            <input type="number" id="bf-pole-qty" name="poleQty" min="1" value="1">
+            <small style="color:#b0b0b0;" id="bf-pole-rate-note"></small>
+          </div>
+        </div>
+
+        <!-- Conditional: Other -->
+        <div id="bf-other-fields" hidden style="margin-top:1rem; padding:1.25rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px;">
+          <div class="form-field">
+            <label for="bf-other-text">What else would you like? *</label>
+            <input type="text" id="bf-other-text" name="otherText" placeholder="Tell us what you have in mind">
+          </div>
+        </div>
+
+        <!-- ===== NOTES ===== -->
+        <div class="form-field" style="margin-top:1.5rem;">
+          <label for="bf-notes">Anything extra you would like to add or ask?</label>
+          <textarea id="bf-notes" name="notes" rows="4" placeholder="Special requests, questions, timings..."></textarea>
+        </div>
+
+        <!-- ===== LIVE QUOTE ===== -->
+        <div id="bf-quote-box" style="margin-top:2rem; padding:1.5rem; background:rgba(0,0,0,0.55); border:1px solid rgba(255,45,85,0.35); border-radius:14px; backdrop-filter:blur(10px);">
+          <h3 style="color:#FF2D55; margin:0 0 1rem 0;">Estimated Quote</h3>
+          <div style="display:flex; justify-content:space-between; padding:0.4rem 0; color:#E5E5E5;">
+            <span>Performance fee</span><strong id="bf-quote-performance">R0</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding:0.4rem 0; color:#E5E5E5;">
+            <span>Distance (round trip)</span><strong id="bf-quote-distance">—</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding:0.4rem 0; color:#E5E5E5;">
+            <span>Travel fee</span><strong id="bf-quote-travel">R0</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding:0.8rem 0 0.2rem 0; margin-top:0.5rem; border-top:1px solid rgba(255,255,255,0.15); color:#fff; font-size:1.15rem;">
+            <strong>Estimated total</strong><strong id="bf-quote-total" style="color:#FF2D55;">R0</strong>
+          </div>
+          <p style="color:#b0b0b0; font-size:0.8rem; margin:0.8rem 0 0 0;">This is an estimate. Final quote confirmed after we review your event details.</p>
+        </div>
+
+        <!-- ===== SUBMIT ===== -->
+        <div style="margin-top:1.5rem; text-align:center;">
+          <button type="submit" class="btn" id="bf-submit" style="font-size:1.1rem; padding:1rem 3rem;">Send Booking Request</button>
+          <p id="bf-form-status" style="margin-top:1rem; display:none;"></p>
+        </div>
+
+      </form>
     </div>
   </section>
 
   <footer>
-    <div class="footer-inner">
-      <div id="footer-copyright">© 2025 Pulse Male Revue - South Africa.</div>
-      <div class="footer-links">
-        <a href="mailto:bookings@pulsedancers.com" id="footer-email">bookings@pulsedancers.com</a>
-        <span>·</span>
-        <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener" id="footer-facebook">Facebook</a>
-        <span>·</span>
-        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" id="footer-instagram">Instagram</a>
-      </div>
+  <div class="footer-inner">
+    <div id="footer-copyright">© 2025 Pulse Male Revue - South Africa.</div>
+    <div class="footer-links">
+      <a href="mailto:bookings@pulsedancers.com" id="footer-email">bookings@pulsedancers.com</a>
+      <span>·</span>
+      <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener" id="footer-facebook">Facebook</a>
+      <span>·</span>
+      <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" id="footer-instagram">Instagram</a>
     </div>
+  </div>
   </footer>
 
   <script src="assets/js/sheets-cms.js" defer></script>
   <script src="assets/js/cms-loader.js" defer></script>
-  <script src="assets/js/app.js" defer></script>
+  <script src="assets/js/booking-form.js" defer></script>
   <script>
     // Load book page content from CMS
     document.addEventListener('DOMContentLoaded', async () => {
       try {
         const pageContent = await PulseSheetsCMS.getPageContent('BOOK');
-        
         if (pageContent.pageTitle) document.getElementById('book-page-title').textContent = pageContent.pageTitle;
         if (pageContent.pageDescription) document.getElementById('book-page-description').textContent = pageContent.pageDescription;
       } catch (error) {
         console.error('Error loading book page content:', error);
-        // Keep default content if CMS fails
       }
     });
   </script>
