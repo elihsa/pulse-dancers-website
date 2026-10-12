@@ -39,8 +39,8 @@ export default async (req, res) => {
   try {
     const { name, area, rating, message, email } = req.body;
 
-    // Validate required fields
-    if (!name || !area || !rating || !message || !email) {
+    // Validate required fields (email is optional)
+    if (!name || !area || !rating || !message) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
