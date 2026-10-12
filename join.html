@@ -25,10 +25,12 @@
   <!-- Preload critical assets -->
   <link rel="preload" href="assets/css/styles.css" as="style">
   <link rel="preload" href="assets/js/app.js" as="script">
+  
+  <!-- Client-side image resizing -->
+  <script src="https://unpkg.com/compressorjs@1.2.1/dist/compressor.min.js"></script>
 </head>
 <body class="page">
-  	<img src="assets/images/top.png" alt="Pulse Male Revue Top Banner" class="top-banner" style="width: 50%; display: block; margin: 0 auto;">
-      <script src="assets/js/banner.js" defer></script>
+  <script src="assets/js/banner.js" defer></script>
   <header>
     <div class="nav-inner">
       <div class="logo-wrap">
@@ -39,7 +41,7 @@
       </div>
       <ul class="nav-links">
         <li><a href="index.html" class="nav-link">Home</a></li>
-        				<li><a href="events.html" class="nav-link">Events & Socials</a></li>
+        <li><a href="events.html" class="nav-link">Events & Socials</a></li>
         <li><a href="prices.html" class="nav-link">Prices</a></li>
         <li><a href="faq.html" class="nav-link">FAQ</a></li>
         <li><a href="meet-the-guys.html" class="nav-link">Meet The Guys</a></li>
@@ -60,16 +62,316 @@
         <strong>📧 Application Form:</strong> Fill out the form below to apply to join the Pulse team. All applications are reviewed carefully and we'll contact you within 5 business days.
       </p>
 
-      
-    <div class="join-form-container">
-      <h2>New Recruit Application Form</h2>
-      <!-- 63
-      Embed -->
-      <!-- Note: This uses the existing JotForm URL (Buns_info/NewGuy) provided by the client -->
-<div class="google-form-container">
-        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScy4D-8DJiZgvlRfNtAIi6K5BS_F_ZHBQkR9--6bKctAiGKQw/viewform?embedded=true" width="640" height="2849" title="New Recruit Application Form" loading="lazy">Loading…</iframe>
+      <div class="join-form-container">
+        <h2 id="join-form-title">New Recruit Application Form</h2>
+        
+        <form id="joinForm" enctype="multipart/form-data" class="pulse-join-form">
+          <!-- Personal Details Section -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">Personal Details</legend>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="firstName">First Name <span class="required">*</span></label>
+                <input type="text" id="firstName" name="firstName" required autocomplete="given-name">
+              </div>
+              <div class="form-group">
+                <label for="lastName">Last Name <span class="required">*</span></label>
+                <input type="text" id="lastName" name="lastName" required autocomplete="family-name">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="birthDate">Date of Birth <span class="required">*</span></label>
+                <div class="date-inputs">
+                  <select id="birthMonth" name="birthMonth" required>
+                    <option value="">Month</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                  </select>
+                  <select id="birthDay" name="birthDay" required disabled>
+                    <option value="">Day</option>
+                  </select>
+                  <select id="birthYear" name="birthYear" required>
+                    <option value="">Year</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="streetAddress">Street Address</label>
+                <input type="text" id="streetAddress" name="streetAddress" autocomplete="street-address">
+              </div>
+              <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" name="city" autocomplete="address-level2">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email">Email <span class="required">*</span></label>
+                <input type="email" id="email" name="email" required autocomplete="email">
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone Number <span class="required">*</span></label>
+                <input type="tel" id="phone" name="phone" required autocomplete="tel" placeholder="+27 XX XXX XXXX">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="instagram">Instagram Handle <span class="required">*</span></label>
+              <div class="input-with-prefix">
+                <span class="prefix">@</span>
+                <input type="text" id="instagram" name="instagram" required placeholder="your_instagram" autocomplete="username">
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Physical Stats Section -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">Physical Stats</legend>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="height">Height (cm) <span class="required">*</span></label>
+                <input type="number" id="height" name="height" required min="100" max="250" placeholder="e.g. 180">
+              </div>
+              <div class="form-group">
+                <label for="weight">Weight (kg) <span class="required">*</span></label>
+                <input type="number" id="weight" name="weight" required min="40" max="150" placeholder="e.g. 80">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="waist">Waist (cm) <span class="required">*</span></label>
+                <input type="number" id="waist" name="waist" required min="50" max="130" placeholder="e.g. 82">
+              </div>
+              <div class="form-group">
+                <label for="chest">Chest (cm) <span class="required">*</span></label>
+                <input type="number" id="chest" name="chest" required min="70" max="150" placeholder="e.g. 100">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="shoeSize">Shoe Size <span class="required">*</span></label>
+                <input type="text" id="shoeSize" name="shoeSize" required placeholder="e.g. 10 UK / 44 EU">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="hairColor">Hair Color <span class="required">*</span></label>
+                <select id="hairColor" name="hairColor" required>
+                  <option value="">Select...</option>
+                  <option value="Black">Black</option>
+                  <option value="Brown">Brown</option>
+                  <option value="Blonde">Blonde</option>
+                  <option value="Red/Auburn">Red/Auburn</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="eyeColor">Eye Color <span class="required">*</span></label>
+                <select id="eyeColor" name="eyeColor" required>
+                  <option value="">Select...</option>
+                  <option value="Brown">Brown</option>
+                  <option value="Blue">Blue</option>
+                  <option value="Green">Green</option>
+                  <option value="Hazel">Hazel</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ethnicity">Ethnicity <span class="required">*</span></label>
+                <select id="ethnicity" name="ethnicity" required>
+                  <option value="">Select...</option>
+                  <option value="Black">Black</option>
+                  <option value="White">White</option>
+                  <option value="Asian">Asian</option>
+                  <option value="Mixed Race">Mixed Race</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="bodyType">Body Type <span class="required">*</span></label>
+                <select id="bodyType" name="bodyType" required>
+                  <option value="">Select...</option>
+                  <option value="Very Toned">Very Toned</option>
+                  <option value="Muscular">Muscular</option>
+                  <option value="Average">Average</option>
+                  <option value="Lean">Lean</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="tattoos">Tattoos (describe locations, sizes, etc.) <span class="required">*</span></label>
+              <textarea id="tattoos" name="tattoos" required rows="3" placeholder="e.g. Small cross on left wrist, tribal band on right arm..."></textarea>
+            </div>
+          </fieldset>
+
+          <!-- Photos Section -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">Photos</legend>
+            <p class="form-help">Upload clear photos. Max 200KB each - they will be auto-resized if larger.</p>
+            
+            <div class="form-row">
+              <div class="form-group file-upload-group">
+                <label for="fullBodyShot">1. Full Body Shot (topless) <span class="required">*</span></label>
+                <div class="file-upload-wrapper">
+                  <input type="file" id="fullBodyShot" name="fullBodyShot" accept="image/*" required capture="environment">
+                  <div class="file-preview" id="fullBodyShotPreview"></div>
+                </div>
+                <small class="form-help">Front-facing, full body, well-lit</small>
+              </div>
+              <div class="form-group file-upload-group">
+                <label for="fullFacePhoto">2. Full Face Photo <span class="required">*</span></label>
+                <div class="file-upload-wrapper">
+                  <input type="file" id="fullFacePhoto" name="fullFacePhoto" accept="image/*" required capture="user">
+                  <div class="file-preview" id="fullFacePhotoPreview"></div>
+                </div>
+                <small class="form-help">Clear face shot, smiling</small>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Role Preference Section -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">What Would You Like To Do? <span class="required">*</span></legend>
+            <p class="form-help">Select one or more options</p>
+            
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" name="preference" value="Dancing">
+                <span class="checkmark"></span>
+                <span class="label-text">Dancing (Stage Shows)</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="preference" value="Topless waitering">
+                <span class="checkmark"></span>
+                <span class="label-text">Topless Waitering</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="preference" value="Bottomless waitering / Barebut butler">
+                <span class="checkmark"></span>
+                <span class="label-text">Bottomless Waitering / Barebut Butler</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <!-- Experience Section -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">Experience & Availability</legend>
+            
+            <div class="radio-group">
+              <label for="danceExperience">Do you have any dance experience? <span class="required">*</span></label>
+              <div class="radio-options">
+                <label class="radio-label">
+                  <input type="radio" name="danceExperience" value="Yes" required>
+                  <span class="radiomark"></span>
+                  <span>Yes</span>
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="danceExperience" value="No">
+                  <span class="radiomark"></span>
+                  <span>No</span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="radio-group">
+              <label for="promoExperience">Do you have any promotional experience? <span class="required">*</span></label>
+              <div class="radio-options">
+                <label class="radio-label">
+                  <input type="radio" name="promoExperience" value="Yes" required>
+                  <span class="radiomark"></span>
+                  <span>Yes</span>
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="promoExperience" value="No">
+                  <span class="radiomark"></span>
+                  <span>No</span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="radio-group">
+              <label for="transport">Do you have your own transport? <span class="required">*</span></label>
+              <div class="radio-options">
+                <label class="radio-label">
+                  <input type="radio" name="transport" value="Yes" required>
+                  <span class="radiomark"></span>
+                  <span>Yes</span>
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="transport" value="No">
+                  <span class="radiomark"></span>
+                  <span>No</span>
+                </label>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Additional Info Section -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">Additional Information</legend>
+            
+            <div class="form-group">
+              <label for="gymLocation">Do you gym, if so where?</label>
+              <textarea id="gymLocation" name="gymLocation" rows="2" placeholder="Gym name & location..."></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="otherWork">What do you do besides Modelling and promos?</label>
+              <textarea id="otherWork" name="otherWork" rows="2" placeholder="Current job, studies, other interests..."></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="skills">Special Skills (Photographer, Graphic editor, DJ, etc.)</label>
+              <textarea id="skills" name="skills" rows="2" placeholder="Any other talents worth mentioning..."></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="imageFilter">Preferred Image Filter</label>
+              <select id="imageFilter" name="imageFilter">
+                <option value="Standard">Standard</option>
+                <option value="Sepia">Sepia</option>
+                <option value="Black & White">Black & White</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </fieldset>
+
+          <!-- Submit -->
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="submitBtn">Submit Application</button>
+            <p class="form-disclaimer">By submitting, you agree to our <a href="privacy.html" target="_blank">Privacy Policy</a> and consent to us storing your data for recruitment purposes.</p>
+          </div>
+        </form>
+        
+        <!-- Success/Error Messages -->
+        <div id="formMessages" class="form-messages" style="display: none;"></div>
       </div>
-    </div>
     </div>
   </section>
 
@@ -89,8 +391,8 @@
   <script src="assets/js/sheets-cms.js" defer></script>
   <script src="assets/js/cms-loader.js" defer></script>
   <script src="assets/js/app.js" defer></script>
-  
-<script>
+
+  <script>
   // Load join page content from CMS
   document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -98,50 +400,67 @@
       
       if (pageContent.pageTitle) document.getElementById('join-page-title').textContent = pageContent.pageTitle;
       if (pageContent.pageDescription) document.getElementById('join-page-description').textContent = pageContent.pageDescription;
+      if (pageContent.formTitle) document.getElementById('join-form-title').textContent = pageContent.formTitle;
       
-      // Security: Only allow specific safe HTML tags for formatting
       if (pageContent.pageBanner) {
         const bannerElement = document.getElementById('join-page-banner');
-        // Simple HTML sanitization - only allow <strong> and <em> tags
         const sanitized = pageContent.pageBanner
-          .replace(/<script[^>]*>.*?<\/script>/gi, '') // Remove script tags
-          .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '') // Remove iframes
-          .replace(/<object[^>]*>.*?<\/object>/gi, '') // Remove objects
-          .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '') // Remove event handlers
-          .replace(/javascript:/gi, ''); // Remove javascript: protocol
+          .replace(/<script[^>]*>.*?<\/script>/gi, '')
+          .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '')
+          .replace(/<object[^>]*>.*?<\/object>/gi, '')
+          .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+          .replace(/javascript:/gi, '');
         bannerElement.innerHTML = sanitized;
       }
     } catch (error) {
       console.error('Error loading join page content:', error);
-      // Keep default content if CMS fails
     }
 
-    // Function to update days based on selected month and year
+    // Initialize date dropdowns
+    initializeDateDropdowns();
+    
+    // Initialize file upload previews
+    initializeFilePreviews();
+    
+    // Handle form submission
+    const joinForm = document.getElementById('joinForm');
+    if (joinForm) {
+      joinForm.addEventListener('submit', handleFormSubmit);
+    }
+  });
+
+  // Date dropdown initialization
+  function initializeDateDropdowns() {
+    const monthSelect = document.getElementById('birthMonth');
+    const daySelect = document.getElementById('birthDay');
+    const yearSelect = document.getElementById('birthYear');
+    
+    if (!monthSelect || !daySelect || !yearSelect) return;
+    
+    // Populate years (1950 to current year - 18)
+    const currentYear = new Date().getFullYear();
+    for (let y = currentYear - 18; y >= 1950; y--) {
+      const option = document.createElement('option');
+      option.value = y;
+      option.textContent = y;
+      yearSelect.appendChild(option);
+    }
+    
     function updateDays() {
-      const monthSelect = document.getElementById('birthMonth');
-      const daySelect = document.getElementById('birthDay');
-      const yearSelect = document.getElementById('birthYear');
-      
-      // Validate that all required elements exist
-      if (!monthSelect || !daySelect || !yearSelect) {
-        console.error('Birth date form elements not found');
-        return;
-      }
-      
       const month = parseInt(monthSelect.value);
       const year = parseInt(yearSelect.value);
       
       if (!month) {
-        return; // Don't update if month is not selected
+        daySelect.disabled = true;
+        daySelect.innerHTML = '<option value="">Day</option>';
+        return;
       }
       
-      // Remember the current selection
+      daySelect.disabled = false;
       const currentDay = daySelect.value;
       
-      // Determine number of days in the month
       let daysInMonth;
-      if (month === 2) { // February
-        // Check for leap year
+      if (month === 2) {
         if (year && ((year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0))) {
           daysInMonth = 29;
         } else {
@@ -153,10 +472,7 @@
         daysInMonth = 31;
       }
       
-      // Clear current options except placeholder
       daySelect.innerHTML = '<option value="">Day</option>';
-      
-      // Add day options
       for (let i = 1; i <= daysInMonth; i++) {
         const option = document.createElement('option');
         const dayValue = i.toString().padStart(2, '0');
@@ -165,92 +481,136 @@
         daySelect.appendChild(option);
       }
       
-      // Restore selection if valid
       if (currentDay && parseInt(currentDay) <= daysInMonth) {
         daySelect.value = currentDay;
       }
     }
     
-    // Add event listeners for month and year changes
-    document.getElementById('birthMonth').addEventListener('change', updateDays);
-    document.getElementById('birthYear').addEventListener('change', updateDays);
-  });
-
-  // Handle form submission for the join form
-  const joinForm = document.getElementById('joinForm');
-  if (joinForm) {
-    joinForm.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      // Validate that at least one preference checkbox is selected
-      const preferenceCheckboxes = document.querySelectorAll('input[name="preference"]');
-      const atLeastOneChecked = Array.from(preferenceCheckboxes).some(checkbox => checkbox.checked);
-      
-      if (!atLeastOneChecked) {
-        alert('Please select at least one preference (Dancing, Topless waitering, or Bottomless / Barebut butler)');
-        return;
-      }
-      
-      // Collect form data
-      const formData = new FormData(this);
-      const data = {
-        firstName: formData.get('firstName'),
-        lastName: formData.get('lastName'),
-        birthMonth: formData.get('birthMonth'),
-        birthDay: formData.get('birthDay'),
-        birthYear: formData.get('birthYear'),
-        streetAddress: formData.get('streetAddress'),
-        city: formData.get('city'),
-        email: formData.get('email'),
-        phone: formData.get('phone'),
-        preference: formData.getAll('preference'),
-        danceExperience: document.querySelector('input[name="danceExperience"]:checked')?.value,
-        promoExperience: document.querySelector('input[name="promoExperience"]:checked')?.value,
-        transport: document.querySelector('input[name="transport"]:checked')?.value,
-        gymLocation: formData.get('gymLocation'),
-        otherWork: formData.get('otherWork'),
-        skills: formData.get('skills')
-      };
-      
-      try {
-        // Show loading message
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'Submitting...';
-        submitBtn.disabled = true;
-        
-        // Send form data to API
-        const response = await fetch('/api/submit-join-form', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data)
-        });
-        
-        if (response.ok) {
-          const result = await response.json();
-          // Show success message
-          alert(result.message);
-          // Reset form
-          joinForm.reset();
-          // Scroll to top
-          window.scrollTo(0, 0);
-        } else {
-          const error = await response.json();
-          alert('Error submitting form: ' + (error.error || 'Unknown error'));
-        }
-      } catch (error) {
-        console.error('Form submission error:', error);
-        alert('Error submitting form: ' + error.message);
-      } finally {
-        // Reset button
-        const submitBtn = this.querySelector('button[type="submit"]');
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-      }
-    });
+    monthSelect.addEventListener('change', updateDays);
+    yearSelect.addEventListener('change', updateDays);
   }
-</script>
+
+  // File upload preview with auto-resize
+  function initializeFilePreviews() {
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    
+    fileInputs.forEach(input => {
+      const previewId = input.id + 'Preview';
+      const preview = document.getElementById(previewId);
+      
+      input.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          alert('Please select an image file');
+          this.value = '';
+          return;
+        }
+        
+        // Auto-resize using Compressor.js (loaded from CDN)
+        if (typeof Compressor !== 'undefined') {
+          new Compressor(file, {
+            quality: 0.8,
+            maxWidth: 800,
+            maxHeight: 800,
+            mimeType: 'image/jpeg',
+            success(result) {
+              // Update the file input with compressed version
+              const dataTransfer = new DataTransfer();
+              dataTransfer.items.add(new File([result], file.name, { type: 'image/jpeg' }));
+              this.files = dataTransfer.files;
+              
+              // Show preview
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                preview.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 1px solid #ddd;">`;
+              };
+              reader.readAsDataURL(result);
+            },
+            error(err) {
+              console.warn('Compression failed, using original:', err);
+              showPreview(file);
+            }
+          });
+        } else {
+          showPreview(file);
+        }
+      });
+    });
+    
+    function showPreview(file) {
+      const preview = document.getElementById(file.id + 'Preview');
+      if (!preview) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        preview.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 1px solid #ddd;">`;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // Form submission handler
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+    
+    // Validate at least one preference checked
+    const preferenceCheckboxes = document.querySelectorAll('input[name="preference"]');
+    const atLeastOneChecked = Array.from(preferenceCheckboxes).some(cb => cb.checked);
+    
+    if (!atLeastOneChecked) {
+      showMessage('Please select at least one preference (Dancing, Topless waitering, or Bottomless / Barebut butler)', 'error');
+      return;
+    }
+    
+    const submitBtn = document.getElementById('submitBtn');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Submitting...';
+    submitBtn.disabled = true;
+    
+    // Collect form data
+    const formData = new FormData(this);
+    
+    try {
+      const response = await fetch('/api/submit-join-form', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        showMessage(result.message, 'success');
+        joinForm.reset();
+        // Clear previews
+        document.querySelectorAll('.file-preview').forEach(p => p.innerHTML = '');
+        window.scrollTo(0, 0);
+      } else {
+        showMessage('Error: ' + (result.error || 'Unknown error'), 'error');
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      showMessage('Error submitting form: ' + error.message, 'error');
+    } finally {
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+    }
+  }
+  
+  function showMessage(message, type) {
+    const messagesDiv = document.getElementById('formMessages');
+    messagesDiv.style.display = 'block';
+    messagesDiv.className = 'form-messages ' + type;
+    messagesDiv.textContent = message;
+    
+    // Auto-hide success messages after 10 seconds
+    if (type === 'success') {
+      setTimeout(() => {
+        messagesDiv.style.display = 'none';
+      }, 10000);
+    }
+  }
+  </script>
 </body>
 </html>
