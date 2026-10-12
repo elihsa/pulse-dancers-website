@@ -1,15 +1,15 @@
-# Testing Guide - JotForm Integration & Google Sheets CMS
+# Testing Guide - Booking Form & Google Sheets CMS
 
-This document outlines how to test the changes made for JotForm integration and Google Sheets CMS fixes.
+This document outlines how to test the custom booking form and Google Sheets CMS.
 
 ## Changes Summary
 
-### 1. JotForm Integration
-- ✅ Replaced Web3Forms with JotForm on `book.html` (Form ID: 253636457639571)
-- ✅ Replaced Web3Forms with JotForm on `join.html` (URL: Buns_info/NewGuy)
-- ✅ Removed all Web3Forms placeholders and references
-- ✅ Added JotForm embed styling to `assets/css/styles.css`
-- ✅ Created documentation in `JOTFORM-INTEGRATION.md`
+### 1. Custom Booking Form (replaces JotForm)
+- ✅ New `book.html` with conditional service sections
+- ✅ `booking-form.js`: conditional field logic, distance calc, live quote
+- ✅ `api/submit-booking.js` writes submissions to the `BOOKINGS` tab
+- ✅ Rates configurable via CMS `PAGE_CONTENT` tab (see `BOOKING-FORM.md`)
+- ✅ Removed JotForm embeds and old `booking-calculator.js`
 
 ### 2. Google Sheets CMS Fixes
 - ✅ Fixed API URL format - now uses sheet names (PRICES, FAQS, DANCERS, etc.) instead of GIDs

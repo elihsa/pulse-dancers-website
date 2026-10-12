@@ -1,5 +1,7 @@
 # JotForm Integration
 
+> ⚠️ **DEPRECATED** — The booking form has been replaced with a custom form. See [`BOOKING-FORM.md`](BOOKING-FORM.md) for the current implementation. This document is kept for reference only.
+
 ## Forms
 
 ### Booking Form

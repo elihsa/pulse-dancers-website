@@ -18,7 +18,7 @@ https://pulse-dancers-website.vercel.app
 - **CMS:** Google Sheets via API (`sheets-cms.js`)
 - **Hosting:** Vercel
 - **Forms:** 
-  - Booking: JotForm embed
+  - Booking: Custom form with conditional fields + live quote (`book.html`, `booking-form.js`, `/api/submit-booking.js`)
   - Join: Custom form with API integration (`/api/submit-join-form.js`)
   - Testimonials: Custom form with approval workflow (`/api/submit-testimonial.js`)
 
@@ -63,6 +63,7 @@ Each page dynamically loads content from Google Sheets:
 - `/api/sheets.js` - Main CMS data fetcher with approval filtering
 - `/api/submit-join-form.js` - Recruitment form submission to Google Sheets
 - `/api/submit-testimonial.js` - Testimonial submission (pending approval)
+- `/api/submit-booking.js` - Booking form submission to Google Sheets (BOOKINGS tab)
 
 ### Required Environment Variables (Vercel)
 
@@ -84,7 +85,9 @@ NOTIFICATION_EMAIL=info@pulsedancers.com
 - ✅ SEO optimized
 - ✅ Performance optimized (caching via vercel.json)
 - ✅ Custom recruitment form with Google Sheets integration
-- ✅ JotForm booking integration
+- ✅ Custom booking form with conditional fields + live quote calculator
+- ✅ Travel fee auto-calculated from address (Google Maps) or area
+- ✅ GitHub → Vercel auto-deploy (push to main deploys to production)
 
 ## 📧 Contact
 
