@@ -71,10 +71,12 @@ a:hover {
 
 /* ===== HEADER & NAVIGATION ===== */
 header {
-  background-color: rgba(26, 26, 31, 0.95);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 2px solid #FF2D55;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   position: sticky;
   top: 0;
   z-index: 1000;
