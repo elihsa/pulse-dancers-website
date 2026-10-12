@@ -129,16 +129,16 @@ const PulseSheetsCMS = {
     return rows
       .slice(startIdx)
       .map((row) => {
-        // Handle format: ID | Name | Specialties | Experience | Location | Bio | Image filename | Image path
+        // DANCERS tab format: Name | Bio | Specialties | Photo | Active
         return {
-          name: row[1],
-          bio: row[6] || '',
-          specialties: row[3] || '',
-          image: row[7] || 'assets/images/performers/placeholder.jpg',
+          name: row[0],
+          bio: row[1] || '',
+          specialties: row[2] || '',
+          image: row[3] || 'assets/images/performers/placeholder.jpg',
           active: row[4],
           // Keep legacy fields for compatibility
-          description: row[6] || '', // bio as description
-          genres: row[3] || '', // specialties as genres
+          description: row[1] || '', // bio as description
+          genres: row[2] || '', // specialties as genres
         };
       })
       .filter((d) => d.name && d.active !== 'FALSE');
