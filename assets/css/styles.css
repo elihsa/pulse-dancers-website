@@ -60,6 +60,15 @@ a:hover {
   color: #ff5276;
 }
 
+/* ===== TOP BANNER ===== */
+.top-banner {
+  width: 50%;
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+}
+
 /* ===== HEADER & NAVIGATION ===== */
 header {
   background-color: rgba(26, 26, 31, 0.95);
