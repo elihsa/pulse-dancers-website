@@ -1,0 +1,1 @@
+// Booking logic is in routes/bookings.ts

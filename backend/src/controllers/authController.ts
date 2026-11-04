@@ -1,0 +1,1 @@
+// Auth logic is in routes/auth.ts

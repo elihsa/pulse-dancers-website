@@ -1,0 +1,1 @@
+// Payment logic is in routes/payments.ts
