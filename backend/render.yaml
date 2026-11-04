@@ -3,8 +3,8 @@ services:
     name: parkbuddy-backend
     runtime: node
     plan: free
-    buildCommand: npm install --prefix backend && npm run build --prefix backend
-    startCommand: node backend/dist/server.js
+    buildCommand: mkdir -p dist-backend && npm install --prefix backend && npm run build --prefix backend && cp -r backend/dist/* dist-backend/
+    startCommand: node dist-backend/server.js
     envVars:
       - key: NODE_ENV
         value: production
