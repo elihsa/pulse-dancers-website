@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "node16",
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "dom"],
     "outDir": "./dist",
     "rootDir": ".",
     "strict": true,
@@ -10,7 +10,8 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node16"
+    "moduleResolution": "node16",
+    "types": ["node"]
   },
   "include": ["src/**/*", "scripts/**/*"],
   "exclude": ["node_modules", "dist"]

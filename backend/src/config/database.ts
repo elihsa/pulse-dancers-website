@@ -35,3 +35,6 @@ export const getPool = async () => {
 export default {
   supabase,
 };
+
+// Named export for routes that use `import { supabase } from '../config/database'`
+export { supabase };
