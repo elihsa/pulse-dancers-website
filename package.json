@@ -35,6 +35,8 @@
     "@types/multer": "^2.3.0",
     "@types/node": "^26.6.6",
     "@types/pg": "^8.23.1",
+    "@tailwindcss/vite": "^4.1.7",
+    "@vitejs/plugin-react": "^4.3.4",
     "bcrypt": "^6.0.0",
     "canvas-confetti": "^1.9.3",
     "cloudinary": "^2.11.0",
@@ -58,20 +60,18 @@
     "react-router-dom": "^6.8.0",
     "recharts": "^2.10.0",
     "resend": "^6.37.0",
+    "tailwindcss": "^4.1.7",
     "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
     "uuid": "^9.0.1",
+    "vite": "^6.3.5",
     "vitest": "^5.1.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.1.7",
     "@types/canvas-confetti": "^1.6.4",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "@types/uuid": "^9.0.7",
-    "@vitejs/plugin-react": "^4.3.4",
-    "tailwindcss": "^4.1.7",
-    "typescript": "^5.9.3",
-    "vite": "^6.3.5"
+    "@types/uuid": "^9.0.7"
   }
 }
