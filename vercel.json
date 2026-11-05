@@ -8,5 +8,6 @@
       "destination": "https://parkbuddy-backend-docker.onrender.com/api/$1"
     }
   ],
-  "installCommand": "npm install"
+  "installCommand": "npm install",
+  "devCommand": "npm run dev"
 }
