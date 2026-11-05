@@ -105,4 +105,19 @@ router.get('/profile', authenticate, async (req: any, res) => {
   }
 });
 
+router.delete('/account', authenticate, async (req: any, res) => {
+  try {
+    const { error } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', req.user.id);
+
+    if (error) throw error;
+    res.json({ message: 'Account deleted successfully' });
+  } catch (error: any) {
+    console.error('Delete account error:', error);
+    res.status(400).json({ error: error.message || 'Failed to delete account' });
+  }
+});
+
 export default router;
