@@ -158,6 +158,14 @@ export default function Login() {
               </div>
             </div>
 
+            {!isRegister && (
+              <div className="text-right">
+                <button type="button" onClick={() => setView('forgot-password')} className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline">
+                  Forgot password?
+                </button>
+              </div>
+            )}
+
             <button type="submit" disabled={loading} className="w-full py-3 bg-blue-600 text-white rounded-xl font-bold text-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
               {loading ? 'Please wait...' : (isRegister ? 'Create Account' : 'Log In')}
             </button>

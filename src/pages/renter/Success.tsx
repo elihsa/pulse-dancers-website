@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { CheckCircle, MessageCircle, MapPin, Calendar, Car as CarIcon, Copy, ExternalLink, Home, Key, Navigation, XCircle } from 'lucide-react';
+import { CheckCircle, MessageCircle, MapPin, Calendar, Car as CarIcon, Copy, ExternalLink, Home, Key, Navigation, XCircle, Send, ClipboardCheck } from 'lucide-react';
 
 export default function Success() {
   const { selectedBooking, setView, cancelBooking } = useApp();
   const [copied, setCopied] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [messageText, setMessageText] = useState('');
 
   if (!selectedBooking) {
     return (
@@ -35,23 +36,23 @@ Hi ${selectedBooking.guest_name}! Here are your parking details:
 
 _Booked via ParkBuddy SA_`;
 
-  const whatsappMessage = encodeURIComponent(bookingDetails);
+  // Initialize message text with booking details
+  React.useEffect(() => {
+    setMessageText(bookingDetails);
+  }, [selectedBooking]);
+
+  const whatsappMessage = encodeURIComponent(messageText);
   const whatsappUrl = `https://wa.me/${selectedBooking.guest_phone.replace(/[^0-9]/g, '')}?text=${whatsappMessage}`;
 
   const handleCopy = () => {
-    const textToCopy = `Parking at ${selectedBooking.estate_name}
-Location: ${selectedBooking.cluster_or_street}, ${selectedBooking.bay_number}
-Dates: ${selectedBooking.start_date} to ${selectedBooking.end_date}
-${selectedBooking.access_code ? `Access Code: ${selectedBooking.access_code}` : ''}${selectedBooking.directions ? `\nDirections: ${selectedBooking.directions}` : ''}`;
-
     // Try modern clipboard API first
     if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(textToCopy).then(() => {
+      navigator.clipboard.writeText(messageText).then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
-      }).catch(() => fallbackCopy(textToCopy));
+      }).catch(() => fallbackCopy(messageText));
     } else {
-      fallbackCopy(textToCopy);
+      fallbackCopy(messageText);
     }
   };
 
@@ -169,8 +170,21 @@ ${selectedBooking.access_code ? `Access Code: ${selectedBooking.access_code}` : 
             <MessageCircle className="w-5 h-5 text-green-600" />
             Send to Visitor
           </h2>
-          <p className="text-sm text-gray-500 mb-4">Share parking details with your visitor via WhatsApp</p>
+          <p className="text-sm text-gray-500 mb-4">Share parking details with your visitor via WhatsApp or copy the message</p>
           
+          {/* Editable Message Field */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Message to Send</label>
+            <textarea
+              value={messageText}
+              onChange={e => setMessageText(e.target.value)}
+              rows={6}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm font-mono resize-y"
+              placeholder="Edit the message before sending..."
+            />
+            <p className="text-xs text-gray-500 mt-1">Edit the message above, then send via WhatsApp or copy to clipboard</p>
+          </div>
+
           <div className="space-y-3">
             <a
               href={whatsappUrl}
@@ -189,7 +203,7 @@ ${selectedBooking.access_code ? `Access Code: ${selectedBooking.access_code}` : 
             >
               {copied ? (
                 <>
-                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <ClipboardCheck className="w-4 h-4 text-green-600" />
                   Copied!
                 </>
               ) : (

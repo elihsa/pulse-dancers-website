@@ -10,7 +10,7 @@ interface AppState {
   searchFilters: SearchFilters;
   searchResults: Listing[];
   isAuthenticated: boolean;
-  currentView: 'landing' | 'login' | 'host-dashboard' | 'create-listing' | 'manage-bookings' | 'search' | 'results' | 'checkout' | 'success' | 'saved-guests';
+  currentView: 'landing' | 'login' | 'host-dashboard' | 'create-listing' | 'manage-bookings' | 'search' | 'renter-dashboard' | 'results' | 'checkout' | 'success' | 'saved-guests' | 'forgot-password' | 'reset-password';
   selectedListing: Listing | null;
   selectedBooking: Booking | null;
   loading: boolean;
@@ -57,6 +57,7 @@ interface AppContextType extends AppState {
   fetchHostListings: () => Promise<Listing[]>;
   fetchHostBookings: () => Promise<Booking[]>;
   fetchHostEarnings: () => Promise<{ total: number; pending: number; released: number }>;
+  fetchHostEarningsHistory: () => Promise<{ monthly: any[]; weekly: any[]; byListing: any[] }>;
   fetchRenterBookings: () => Promise<void>;
   
   // Synchronous getters (work with local state - for components like HostDashboard)
@@ -174,7 +175,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const { user: loggedInUser, token } = await authAPI.login({ email, password });
       tokenManager.setToken(token);
       setUser(loggedInUser);
-      setCurrentView(loggedInUser.role === 'host' ? 'host-dashboard' : 'search');
+      setCurrentView(loggedInUser.role === 'host' ? 'host-dashboard' : 'renter-dashboard');
       await Promise.all([
         fetchListings(),
         fetchSavedGuests(),
@@ -195,7 +196,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const { user: newUser, token } = await authAPI.register(data);
       tokenManager.setToken(token);
       setUser(newUser);
-      setCurrentView(newUser.role === 'host' ? 'host-dashboard' : 'search');
+      setCurrentView(newUser.role === 'host' ? 'host-dashboard' : 'renter-dashboard');
       await Promise.all([
         fetchListings(),
         fetchSavedGuests(),
@@ -308,6 +309,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const fetchHostEarningsHistory = useCallback(async () => {
+    try {
+      return await bookingsAPI.getHostEarningsHistory();
+    } catch (err: any) {
+      console.error('Failed to fetch host earnings history:', err);
+      return { monthly: [], weekly: [], byListing: [] };
+    }
+  }, []);
+
   const fetchRenterBookings = useCallback(async () => {
     try {
       const data = await bookingsAPI.getRenterBookings();
@@ -347,8 +357,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setSelectedBooking(booking);
   }, []);
 
-  const addSavedGuest = useCallback(async (guest: Omit<SavedGuest, 'id' | 'renter_id'>) => {
-    if (!user) return;
+  const addSavedGuest = useCallback(async (guest: Omit<SavedGuest, 'id' | 'renter_id'>): Promise<string> => {
+    if (!user) return '';
     const newGuest: SavedGuest = {
       ...guest,
       id: `sg${Date.now()}`,
@@ -358,6 +368,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const updated = [...savedGuests, newGuest];
     setSavedGuests(updated);
     localStorage.setItem('savedGuests', JSON.stringify(updated));
+    return newGuest.id;
   }, [user, savedGuests]);
 
   const removeSavedGuest = useCallback(async (id: string) => {
@@ -448,7 +459,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       cancelBooking, deleteAccount, 
       // Async fetch functions
       fetchListings, fetchSavedGuests, fetchBookings,
-      fetchHostListings, fetchHostBookings, fetchHostEarnings, fetchRenterBookings,
+      fetchHostListings, fetchHostBookings, fetchHostEarnings, fetchHostEarningsHistory, fetchRenterBookings,
       // Synchronous getters (for components)
       getHostListings, getHostBookings, getHostEarnings, getRenterBookings,
       clearError

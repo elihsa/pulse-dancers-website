@@ -1,15 +1,29 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Search, MapPin, Calendar, Filter, Car, User, LogOut, Plus, LayoutDashboard, Users, Trash2, XCircle } from 'lucide-react';
+import { Search, MapPin, Calendar, Filter, Car, User, LogOut, Plus, LayoutDashboard, Users, Trash2, XCircle, Map, Navigation, Home, AlertCircle } from 'lucide-react';
 import { mockEstates } from '../../data/mockData';
+import MapView from '../../components/MapView';
 
 export default function SearchPage() {
   const { user, searchFilters, updateSearchFilters, performSearch, setView, logout, deleteAccount, cancelBooking, bookings } = useApp();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [cancelBookingId, setCancelBookingId] = useState<string | null>(null);
-  
+  const [showMapSelector, setShowMapSelector] = useState(false);
+  const [mapCenter, setMapCenter] = useState({ lat: -26.2041, lng: 28.0473 });
+  const [mapZoom, setMapZoom] = useState(10);
+
   const activeBookings = bookings.filter(b => b.status === 'confirmed' || b.status === 'active');
+
+  const handleMapClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Map integration placeholder
+  };
+
+  const selectEstateFromMap = (estateName: string) => {
+    updateSearchFilters({ estate: estateName });
+    setShowMapSelector(false);
+    performSearch();
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -84,11 +98,19 @@ export default function SearchPage() {
 
         {/* Search Form */}
         <div className="bg-white rounded-2xl p-6 card-shadow mb-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <Search className="w-5 h-5 text-blue-600" />
-            Search Parking
-          </h2>
-          
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <Search className="w-5 h-5 text-blue-600" />
+              Search Parking
+            </h2>
+            <button
+              onClick={() => setShowMapSelector(true)}
+              className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition flex items-center gap-1"
+            >
+              <Map className="w-4 h-4" /> Map View
+            </button>
+          </div>
+
           <div className="grid md:grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Estate Name</label>
@@ -222,6 +244,49 @@ export default function SearchPage() {
               >
                 Delete Account
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Map Selector Modal */}
+      {showMapSelector && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                  <Map className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900">Select Estate from Map</h3>
+                  <p className="text-sm text-gray-500">Click on an estate to search for parking bays</p>
+                </div>
+              </div>
+              <button onClick={() => setShowMapSelector(false)} className="p-2 hover:bg-gray-100 rounded-lg transition">
+                <XCircle className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="rounded-xl overflow-hidden border border-gray-200" style={{ height: '400px' }}>
+              <MapView
+                center={mapCenter}
+                zoom={mapZoom}
+                height="400px"
+              />
+            </div>
+            <div className="mt-4 space-y-2">
+              <p className="text-sm text-gray-500 text-center">Popular estates near the map center:</p>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {mockEstates.slice(0, 10).map(estate => (
+                  <button
+                    key={estate.id}
+                    onClick={() => selectEstateFromMap(estate.name)}
+                    className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-100 transition"
+                  >
+                    {estate.name}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>

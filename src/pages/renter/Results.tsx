@@ -62,19 +62,19 @@ export default function Results() {
                 </div>
 
                 <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    {listing.walk_time_minutes} min walk
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                    {listing.rating} ({listing.review_count} reviews)
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Shield className="w-4 h-4 text-green-500" />
-                    Verified Host
-                  </span>
-                </div>
+                                  <span className="flex items-center gap-1">
+                                    <Clock className="w-4 h-4" />
+                                    {listing.walk_time_minutes} min walk to gate
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                                    {listing.rating} ({listing.review_count} reviews)
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <Shield className="w-4 h-4 text-green-500" />
+                                    Verified Host
+                                  </span>
+                                </div>
 
                 {listing.notes && (
                   <p className="mt-2 text-sm text-gray-400 italic">"{listing.notes}"</p>

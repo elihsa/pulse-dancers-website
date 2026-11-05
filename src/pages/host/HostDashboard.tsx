@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Car, Plus, Calendar, TrendingUp, MapPin, Star, Clock, CheckCircle, XCircle, AlertCircle, Key } from 'lucide-react';
+import { Car, Plus, Calendar, TrendingUp, MapPin, Star, Clock, CheckCircle, XCircle, AlertCircle, Key, BarChart2, ChevronDown, ChevronUp, DollarSign, CreditCard, Users, Settings, Download, Eye } from 'lucide-react';
 
 export default function HostDashboard() {
-  const { user, setView, getHostListings, getHostBookings, getHostEarnings, updateBookingStatus, updateBookingAccessCode, cancelBooking } = useApp();
+  const { user, setView, getHostListings, getHostBookings, getHostEarnings, fetchHostEarningsHistory, updateBookingStatus, updateBookingAccessCode, cancelBooking } = useApp();
   const listings = getHostListings();
   const bookings = getHostBookings();
   const earnings = getHostEarnings();
@@ -12,6 +12,16 @@ export default function HostDashboard() {
   const [accessCodeModal, setAccessCodeModal] = useState<{ bookingId: string; action: 'accept' | 'edit' } | null>(null);
   const [accessCodeInput, setAccessCodeInput] = useState('');
   const [cancelBookingId, setCancelBookingId] = useState<string | null>(null);
+  const [earningsHistory, setEarningsHistory] = useState<{ monthly: any[]; weekly: any[]; byListing: any[] } | null>(null);
+  const [earningsTab, setEarningsTab] = useState<'overview' | 'history' | 'listings'>('overview');
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+
+  const loadEarningsHistory = async () => {
+    setIsLoadingHistory(true);
+    const history = await fetchHostEarningsHistory();
+    setEarningsHistory(history);
+    setIsLoadingHistory(false);
+  };
 
   const handleAcceptWithCode = () => {
     if (!accessCodeModal) return;
@@ -25,6 +35,19 @@ export default function HostDashboard() {
     updateBookingAccessCode(accessCodeModal.bookingId, accessCodeInput);
     setAccessCodeModal(null);
     setAccessCodeInput('');
+  };
+
+  const formatCurrency = (amount: number) => `R${amount.toLocaleString()}`;
+
+  const getMonthName = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-ZA', { month: 'short', year: 'numeric' });
+  };
+
+  const getWeekLabel = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const weekNum = Math.ceil(date.getDate() / 7);
+    return `Week ${weekNum} ${date.toLocaleDateString('en-ZA', { month: 'short' })}`;
   };
 
   return (
@@ -62,7 +85,7 @@ export default function HostDashboard() {
               </div>
               <span className="text-sm text-gray-500">Total Earnings</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">R{earnings.total.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-gray-900">{formatCurrency(earnings.total)}</p>
           </div>
           <div className="bg-white rounded-2xl p-6 card-shadow">
             <div className="flex items-center gap-3 mb-2">
@@ -71,7 +94,7 @@ export default function HostDashboard() {
               </div>
               <span className="text-sm text-gray-500">Pending Payout</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">R{earnings.pending.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-gray-900">{formatCurrency(earnings.pending)}</p>
           </div>
           <div className="bg-white rounded-2xl p-6 card-shadow">
             <div className="flex items-center gap-3 mb-2">
@@ -80,9 +103,158 @@ export default function HostDashboard() {
               </div>
               <span className="text-sm text-gray-500">Released</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">R{earnings.released.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-gray-900">{formatCurrency(earnings.released)}</p>
           </div>
         </div>
+
+        {/* Earnings History Tabs */}
+                <div className="mb-8">
+                  <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-6" role="tablist">
+                    <button
+                      role="tab"
+                      aria-selected={earningsTab === 'overview'}
+                      onClick={() => setEarningsTab('overview')}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                        earningsTab === 'overview'
+                          ? 'bg-white text-blue-600 shadow-sm'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      Overview
+                    </button>
+                    <button
+                      role="tab"
+                      aria-selected={earningsTab === 'history'}
+                      onClick={() => {
+                        setEarningsTab('history');
+                        if (!earningsHistory) loadEarningsHistory();
+                      }}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                        earningsTab === 'history'
+                          ? 'bg-white text-blue-600 shadow-sm'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      <BarChart2 className="w-4 h-4 inline mr-1" /> History
+                    </button>
+                    <button
+                      role="tab"
+                      aria-selected={earningsTab === 'listings'}
+                      onClick={() => {
+                        setEarningsTab('listings');
+                        if (!earningsHistory) loadEarningsHistory();
+                      }}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                        earningsTab === 'listings'
+                          ? 'bg-white text-blue-600 shadow-sm'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      <MapPin className="w-4 h-4 inline mr-1" /> By Listing
+                    </button>
+                  </div>
+
+                  {earningsTab === 'history' && (
+                    <div className="bg-white rounded-2xl p-6 card-shadow">
+                      <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <BarChart2 className="w-5 h-5 text-blue-500" />
+                        Earnings History
+                      </h3>
+                      {isLoadingHistory ? (
+                        <div className="flex items-center justify-center py-12">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+                        </div>
+                      ) : earningsHistory && earningsHistory.monthly.length > 0 ? (
+                        <div className="space-y-6">
+                          {/* Monthly Earnings */}
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-500 mb-3">Monthly Breakdown</h4>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-left">
+                                <thead>
+                                  <tr className="border-b border-gray-200">
+                                    <th className="pb-2 font-medium text-gray-500">Month</th>
+                                    <th className="pb-2 font-medium text-gray-500 text-right">Bookings</th>
+                                    <th className="pb-2 font-medium text-gray-500 text-right">Completed</th>
+                                    <th className="pb-2 font-medium text-gray-500 text-right">Earnings</th>
+                                    <th className="pb-2 font-medium text-gray-500 text-right">Pending</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {earningsHistory.monthly.map((month: any, idx: number) => (
+                                    <tr key={month.period} className={`border-b border-gray-100 ${idx % 2 === 0 ? 'bg-gray-50' : ''}`}>
+                                      <td className="py-3">{getMonthName(month.period)}</td>
+                                      <td className="py-3 text-right">{month.total_bookings}</td>
+                                      <td className="py-3 text-right text-green-600">{month.completed_bookings}</td>
+                                      <td className="py-3 text-right font-medium">{formatCurrency(parseFloat(month.earnings))}</td>
+                                      <td className="py-3 text-right text-yellow-600">{formatCurrency(parseFloat(month.pending))}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+                          {/* Weekly Earnings (Current Month) */}
+                          {earningsHistory.weekly.length > 0 && (
+                            <div>
+                              <h4 className="text-sm font-medium text-gray-500 mb-3">This Month (Weekly)</h4>
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                {earningsHistory.weekly.map((week: any) => (
+                                  <div key={week.period} className="bg-gray-50 rounded-xl p-4 text-center">
+                                    <p className="text-xs text-gray-500">{getWeekLabel(week.period)}</p>
+                                    <p className="text-lg font-bold text-gray-900">{formatCurrency(parseFloat(week.earnings))}</p>
+                                    <p className="text-xs text-gray-500">{week.completed_bookings} of {week.total_bookings} completed</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 text-center py-8">No earnings history available yet</p>
+                      )}
+                    </div>
+                  )}
+
+                  {earningsTab === 'listings' && earningsHistory && (
+                    <div className="bg-white rounded-2xl p-6 card-shadow">
+                      <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <MapPin className="w-5 h-5 text-blue-500" />
+                        Earnings by Listing
+                      </h3>
+                      {earningsHistory.byListing.length > 0 ? (
+                        <div className="space-y-4">
+                          {earningsHistory.byListing.map((listing: any) => (
+                            <div key={listing.id} className="bg-gray-50 rounded-xl p-5">
+                              <div className="flex items-center justify-between mb-3">
+                                <div>
+                                  <h4 className="font-bold text-gray-900">{listing.estate_name}</h4>
+                                  <p className="text-sm text-gray-500">{listing.cluster_or_street} • {listing.bay_number}</p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-lg font-bold text-blue-600">{formatCurrency(parseFloat(listing.total_earnings))}</p>
+                                  <p className="text-xs text-gray-500">{listing.completed_bookings} completed / {listing.total_bookings} total</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center justify-between text-sm text-gray-500">
+                                <span className={`px-2 py-1 rounded-md ${listing.booking_type === 'instant' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                  {listing.booking_type === 'instant' ? '⚡ Instant Book' : '📋 Request'}
+                                </span>
+                                <span>R{listing.price_per_day}/day</span>
+                                {parseFloat(listing.pending_earnings) > 0 && (
+                                  <span className="text-yellow-600 font-medium">Pending: {formatCurrency(parseFloat(listing.pending_earnings))}</span>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 text-center py-8">No listing earnings data available</p>
+                      )}
+                    </div>
+                  )}
+                </div>
 
         {/* Pending Bookings */}
         {pendingBookings.length > 0 && (

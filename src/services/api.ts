@@ -83,6 +83,8 @@ export const bookingsAPI = {
 
   getHostEarnings: () => apiCall('/bookings/host/earnings'),
 
+  getHostEarningsHistory: () => apiCall('/bookings/host/earnings/history'),
+
   getById: (id: string) => apiCall(`/bookings/${id}`),
 
   updateStatus: (id: string, status: string, access_code?: string) =>

@@ -49,6 +49,7 @@ export interface SavedGuest {
   guest_name: string;
   phone_number: string;
   license_plate: string;
+  access_code?: string;
 }
 
 export interface Booking {

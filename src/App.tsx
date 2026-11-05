@@ -9,6 +9,9 @@ import Results from './pages/renter/Results';
 import Checkout from './pages/renter/Checkout';
 import Success from './pages/renter/Success';
 import SavedGuests from './pages/renter/SavedGuests';
+import RenterDashboard from './pages/renter/RenterDashboard';
+import ForgotPassword from './pages/renter/ForgotPassword';
+import ResetPassword from './pages/renter/ResetPassword';
 
 function AppRouter() {
   const { currentView } = useApp();
@@ -24,6 +27,8 @@ function AppRouter() {
       return <CreateListing />;
     case 'search':
       return <SearchPage />;
+    case 'renter-dashboard':
+      return <RenterDashboard />;
     case 'results':
       return <Results />;
     case 'checkout':
@@ -32,6 +37,10 @@ function AppRouter() {
       return <Success />;
     case 'saved-guests':
       return <SavedGuests />;
+    case 'forgot-password':
+      return <ForgotPassword />;
+    case 'reset-password':
+      return <ResetPassword />;
     default:
       return <Landing />;
   }

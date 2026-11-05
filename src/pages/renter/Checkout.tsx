@@ -1,13 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import { ArrowLeft, User, Phone, Car as CarIcon, Plus, CreditCard, Shield, Zap, Calendar, MapPin, CheckCircle } from 'lucide-react';
+import { ArrowLeft, User, Phone, Car as CarIcon, Plus, CreditCard, Shield, Zap, Calendar, MapPin, CheckCircle, AlertCircle, Info, Clock } from 'lucide-react';
 
 export default function Checkout() {
   const { selectedListing, savedGuests, searchFilters, createBooking, setView, addSavedGuest, user } = useApp();
   const [selectedGuestId, setSelectedGuestId] = useState('');
   const [showAddGuest, setShowAddGuest] = useState(false);
-  const [newGuest, setNewGuest] = useState({ guest_name: '', phone_number: '', license_plate: '' });
+  const [newGuest, setNewGuest] = useState({ guest_name: '', phone_number: '', license_plate: '', access_code: '' });
   const [processing, setProcessing] = useState(false);
+
+  // Auto-select the first guest if none selected, or the newly added guest
+  useEffect(() => {
+    if (savedGuests.length > 0 && !selectedGuestId) {
+      setSelectedGuestId(savedGuests[0].id);
+    }
+  }, [savedGuests, selectedGuestId]);
+
+  // Auto-select newly created guest
+  useEffect(() => {
+    if (showAddGuest === false && newGuest.guest_name === '' && savedGuests.length > 0) {
+      // Check if the last guest was just added (by checking if it matches our newGuest data before reset)
+      // This is handled by the addSavedGuest function setting the ID
+    }
+  }, [savedGuests]);
 
   if (!selectedListing) {
     return (
@@ -29,9 +44,11 @@ export default function Checkout() {
 
   const handleAddGuest = () => {
     if (!newGuest.guest_name || !newGuest.phone_number || !newGuest.license_plate) return;
-    addSavedGuest(newGuest);
+    const newGuestId = addSavedGuest(newGuest);
+    // Auto-select the newly created guest
+    setSelectedGuestId(newGuestId);
     setShowAddGuest(false);
-    setNewGuest({ guest_name: '', phone_number: '', license_plate: '' });
+    setNewGuest({ guest_name: '', phone_number: '', license_plate: '', access_code: '' });
   };
 
   const handlePayment = () => {
@@ -50,6 +67,7 @@ export default function Checkout() {
         guest_name: guest.guest_name,
         guest_phone: guest.phone_number,
         guest_license_plate: guest.license_plate,
+        access_code: guest.access_code || '',
         estate_name: selectedListing.estate_name,
         cluster_or_street: selectedListing.cluster_or_street,
         bay_number: selectedListing.bay_number,
@@ -132,7 +150,9 @@ export default function Checkout() {
               ) : (
                 <div className="bg-gray-50 rounded-xl p-4 space-y-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Guest Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                      Guest Name <span className="text-red-500">*</span>
+                    </label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
@@ -141,11 +161,14 @@ export default function Checkout() {
                         onChange={e => setNewGuest(prev => ({ ...prev, guest_name: e.target.value }))}
                         className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
                         placeholder="e.g. Uncle Bheki"
+                        required
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                      Phone Number <span className="text-red-500">*</span>
+                    </label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
@@ -154,11 +177,14 @@ export default function Checkout() {
                         onChange={e => setNewGuest(prev => ({ ...prev, phone_number: e.target.value }))}
                         className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
                         placeholder="+27 72 123 4567"
+                        required
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">License Plate</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                      License Plate <span className="text-red-500">*</span>
+                    </label>
                     <div className="relative">
                       <CarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
@@ -167,8 +193,25 @@ export default function Checkout() {
                         onChange={e => setNewGuest(prev => ({ ...prev, license_plate: e.target.value }))}
                         className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
                         placeholder="GP 123 456"
+                        required
                       />
                     </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                      Access Code <span className="text-gray-400">(Optional)</span>
+                    </label>
+                    <div className="relative">
+                      <AlertCircle className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        type="text"
+                        value={newGuest.access_code}
+                        onChange={e => setNewGuest(prev => ({ ...prev, access_code: e.target.value }))}
+                        className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                        placeholder="e.g. 1234, ABCD, or gate code"
+                      />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">Optional: Enter the estate gate access code if you already have it from the estate app. This will be shared with your guest.</p>
                   </div>
                   <div className="flex gap-2">
                     <button onClick={() => setShowAddGuest(false)} className="flex-1 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
