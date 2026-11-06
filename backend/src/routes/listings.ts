@@ -6,7 +6,7 @@ import { z } from 'zod';
 const router = express.Router();
 
 // Enhanced listing schema for v1.1.0
-const createListingSchema = z.object({
+const createListingSchemaBase = z.object({
   listing_type: z.enum(['estate_bay', 'residential_driveway', 'garage', 'commercial_lot']).default('estate_bay'),
   estate_id: z.string().uuid().optional(), // Required for estate_bay
   cluster_or_street: z.string().min(1).optional(),
@@ -41,7 +41,9 @@ const createListingSchema = z.object({
   map_marker_lat: z.number().optional(),
   map_marker_lng: z.number().optional(),
   photos: z.array(z.string().url()).optional(),
-}).refine(data => {
+});
+
+const createListingSchema = createListingSchemaBase.refine(data => {
   // Estate bay requires estate_id
   if (data.listing_type === 'estate_bay' && !data.estate_id) {
     return false;
@@ -56,7 +58,7 @@ const createListingSchema = z.object({
   path: ['listing_type']
 });
 
-const updateListingSchema = createListingSchema.partial();
+const updateListingSchema = createListingSchemaBase.partial();
 
 const listingFiltersSchema = z.object({
   estate: z.string().optional(),
@@ -299,6 +301,7 @@ router.get('/:id', async (req, res) => {
       effective_price_per_hour: effectiveHourlyPrice,
       is_event_pricing: effectivePrice !== listing.price_per_day
     });
+  }
   } catch (error) {
     console.error('Get listing error:', error);
     res.status(400).json({ error: 'Failed to fetch listing' });

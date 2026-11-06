@@ -39,3 +39,4 @@ workspace (1)/
 
 # Turbo
 .turbo
+backend/.env
