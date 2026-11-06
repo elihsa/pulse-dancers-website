@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Car, ArrowLeft, Mail, Lock, User, Phone, Eye, EyeOff } from 'lucide-react';
+import { Car, ArrowLeft, Mail, Lock, User, Phone, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
 
 export default function Login() {
   const { login, register, setView } = useApp();
@@ -8,13 +8,68 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     email: '', password: '', full_name: '', phone: '', role: 'renter' as 'host' | 'renter' | 'both'
   });
 
+  const validateField = (name: string, value: string): string => {
+    switch (name) {
+      case 'email':
+        if (!value) return 'Email is required';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Enter a valid email address';
+        return '';
+      case 'password':
+        if (!value) return 'Password is required';
+        if (value.length < 8) return 'Password must be at least 8 characters';
+        return '';
+      case 'full_name':
+        if (!value) return 'Full name is required';
+        if (value.length < 2) return 'Name must be at least 2 characters';
+        return '';
+      case 'phone':
+        if (!value) return 'Phone number is required';
+        // Allow +27 format or 10-digit SA number
+        const cleanPhone = value.replace(/\D/g, '');
+        if (cleanPhone.length < 10) return 'Enter a valid SA phone number (10 digits)';
+        if (cleanPhone.length > 11) return 'Phone number too long';
+        return '';
+      default:
+        return '';
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {};
+    if (isRegister) {
+      errors.full_name = validateField('full_name', formData.full_name);
+      errors.phone = validateField('phone', formData.phone);
+    }
+    errors.email = validateField('email', formData.email);
+    errors.password = validateField('password', formData.password);
+    
+    const hasErrors = Object.values(errors).some(e => e !== '');
+    setFieldErrors(errors);
+    return !hasErrors;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear field error on change
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     setLoading(true);
     
     if (isRegister) {
@@ -98,13 +153,22 @@ export default function Login() {
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     type="text"
+                    name="full_name"
                     value={formData.full_name}
-                    onChange={e => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    onChange={handleChange}
+                    className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
+                      fieldErrors.full_name ? 'border-red-300' : 'border-gray-200'
+                    }`}
                     placeholder="e.g. Kagiso Molefe"
                     required
                   />
                 </div>
+                {fieldErrors.full_name && (
+                  <div className="mt-1 flex items-center gap-1 text-red-600 text-sm">
+                    <AlertCircle className="w-4 h-4" />
+                    <span>{fieldErrors.full_name}</span>
+                  </div>
+                )}
               </div>
             )}
 
@@ -115,13 +179,22 @@ export default function Login() {
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     type="tel"
+                    name="phone"
                     value={formData.phone}
-                    onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    onChange={handleChange}
+                    className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
+                      fieldErrors.phone ? 'border-red-300' : 'border-gray-200'
+                    }`}
                     placeholder="+27 82 555 0000"
                     required
                   />
                 </div>
+                {fieldErrors.phone && (
+                  <div className="mt-1 flex items-center gap-1 text-red-600 text-sm">
+                    <AlertCircle className="w-4 h-4" />
+                    <span>{fieldErrors.phone}</span>
+                  </div>
+                )}
               </div>
             )}
 
@@ -131,13 +204,22 @@ export default function Login() {
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="email"
+                  name="email"
                   value={formData.email}
-                  onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
+                    fieldErrors.email ? 'border-red-300' : 'border-gray-200'
+                  }`}
                   placeholder="you@email.co.za"
                   required
                 />
               </div>
+              {fieldErrors.email && (
+                <div className="mt-1 flex items-center gap-1 text-red-600 text-sm">
+                  <AlertCircle className="w-4 h-4" />
+                  <span>{fieldErrors.email}</span>
+                </div>
+              )}
             </div>
 
             <div>
@@ -146,9 +228,12 @@ export default function Login() {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type={showPassword ? 'text' : 'password'}
+                  name="password"
                   value={formData.password}
-                  onChange={e => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
+                    fieldErrors.password ? 'border-red-300' : 'border-gray-200'
+                  }`}
                   placeholder="••••••••"
                   required
                 />
@@ -156,6 +241,12 @@ export default function Login() {
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
+              {fieldErrors.password && (
+                <div className="mt-1 flex items-center gap-1 text-red-600 text-sm">
+                  <AlertCircle className="w-4 h-4" />
+                  <span>{fieldErrors.password}</span>
+                </div>
+              )}
             </div>
 
             {!isRegister && (

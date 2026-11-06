@@ -1,5 +1,6 @@
 import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
+import { BuildInfoDisplay } from './components/BuildInfoDisplay';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import HostDashboard from './pages/host/HostDashboard';
@@ -50,6 +51,7 @@ export default function App() {
   return (
     <AppProvider>
       <AppRouter />
+      <BuildInfoDisplay />
     </AppProvider>
   );
 }

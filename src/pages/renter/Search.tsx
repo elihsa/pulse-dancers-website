@@ -37,6 +37,9 @@ export default function SearchPage() {
             <span className="text-xl font-bold text-gray-900">ParkBuddy<span className="text-blue-600">SA</span></span>
           </div>
           <div className="flex items-center gap-2">
+            <button onClick={() => setView('renter-dashboard')} className="p-2 hover:bg-gray-100 rounded-lg transition" title="My Dashboard">
+              <LayoutDashboard className="w-5 h-5 text-gray-600" />
+            </button>
             <button onClick={() => setView('saved-guests')} className="p-2 hover:bg-gray-100 rounded-lg transition" title="Saved Guests">
               <Users className="w-5 h-5 text-gray-600" />
             </button>

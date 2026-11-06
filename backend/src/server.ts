@@ -9,6 +9,10 @@ import listingRoutes from './routes/listings';
 import bookingRoutes from './routes/bookings';
 import paymentRoutes from './routes/payments';
 import uploadRoutes from './routes/uploads';
+import verificationRoutes from './routes/verification';
+import reviewRoutes from './routes/reviews';
+import venueRoutes from './routes/venues';
+import supportRoutes from './routes/support';
 
 dotenv.config();
 
@@ -19,7 +23,7 @@ app.use(helmet());
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:4000',
   credentials: true,
-}));
+}))
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -40,6 +44,10 @@ app.use('/api/listings', listingRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/uploads', uploadRoutes);
+app.use('/api/verification', verificationRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/venues', venueRoutes);
+app.use('/api/support', supportRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });

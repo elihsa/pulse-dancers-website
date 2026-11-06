@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import { ArrowLeft, User, Phone, Car as CarIcon, Plus, CreditCard, Shield, Zap, Calendar, MapPin, CheckCircle, AlertCircle, Info, Clock } from 'lucide-react';
+import { ArrowLeft, User, Phone, Car as CarIcon, Plus, CreditCard, Shield, Zap, Calendar, MapPin, CheckCircle, AlertCircle, Info, Clock, XCircle, FileText, Scale, Car } from 'lucide-react';
 
 export default function Checkout() {
   const { selectedListing, savedGuests, searchFilters, createBooking, setView, addSavedGuest, user } = useApp();
@@ -8,6 +8,8 @@ export default function Checkout() {
   const [showAddGuest, setShowAddGuest] = useState(false);
   const [newGuest, setNewGuest] = useState({ guest_name: '', phone_number: '', license_plate: '', access_code: '' });
   const [processing, setProcessing] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   // Auto-select the first guest if none selected, or the newly added guest
   useEffect(() => {
@@ -53,6 +55,10 @@ export default function Checkout() {
 
   const handlePayment = () => {
     if (!selectedGuestId) return;
+    if (!acceptedTerms) {
+      setShowTerms(true);
+      return;
+    }
     setProcessing(true);
     
     // Simulate Paystack payment processing
@@ -121,7 +127,6 @@ export default function Checkout() {
             {/* Select Guest */}
             <div className="bg-white rounded-2xl p-5 card-shadow">
               <h2 className="font-bold text-gray-900 mb-3">Select Visitor</h2>
-              
               {savedGuests.length > 0 && (
                 <div className="space-y-2 mb-4">
                   {savedGuests.map(guest => (
@@ -285,10 +290,139 @@ export default function Checkout() {
               <p className="text-xs text-gray-400 text-center mt-2">
                 {selectedListing.booking_type === 'instant' ? '⚡ Instant confirmation' : '📋 Awaiting host approval'}
               </p>
+
+              {/* Terms & Conditions Link */}
+              <p className="text-xs text-center mt-3">
+                By paying, you agree to our{' '}
+                <button
+                  type="button"
+                  onClick={() => setShowTerms(true)}
+                  className="text-blue-600 hover:underline font-medium"
+                >
+                  Terms & Conditions
+                </button>
+                {' '}including the 1-hour grace period for bay vacation.
+              </p>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Terms & Conditions Modal */}
+      {showTerms && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900">Terms & Conditions</h3>
+                  <p className="text-sm text-gray-500">Please read and accept before booking</p>
+                </div>
+              </div>
+              <button onClick={() => setShowTerms(false)} className="p-2 hover:bg-gray-100 rounded-lg transition">
+                <XCircle className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="max-h-[60vh] overflow-y-auto pr-2 mb-4">
+              <div className="space-y-4 text-sm text-gray-700">
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <Scale className="w-4 h-4 text-blue-600" />
+                    1. Booking & Payment
+                  </h4>
+                  <ul className="list-disc list-inside space-y-1 text-gray-600">
+                    <li>Payment is processed via Paystack and held in escrow until the booking is completed.</li>
+                    <li>Platform fee of 15% is deducted from the total amount.</li>
+                    <li>For Instant Book listings, confirmation is immediate. For Request listings, the host must approve within 2 hours.</li>
+                    <li>Refunds are processed for cancellations made before the check-in date.</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-orange-600" />
+                    2. Grace Period & Bay Vacation
+                  </h4>
+                  <ul className="list-disc list-inside space-y-1 text-gray-600">
+                    <li><strong>1-hour grace period:</strong> After the booking end date/time, visitors have a 1-hour grace period to vacate the parking bay.</li>
+                    <li>If the bay is not vacated within the grace period, the host may request assistance from estate security.</li>
+                    <li>Repeated violations may result in booking cancellation without refund and account restrictions.</li>
+                    <li>The grace period is intended for reasonable exit time only, not for extended parking.</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <Car className="w-4 h-4 text-green-600" />
+                    3. Vehicle & Guest Responsibility
+                  </h4>
+                  <ul className="list-disc list-inside space-y-1 text-gray-600">
+                    <li>The renter is responsible for their guest's conduct and vehicle while parked.</li>
+                    <li>Only the registered vehicle (license plate provided at booking) may use the bay.</li>
+                    <li>Access codes must be shared securely with the guest only.</li>
+                    <li>Any damage to the parking bay or estate property is the renter's responsibility.</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-red-600" />
+                    4. Cancellation & Refunds
+                  </h4>
+                  <ul className="list-disc list-inside space-y-1 text-gray-600">
+                    <li>Cancellations before check-in: Full refund minus platform fee.</li>
+                    <li>Cancellations after check-in: No refund.</li>
+                    <li>Host cancellations: Full refund including platform fee.</li>
+                    <li>Disputes are resolved by ParkBuddy SA support within 5 business days.</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <Info className="w-4 h-4 text-purple-600" />
+                    5. General
+                  </h4>
+                  <ul className="list-disc list-inside space-y-1 text-gray-600">
+                    <li>ParkBuddy SA is a platform connecting hosts and renters; we do not own or manage parking bays.</li>
+                    <li>All estate rules and regulations apply and take precedence over these terms.</li>
+                    <li>We reserve the right to suspend accounts for violation of these terms.</li>
+                    <li>These terms are governed by South African law.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="border-t pt-4">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={acceptedTerms}
+                  onChange={e => setAcceptedTerms(e.target.checked)}
+                  className="w-5 h-5 mt-1 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  required
+                />
+                <div className="text-sm text-gray-700">
+                  <p className="font-medium">I have read and accept the Terms & Conditions</p>
+                  <p className="text-xs text-gray-500 mt-1">Including the 1-hour grace period for bay vacation after booking end time</p>
+                </div>
+              </label>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowTerms(false)}
+                className="flex-1 py-3 border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => { setAcceptedTerms(true); setShowTerms(false); }}
+                disabled={!acceptedTerms}
+                className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Accept & Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

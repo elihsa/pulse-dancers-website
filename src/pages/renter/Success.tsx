@@ -219,11 +219,18 @@ _Booked via ParkBuddy SA_`;
         {/* Actions */}
         <div className="space-y-3">
           <button
-            onClick={() => setView('search')}
+            onClick={() => setView('renter-dashboard')}
             className="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2"
           >
             <Home className="w-5 h-5" />
-            Back to Home
+            Go to My Dashboard
+          </button>
+          <button
+            onClick={() => setView('search')}
+            className="w-full py-3 border-2 border-blue-200 text-blue-600 rounded-xl font-bold hover:bg-blue-50 transition flex items-center justify-center gap-2"
+          >
+            <Home className="w-5 h-5" />
+            Search for More Parking
           </button>
           {selectedBooking.status !== 'cancelled' && (
             <button
