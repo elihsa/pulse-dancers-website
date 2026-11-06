@@ -1,36 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useSearchParams } from 'react-router-dom';
 import { Lock, ArrowLeft, Eye, EyeOff, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 
 const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || '/api';
 
 export default function ResetPassword() {
   const { setView } = useApp();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get('token');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const [token, setToken] = useState('');
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const resetToken = urlParams.get('token');
-    if (resetToken) {
-      setToken(resetToken);
-    } else {
+    if (!token) {
       setError('Invalid or missing reset token');
     }
-  }, []);
+  }, [token]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+    if (!token) {
+      setError('Missing reset token');
       return;
     }
 
@@ -39,8 +36,8 @@ export default function ResetPassword() {
       return;
     }
 
-    if (!token) {
-      setError('Invalid reset token');
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
       return;
     }
 
@@ -67,6 +64,36 @@ export default function ResetPassword() {
     }
   };
 
+  // No token - show error
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex flex-col">
+        <header className="p-4">
+          <button onClick={() => setView('login')} className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition">
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back</span>
+          </button>
+        </header>
+
+        <div className="flex-1 flex items-center justify-center px-4 pb-12">
+          <div className="w-full max-w-md">
+            <div className="bg-white rounded-2xl p-8 card-shadow text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="w-9 h-9 text-red-600" />
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900">Invalid Reset Link</h1>
+              <p className="text-gray-500 mt-2">This password reset link is invalid or has expired.</p>
+              <button onClick={() => setView('login')} className="mt-6 w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition">
+                Back to Login
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Success - show success message
   if (success) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex flex-col">
@@ -101,6 +128,7 @@ export default function ResetPassword() {
     );
   }
 
+  // Show form
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex flex-col">
       <header className="p-4">
@@ -152,7 +180,7 @@ export default function ResetPassword() {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={e => setConfirmPassword(e.target.value)}
                   className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
@@ -160,9 +188,6 @@ export default function ResetPassword() {
                   required
                   disabled={loading}
                 />
-                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
               </div>
             </div>
 

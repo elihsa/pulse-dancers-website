@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import { ArrowLeft, User, Phone, Car as CarIcon, Plus, CreditCard, Shield, Zap, Calendar, MapPin, CheckCircle, AlertCircle, Info, Clock, XCircle, FileText, Scale, Car } from 'lucide-react';
+import { ArrowLeft, User, Phone, Car as CarIcon, Plus, CreditCard, Shield, Zap, Calendar, MapPin, CheckCircle, AlertCircle, Info, Clock, XCircle, FileText, Scale, Car, Edit2, Save, X, BadgeCheck } from 'lucide-react';
+import VerificationBadge from '../../components/VerificationBadge';
 
 export default function Checkout() {
-  const { selectedListing, savedGuests, searchFilters, createBooking, setView, addSavedGuest, user } = useApp();
+  const { selectedListing, savedGuests, searchFilters, createBooking, setView, addSavedGuest, updateSavedGuest, user, verificationStatus, fetchVerificationStatus, submitVerification } = useApp();
   const [selectedGuestId, setSelectedGuestId] = useState('');
   const [showAddGuest, setShowAddGuest] = useState(false);
+  const [editingGuestId, setEditingGuestId] = useState<string | null>(null);
   const [newGuest, setNewGuest] = useState({ guest_name: '', phone_number: '', license_plate: '', access_code: '' });
   const [processing, setProcessing] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [lastCreatedGuestId, setLastCreatedGuestId] = useState<string | null>(null);
+  const [showVerificationGate, setShowVerificationGate] = useState(false);
 
-  // Auto-select the first guest if none selected, or the newly added guest
+  // Fetch verification status on mount
+  useEffect(() => {
+    fetchVerificationStatus();
+  }, [fetchVerificationStatus]);
+
+  // Auto-select the first guest if none selected
   useEffect(() => {
     if (savedGuests.length > 0 && !selectedGuestId) {
       setSelectedGuestId(savedGuests[0].id);
@@ -20,11 +29,14 @@ export default function Checkout() {
 
   // Auto-select newly created guest
   useEffect(() => {
-    if (showAddGuest === false && newGuest.guest_name === '' && savedGuests.length > 0) {
-      // Check if the last guest was just added (by checking if it matches our newGuest data before reset)
-      // This is handled by the addSavedGuest function setting the ID
+    if (lastCreatedGuestId) {
+      setSelectedGuestId(lastCreatedGuestId);
+      setLastCreatedGuestId(null);
     }
-  }, [savedGuests]);
+  }, [lastCreatedGuestId]);
+
+  // Check if verification is required and user is not verified
+  const requiresVerification = selectedListing?.requires_id_verified_renter && verificationStatus !== 'verified';
 
   if (!selectedListing) {
     return (
@@ -44,16 +56,48 @@ export default function Checkout() {
   const platformFee = Math.round(totalAmount * 0.15);
   const hostPayout = totalAmount - platformFee;
 
-  const handleAddGuest = () => {
+  const handleAddGuest = async () => {
     if (!newGuest.guest_name || !newGuest.phone_number || !newGuest.license_plate) return;
-    const newGuestId = addSavedGuest(newGuest);
-    // Auto-select the newly created guest
-    setSelectedGuestId(newGuestId);
+    const newGuestId = await addSavedGuest(newGuest);
+    // Store the new guest ID to auto-select it
+    setLastCreatedGuestId(newGuestId);
+    setShowAddGuest(false);
+    setEditingGuestId(null);
+    setNewGuest({ guest_name: '', phone_number: '', license_plate: '', access_code: '' });
+  };
+
+  const handleEditGuest = (guest: any) => {
+    setEditingGuestId(guest.id);
+    setNewGuest({
+      guest_name: guest.guest_name,
+      phone_number: guest.phone_number,
+      license_plate: guest.license_plate,
+      access_code: guest.access_code || ''
+    });
+    setShowAddGuest(true);
+  };
+
+  const handleSaveGuest = async () => {
+    if (!newGuest.guest_name || !newGuest.phone_number || !newGuest.license_plate) return;
+    
+    if (editingGuestId) {
+      await updateSavedGuest(editingGuestId, newGuest);
+      setEditingGuestId(null);
+    } else {
+      const newGuestId = await addSavedGuest(newGuest);
+      setLastCreatedGuestId(newGuestId);
+    }
     setShowAddGuest(false);
     setNewGuest({ guest_name: '', phone_number: '', license_plate: '', access_code: '' });
   };
 
   const handlePayment = () => {
+    // Check verification requirement before proceeding
+    if (requiresVerification) {
+      setShowVerificationGate(true);
+      return;
+    }
+    
     if (!selectedGuestId) return;
     if (!acceptedTerms) {
       setShowTerms(true);
@@ -86,6 +130,26 @@ export default function Checkout() {
       });
       setProcessing(false);
     }, 2000);
+  };
+
+  const handleVerificationSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const files: Record<string, File> = {};
+    const data: Record<string, string> = {};
+    
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        files[key] = value;
+      } else {
+        data[key] = value;
+      }
+    }
+    
+    const success = await submitVerification(data, files);
+    if (success) {
+      setShowVerificationGate(false);
+    }
   };
 
   return (
@@ -139,9 +203,19 @@ export default function Checkout() {
                         onChange={() => setSelectedGuestId(guest.id)}
                         className="w-4 h-4 text-blue-600"
                       />
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-900">{guest.guest_name}</p>
-                        <p className="text-xs text-gray-500">{guest.phone_number} • 🚗 {guest.license_plate}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 truncate">{guest.guest_name}</p>
+                        <p className="text-xs text-gray-500 truncate">{guest.phone_number} • 🚗 {guest.license_plate}</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={(e) => { e.preventDefault(); handleEditGuest(guest); }}
+                          className="p-1.5 text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                          title="Edit guest"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </label>
                   ))}
@@ -149,11 +223,17 @@ export default function Checkout() {
               )}
 
               {!showAddGuest ? (
-                <button onClick={() => setShowAddGuest(true)} className="w-full py-3 border-2 border-dashed border-gray-200 rounded-xl text-gray-500 hover:border-blue-300 hover:text-blue-600 transition flex items-center justify-center gap-2">
+                <button onClick={() => { setShowAddGuest(true); setEditingGuestId(null); setNewGuest({ guest_name: '', phone_number: '', license_plate: '', access_code: '' }); }} className="w-full py-3 border-2 border-dashed border-gray-200 rounded-xl text-gray-500 hover:border-blue-300 hover:text-blue-600 transition flex items-center justify-center gap-2">
                   <Plus className="w-4 h-4" /> Add New Guest
                 </button>
               ) : (
                 <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                  <h3 className="font-bold text-gray-900 flex items-center justify-between">
+                    {editingGuestId ? 'Edit Guest' : 'Add New Guest'}
+                    <button onClick={() => { setShowAddGuest(false); setEditingGuestId(null); setNewGuest({ guest_name: '', phone_number: '', license_plate: '', access_code: '' }); }} className="p-1 hover:bg-gray-200 rounded-lg transition" title="Close">
+                      <X className="w-5 h-5 text-gray-500" />
+                    </button>
+                  </h3>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
                       Guest Name <span className="text-red-500">*</span>
@@ -204,7 +284,7 @@ export default function Checkout() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
-                      Access Code <span className="text-gray-400">(Optional)</span>
+                      Access Code <span className="text-gray-400 text-sm">(Optional)</span>
                     </label>
                     <div className="relative">
                       <AlertCircle className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -219,11 +299,11 @@ export default function Checkout() {
                     <p className="text-xs text-gray-500 mt-1">Optional: Enter the estate gate access code if you already have it from the estate app. This will be shared with your guest.</p>
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={() => setShowAddGuest(false)} className="flex-1 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
+                    <button onClick={() => { setShowAddGuest(false); setEditingGuestId(null); setNewGuest({ guest_name: '', phone_number: '', license_plate: '', access_code: '' }); }} className="flex-1 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
                       Cancel
                     </button>
-                    <button onClick={handleAddGuest} className="flex-1 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
-                      Save Guest
+                    <button onClick={handleSaveGuest} className="flex-1 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
+                      <Save className="w-4 h-4 inline mr-1" /> {editingGuestId ? 'Update Guest' : 'Save Guest'}
                     </button>
                   </div>
                 </div>
@@ -307,6 +387,70 @@ export default function Checkout() {
           </div>
         </div>
       </div>
+
+      {/* Verification Gate Modal */}
+      {requiresVerification && showVerificationGate && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                  <BadgeCheck className="w-6 h-6 text-orange-600" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900">ID Verification Required</h3>
+                  <p className="text-sm text-gray-500">This listing requires verified identity</p>
+                </div>
+              </div>
+            </div>
+            <div className="mb-4 p-4 bg-blue-50 rounded-xl">
+              <p className="text-sm text-blue-900 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4" />
+                This parking bay is in a residential/private area. For security, you must complete ID verification before booking.
+              </p>
+            </div>
+            <div className="max-h-[60vh] overflow-y-auto pr-2 mb-4">
+              <form onSubmit={handleVerificationSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                  <input type="text" name="full_name" required className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">SA ID Number *</label>
+                  <input type="text" name="id_number" required className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" placeholder="YYYYMMDDXXXXXX" maxLength={13} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
+                  <input type="tel" name="phone" required className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" placeholder="+27 72 123 4567" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">ID Document Front *</label>
+                  <input type="file" name="id_front" accept="image/*" required className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" />
+                  <p className="text-xs text-gray-500 mt-1">Clear photo of your SA ID book/card front</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">ID Document Back *</label>
+                  <input type="file" name="id_back" accept="image/*" required className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" />
+                  <p className="text-xs text-gray-500 mt-1">Clear photo of your SA ID book/card back</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Selfie with ID *</label>
+                  <input type="file" name="selfie" accept="image/*" required className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" />
+                  <p className="text-xs text-gray-500 mt-1">Selfie holding your ID next to your face</p>
+                </div>
+                <div className="flex gap-3">
+                  <button type="button" onClick={() => setShowVerificationGate(false)} className="flex-1 py-3 border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition">
+                    Cancel
+                  </button>
+                  <button type="submit" className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition">
+                    Submit for Verification
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Terms & Conditions Modal */}
       {showTerms && (

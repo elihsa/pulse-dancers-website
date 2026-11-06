@@ -116,6 +116,88 @@ export const paymentsAPI = {
     apiCall(`/payments/refund/${booking_id}`, { method: 'POST' }),
 };
 
+// Verification API
+export const verificationAPI = {
+  submit: async (data: { id_front: File; id_back: File; selfie: File }) => {
+    const formData = new FormData();
+    formData.append('id_front', data.id_front);
+    formData.append('id_back', data.id_back);
+    formData.append('selfie', data.selfie);
+    
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_BASE_URL}/verification/submit`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Verification submission failed');
+    }
+
+    return response.json();
+  },
+
+  getStatus: async () => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_BASE_URL}/verification/status`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to get verification status');
+    }
+
+    return response.json();
+  },
+};
+
+// Reviews API
+export const reviewsAPI = {
+  submit: (data: {
+    booking_id: string;
+    reviewee_id: string;
+    reviewer_role: 'host' | 'renter';
+    rating: number;
+    comment?: string;
+    categories?: {
+      communication: number;
+      cleanliness: number;
+      safety: number;
+      accuracy: number;
+    };
+    is_public?: boolean;
+  }) =>
+    apiCall('/reviews', { method: 'POST', body: JSON.stringify(data) }),
+
+  getHostReviews: (hostId: string, params?: { limit?: number; offset?: number }) => {
+    const query = new URLSearchParams();
+    if (params?.limit) query.append('limit', params.limit.toString());
+    if (params?.offset) query.append('offset', params.offset.toString());
+    return apiCall(`/reviews/host/${hostId}?${query.toString()}`);
+  },
+
+  getRenterReviews: (renterId: string, params?: { limit?: number; offset?: number }) => {
+    const query = new URLSearchParams();
+    if (params?.limit) query.append('limit', params.limit.toString());
+    if (params?.offset) query.append('offset', params.offset.toString());
+    return apiCall(`/reviews/renter/${renterId}?${query.toString()}`);
+  },
+
+  getListingReviews: (listingId: string, params?: { limit?: number; offset?: number }) => {
+    const query = new URLSearchParams();
+    if (params?.limit) query.append('limit', params.limit.toString());
+    if (params?.offset) query.append('offset', params.offset.toString());
+    return apiCall(`/reviews/listing/${listingId}?${query.toString()}`);
+  },
+};
+
 // Token management
 export const tokenManager = {
   setToken: (token: string) => localStorage.setItem('token', token),

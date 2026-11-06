@@ -1,4 +1,4 @@
-# ParkBuddy SA - Complete Project Specification (Updated v1.0.1)
+# ParkBuddy SA - Complete Project Specification (Updated v1.1.0)
 
 ## 📋 Project Overview
 
@@ -23,8 +23,8 @@
 - Testing: Vitest (unit) + Playwright (E2E)
 
 **Version:** 1.1.0
-**Build Date:** 2026-11-05T19:34:26.004Z
-**Git Commit:** 7de3d89b
+**Build Date:** 2026-11-06
+**Git Commit:** 52d5d346
 **Git Branch:** master
 
 ---
@@ -38,6 +38,11 @@ parkbuddy-sa/
 │   │   ├── BuildInfoDisplay.tsx    # Version/build footer (NEW v1.0.1)
 │   │   ├── MapPicker.tsx           # Satellite map for marking parking bays
 │   │   ├── MapView.tsx             # Read-only map display
+│   │   ├── ReviewPrompt.tsx        # Post-booking review modal (NEW v1.1.0)
+│   │   ├── ReviewForm.tsx          # Review submission form (NEW v1.1.0)
+│   │   ├── ReviewDisplay.tsx       # Reusable review display (NEW v1.1.0)
+│   │   ├── EstateBayMap.tsx        # Estate-level bay map (NEW v1.1.0)
+│   │   ├── VerificationBadge.tsx   # Verification status badge (NEW v1.1.0)
 │   │   └── index.ts
 │   ├── context/
 │   │   └── AppContext.tsx          # Global state management (all CRUD ops)
@@ -48,7 +53,8 @@ parkbuddy-sa/
 │   │   ├── Login.tsx               # Login/Register page
 │   │   ├── host/
 │   │   │   ├── HostDashboard.tsx   # Host's main dashboard (enhanced v1.0.1)
-│   │   │   └── CreateListing.tsx   # 4-step wizard (NEW v1.0.1)
+│   │   │   ├── CreateListing.tsx   # 4-step wizard (NEW v1.0.1)
+│   │   │   └── Verification.tsx    # ID verification page (NEW v1.1.0)
 │   │   └── renter/
 │   │       ├── Search.tsx          # Search with Map Selector (NEW v1.0.1)
 │   │       ├── Results.tsx         # View search results with satellite maps
@@ -57,9 +63,12 @@ parkbuddy-sa/
 │   │       ├── SavedGuests.tsx     # Manage frequent visitors
 │   │       ├── RenterDashboard.tsx # 3-tab booking management (NEW v1.0.1)
 │   │       ├── ForgotPassword.tsx  # Email-based reset flow (NEW v1.0.1)
-│   │       └── ResetPassword.tsx   # Token-based password reset (NEW v1.0.1)
+│   │       ├── ResetPassword.tsx   # Token-based password reset (NEW v1.0.1)
+│   │       └── Verification.tsx    # ID verification page (NEW v1.1.0)
 │   ├── services/
-│   │   └── api.ts                  # API client
+│   │   ├── api.ts                  # API client
+│   │   ├── reviewsAPI.ts           # Reviews API client (NEW v1.1.0)
+│   │   └── verificationAPI.ts      # Verification API client (NEW v1.1.0)
 │   ├── types/
 │   │   └── index.ts                # TypeScript definitions
 │   ├── App.tsx                     # Main app with BuildInfoDisplay
@@ -75,6 +84,8 @@ parkbuddy-sa/
 │   │   │   ├── listings.ts         # Parking bay CRUD
 │   │   │   ├── bookings.ts         # Booking mgmt + Earnings History (NEW v1.0.1)
 │   │   │   ├── payments.ts         # Paystack integration
+│   │   │   ├── reviews.ts          # Reviews API (NEW v1.1.0)
+│   │   │   ├── verification.ts     # Verification API (NEW v1.1.0)
 │   │   │   └── uploads.ts          # File upload handling
 │   │   ├── services/
 │   │   │   ├── cloudinary.ts       # File storage
@@ -84,7 +95,7 @@ parkbuddy-sa/
 │   ├── database/schema.sql         # PostgreSQL schema
 │   └── package.json
 ├── tests/
-│   ├── e2e/                        # Playwright E2E tests (22 tests, 12 passing)
+│   ├── e2e/                        # Playwright E2E tests
 │   └── unit/                       # Vitest unit tests
 ├── scripts/
 │   ├── remove-hmr.js               # HMR stripping (preserves Yu + module utils)
@@ -127,6 +138,347 @@ parkbuddy-sa/
   - Email Verified
   - ID Verified (Host) / ID Verified (Renter)
   - Fully Verified (Email + ID + Residence for hosts)
+
+### 1b. Identity Verification Frontend (NEW v1.1.0 - SPECIFIED FOR IMPLEMENTATION)
+**File: `src/pages/renter/Verification.tsx` & `src/pages/host/Verification.tsx` (shared component)**
+
+#### User Flow:
+1. **Entry Points:**
+   - User menu dropdown → "Verify Identity" button (shows current status)
+   - Checkout page → If listing requires ID verification and user not verified → redirect to verification page with `?redirect=checkout&listingId=xxx`
+   - Create Listing (Host) → If creating residential/garage/event listing and host not verified → redirect with `?redirect=create-listing`
+
+2. **Verification Page Layout:**
+   ```
+   Header: "Verify Your Identity" + progress indicator (3 steps)
+   
+   Step 1: Personal Info (pre-filled from profile, read-only)
+     - Full Name, Email, Phone
+   
+   Step 2: Document Upload (all required)
+     - SA ID Document Front (drag & drop / click to upload)
+       * Accept: image/* (jpg, png, heic), max 10MB
+       * Preview thumbnail after upload
+     - SA ID Document Back (drag & drop / click to upload)
+       * Same validation
+     - Selfie Photo (drag & drop / click to upload)
+       * Must be clear face photo for facial recognition match
+       * Instruction: "Hold your ID next to your face for the selfie"
+   
+   Step 3: Review & Submit
+     - Show all three uploaded images in preview grid
+     - Checkbox: "I confirm these are genuine documents and the selfie matches my ID photo"
+     - Submit button: "Submit for Review"
+   
+   Status Display (after submission):
+     - Pending: "Under review — typically 24 hours" + spinning icon
+     - Verified: Green badge "ID Verified ✓" + timestamp
+     - Rejected: Red badge "Rejected" + admin notes + "Resubmit" button
+   ```
+
+3. **API Integration:**
+   - `POST /api/verification/submit` (multipart/form-data: id_front, id_back, selfie)
+   - `GET /api/verification/status` → returns status, submitted_at, reviewed_at, notes
+   - On login, fetch verification status and store in user context
+
+4. **Verification Badges (Display Throughout App):**
+   - **Listing Cards (Results page):** Small badge next to host name: 🟢 "Verified Host" / 🟡 "Email Only" / ⚪ "Unverified"
+   - **User Menu Dropdown:** Show status with colored dot: 🟢 Verified / 🟡 Pending / 🔴 Rejected / ⚪ Not Started
+   - **Host Dashboard:** Banner if unverified: "Verify your identity to create residential/garage listings"
+   - **Checkout Page:** If listing requires verified renter and user not verified → show alert banner with "Verify Now" button
+
+5. **Host Verification Gate (CreateListing):**
+   - In Step 1 (Listing Type), if user selects Residential/Garage/Event:
+     - Check user's `id_verification_status`
+     - If not 'verified': Show blocking alert: "ID verification required for this listing type. Please complete verification first."
+     - Disable "Continue" button until verified
+     - Link to verification page with `?redirect=create-listing`
+
+6. **Renter Verification Gate (Checkout):**
+   - When selecting listing, check `listing.requires_id_verified_renter`
+   - If true AND user's `id_verification_status !== 'verified'`:
+     - Show modal: "This host requires ID-verified renters. Please verify your identity to book."
+     - Buttons: "Verify Now" (redirects to verification page) / "Choose Different Listing"
+     - Prevent proceeding to payment until verified
+
+7. **Verification Status in Context:**
+   - Add `user.id_verification_status` to User type
+   - Fetch on login via `/api/auth/profile` (already returns it)
+   - Store in AppContext for immediate access
+
+### 1c. Estate vs Non-Estate Verification Logic (Business Rules)
+
+| Listing Type | Host Must Be Verified? | Renter Must Be Verified? | Notes |
+|--------------|------------------------|--------------------------|-------|
+| Estate Bay | No | No (unless host enables `requires_id_verified_renter`) | Estate security manages access |
+| Residential Driveway | **Yes** | Yes (if host enables) | Private property, no estate security |
+| Garage | **Yes** | Yes (if host enables) | Enclosed, higher security need |
+| Commercial Lot | No | No (unless host enables) | Business-managed, attendants/gates |
+| Event/Stadium Parking | **Yes** | Yes (if host enables) | High traffic, transient users |
+
+**Implementation:**
+- Backend already enforces host verification for residential/garage (listings.ts lines 313-323)
+- Backend already enforces renter verification for bookings (bookings.ts lines 41-51)
+- Frontend must mirror these checks for UX (prevent submission, show clear messages)
+
+---
+
+### 2. Rating & Review System (Frontend) — NEW v1.1.0
+**Backend API already implemented at `/api/reviews`**
+
+#### 2a. Review Prompt (Post-Booking)
+**Trigger:** When booking status changes to 'completed' (host marks complete)
+**Component:** `src/components/ReviewPrompt.tsx`
+
+```
+Modal appears on next app visit (Dashboard or Search):
+┌─────────────────────────────────────┐
+│  How was your parking experience?   │
+│  ┌─────────────────────────────┐    │
+│  │ [Host Name / Guest Name]    │    │
+│  │ [Listing: Estate • Bay #]   │    │
+│  │ [Dates]                     │    │
+│  └─────────────────────────────┘    │
+│                                     │
+│  ★ ★ ★ ★ ☆   Tap to rate           │
+│                                     │
+│  [Write Review Button]              │
+│  [Skip for Now]                     │
+└─────────────────────────────────────┘
+```
+
+**Logic:**
+- Check `bookings` for status='completed' where user hasn't reviewed
+- Show one prompt at a time (oldest first)
+- Store `reviewed_booking_ids` in localStorage to prevent re-prompting
+- Separate prompts for: Host reviewing Renter, Renter reviewing Host
+
+#### 2b. Review Form
+**Component:** `src/components/ReviewForm.tsx`
+
+```
+Fields:
+- Overall Rating: ★ ★ ★ ★ ★ (required, 1-5)
+- Categories (optional, 1-5 each):
+  • Communication: ★★★★☆
+  • Cleanliness: ★★★★★
+  • Safety: ★★★★☆
+  • Accuracy: ★★★★★ (listing matched description)
+- Comment: [textarea, optional, max 500 chars]
+- Checkbox: "Make this review public" (default: checked)
+
+Buttons: [Cancel] [Submit Review]
+```
+
+**API Call:**
+```
+POST /api/reviews
+{
+  booking_id: "uuid",
+  reviewee_id: "uuid",
+  reviewer_role: "host" | "renter",
+  rating: 5,
+  comment: "Great experience...",
+  categories: { communication: 5, cleanliness: 4, safety: 5, accuracy: 5 },
+  is_public: true
+}
+```
+
+#### 2c. Review Display Components
+**Component:** `src/components/ReviewDisplay.tsx` (reusable)
+
+**Variants:**
+1. **Listing Card Badge (Results.tsx):**
+   ```
+   ⭐ 4.8 (24 reviews)  [clickable → expands to show recent 3]
+   ```
+
+2. **Listing Detail (Checkout.tsx):**
+   ```
+   Reviews (24)
+   ┌────────────────────────────────────┐
+   │ ⭐ 4.8  Communication: 4.9  Clean: 4.7  Safety: 4.8  Accuracy: 4.7 │
+   ├────────────────────────────────────┤
+   │ "Very clean bay, easy access..."   │ — Kagiso M. (Verified Renter)  Jan 2026
+   │ "Host was responsive..."           │ — Thabo K. (Verified Host)     Dec 2025
+   │ [View All Reviews]                 │
+   └────────────────────────────────────┘
+   ```
+
+3. **Host Dashboard (HostDashboard.tsx):**
+   - Tab: "Reviews" 
+   - Shows all reviews received as host
+   - Aggregate: Average rating, total reviews, category breakdown
+
+4. **Renter Dashboard (RenterDashboard.tsx):**
+   - Tab: "Reviews"
+   - Shows reviews received as renter
+   - Aggregate stats
+
+#### 2d. Review API Service
+**File:** `src/services/reviewsAPI.ts`
+```typescript
+export const reviewsAPI = {
+  submit: (data: ReviewSubmit) => api.post('/reviews', data),
+  getHostReviews: (hostId, params) => api.get(`/reviews/host/${hostId}`, params),
+  getRenterReviews: (renterId, params) => api.get(`/reviews/renter/${renterId}`, params),
+  getListingReviews: (listingId, params) => api.get(`/reviews/listing/${listingId}`, params),
+};
+```
+
+---
+
+### 3. Estate Bay Map View — NEW v1.1.0
+**Component:** `src/components/EstateBayMap.tsx`
+
+#### 3a. Purpose
+When a renter searches for parking in a specific estate, show ALL available bays in that estate on a single interactive satellite map. This allows the renter to visually compare locations, see proximity to their cluster/block, and make informed decisions.
+
+#### 3b. Integration Points
+1. **Search Page:** When user searches by estate name, show "View Estate Map" button
+2. **Results Page:** Add toggle "List View" ↔ "Map View" (default List)
+3. **URL State:** `?estate=Midrand+Estate&view=map` for deep linking
+
+#### 3c. Map Component Specification
+
+**Props:**
+```typescript
+interface EstateBayMapProps {
+  estate: Estate;                    // Estate center/zoom
+  listings: Listing[];               // All bays in this estate
+  userCluster?: string;              // User's cluster/block (from profile or last booking)
+  selectedListingId?: string;        // Highlighted listing
+  onListingClick: (listing: Listing) => void;
+  onViewListings: () => void;        // Toggle back to list
+  height?: string;                   // Default: '500px'
+}
+```
+
+**Visual Elements:**
+
+1. **Base Map:** Esri World Imagery satellite (same as MapView)
+2. **Bay Markers:** Red X markers (same style as MapPicker) at each bay's `map_marker` coords
+3. **Cluster/Block Labels:** 
+   - If multiple bays share same `cluster_or_street`, show label at centroid
+   - Label: "Cluster A (3 bays)" — click to zoom to cluster
+4. **User Location Marker (Optional):**
+   - Blue pulsing dot at user's cluster/block (if known)
+   - Tooltip: "Your cluster: Cluster B"
+5. **Selected Bay Highlight:** 
+   - Larger marker with white ring
+   - Popup card on click (see below)
+
+**Bay Popup Card (on marker click):**
+```
+┌─────────────────────────────────┐
+│ 🏘️ Midrand Estate • Cluster A   │
+│ 📍 Bay 14                       │
+│                                 │
+│ 💰 R50/day  ⚡ Instant Book      │
+│ ⭐ 4.8 (24 reviews) 🟢 Verified │
+│ 🚶 3 min walk to gate           │
+│                                 │
+│ [View Details →]  [Book Now]    │
+└─────────────────────────────────┘
+```
+
+**Filter Controls (Top-right of map):**
+- Price Range: [Min] - [Max] slider
+- Booking Type: ☑ Instant  ☑ Request
+- Amenities: ☐ Covered  ☐ CCTV  ☐ EV Charging  ☐ Lighting
+- Verified Hosts Only: ☐
+
+**Responsive Behavior:**
+- Desktop: Map 60%, List 40% side-by-side (optional toggle)
+- Mobile: Full-screen map with bottom sheet for list (toggle button)
+- Map height: 500px desktop, 100vh mobile
+
+#### 3d. Data Requirements
+- Listings must have `map_marker` (lat/lng) to appear on map
+- Listings without marker: Show in list view only, with "Location not mapped" badge
+- Fetch all active listings for estate: `GET /api/listings?estate=xxx&is_active=true`
+
+#### 3e. User Cluster Detection
+Sources for `userCluster`:
+1. User profile field `cluster_or_street` (future enhancement)
+2. Last booking's cluster
+3. Saved guest's typical cluster
+4. Manual input in map view: "Where are you staying?" dropdown
+
+---
+
+### 3.1. Map View Toggle in Results Page
+**File:** `src/pages/renter/Results.tsx`
+
+**UI Addition:**
+```
+Header: "Available Bays" | [List View] [Map View]  ← toggle buttons
+Results: <EstateBayMap /> when map view selected
+```
+
+**State:**
+```typescript
+const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+```
+
+**URL Sync:**
+- Update URL: `?estate=Midrand Estate&view=map`
+- On mount, read `view` param
+
+---
+
+### 3.2. Search Page Map Selector Enhancement
+**File:** `src/pages/renter/Search.tsx`
+
+**Current:** MapSelector modal shows estate pins
+**Enhancement:** When user clicks estate on map, go to Results with `view=map` param
+
+---
+
+## 🔧 Technical Implementation Details
+
+### New Files to Create:
+```
+src/
+├── pages/
+│   ├── renter/Verification.tsx      # ID verification page (renter)
+│   └── host/Verification.tsx        # ID verification page (host) - or shared
+├── components/
+│   ├── ReviewPrompt.tsx             # Post-booking review modal
+│   ├── ReviewForm.tsx               # Review submission form
+│   ├── ReviewDisplay.tsx            # Reusable review display
+│   ├── EstateBayMap.tsx             # Estate-level bay map
+│   └── VerificationBadge.tsx        # Reusable badge component
+├── services/
+│   ├── reviewsAPI.ts                # Reviews API client
+│   └── verificationAPI.ts           # Verification API client
+```
+
+### Files to Modify:
+```
+src/
+├── context/AppContext.tsx           # Add verification status, review functions
+├── types/index.ts                   # Add review, verification types
+├── pages/renter/
+│   ├── Checkout.tsx                 # Verification gate, review display
+│   ├── Results.tsx                  # Map view toggle, EstateBayMap
+│   ├── Search.tsx                   # Map selector → map view
+│   ├── RenterDashboard.tsx          # Reviews tab
+│   └── SavedGuests.tsx              # (no changes needed)
+├── pages/host/
+│   ├── CreateListing.tsx            # Host verification gate
+│   └── HostDashboard.tsx            # Reviews tab
+├── services/api.ts                  # Add reviewsAPI, verificationAPI exports
+└── components/index.ts              # Export new components
+```
+
+### Playwright Tests to Add:
+```
+tests/e2e/
+├── verification.spec.ts             # ID verification flow
+├── reviews.spec.ts                  # Review prompt, form, display
+└── estate-map.spec.ts               # Estate bay map view
+```
 
 ### 2. Host Features
 - **Create listings** via 4-step wizard (enhanced v1.1.0):
@@ -604,11 +956,11 @@ npx vercel --prod --force
 At build time, `dist/build-info.json` is created:
 ```json
 {
-  "version": "1.0.1",
+  "version": "1.1.0",
   "name": "parkbuddy-sa",
-  "buildDate": "2026-11-05T16:30:34.679Z",
-  "buildTimestamp": 1793896234679,
-  "gitCommit": "7de3d89b",
+  "buildDate": "2026-11-06T09:58:54.327Z",
+  "buildTimestamp": 1793959134328,
+  "gitCommit": "52d5d346",
   "gitBranch": "master"
 }
 ```
@@ -630,14 +982,15 @@ npm run test:e2e:headed   # Visible browser
 npm run test:e2e:ui       # Playwright UI
 ```
 
-**Test Coverage (22 tests):**
+**Test Coverage:**
 - login.spec.ts (4 tests) - Authentication flows
 - booking.spec.ts (6 tests) - Booking creation, payment
 - host.spec.ts (4 tests) - Host dashboard, listings
 - account.spec.ts (4 tests) - Delete account, password reset (NEW)
 - saved-guests.spec.ts (4 tests) - Guest management
-
-**Current:** 12/22 passing (10 failures due to test selector issues, not app bugs)
+- verification.spec.ts (NEW v1.1.0) - ID verification flow
+- reviews.spec.ts (NEW v1.1.0) - Review prompt, form, display
+- estate-map.spec.ts (NEW v1.1.0) - Estate bay map view
 
 ---
 
@@ -901,6 +1254,6 @@ MIT License - Free to use and modify
 
 ---
 
-**Last Updated:** 2026-11-05
-**Version:** 1.0.1
-**Status:** Production Ready - All Core Features Complete
+**Last Updated:** 2026-11-06
+**Version:** 1.1.0
+**Status:** Implementation in Progress - Verification, Reviews, Estate Map Features

@@ -6,6 +6,7 @@ export interface User {
   role: 'host' | 'renter' | 'both';
   id_verified: boolean;
   residence_verified: boolean;
+  id_verification_status?: 'unverified' | 'pending' | 'verified' | 'rejected';
   avatar?: string;
 }
 
@@ -33,6 +34,7 @@ export interface Listing {
   cluster_or_street: string;
   bay_number: string;
   price_per_day: number;
+  price_per_hour?: number;
   booking_type: 'instant' | 'request';
   is_active: boolean;
   walk_time_minutes: number;
@@ -41,6 +43,13 @@ export interface Listing {
   notes?: string;
   map_marker?: MapMarker;
   directions?: string;
+  listing_type?: 'estate_bay' | 'residential_driveway' | 'garage' | 'commercial_lot' | 'event_parking';
+  is_event_parking?: boolean;
+  event_multiplier?: number;
+  event_dates?: string[];
+  amenities?: string[];
+  requires_id_verified_renter?: boolean;
+  deposit_amount?: number;
 }
 
 export interface SavedGuest {
@@ -72,6 +81,7 @@ export interface Booking {
   created_at: string;
   access_code?: string;
   directions?: string;
+  has_review?: boolean;
 }
 
 export interface Payment {
@@ -96,4 +106,45 @@ export interface SearchFilters {
   start_date: string;
   end_date: string;
   booking_type: 'all' | 'instant' | 'request';
+}
+
+export interface Review {
+  id: string;
+  booking_id: string;
+  reviewer_id: string;
+  reviewee_id: string;
+  reviewer_role: 'host' | 'renter';
+  rating: number;
+  comment: string | null;
+  categories: {
+    communication: number;
+    cleanliness: number;
+    safety: number;
+    accuracy: number;
+  } | null;
+  is_public: boolean;
+  created_at: string;
+  reviewer?: {
+    id: string;
+    full_name: string;
+    id_verification_status?: string;
+  };
+  booking?: {
+    id: string;
+    start_date: string;
+    end_date: string;
+    listing?: {
+      id: string;
+      cluster_or_street: string;
+      bay_number: string;
+      estate_name: string;
+    };
+  };
+  host_response?: string;
+}
+
+export interface ReviewAggregate {
+  average_rating: number;
+  total_reviews: number;
+  categories: Record<string, number>;
 }

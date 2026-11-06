@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
-import { User, Listing, SavedGuest, Booking, SearchFilters } from '../types';
-import { authAPI, listingsAPI, bookingsAPI, paymentsAPI, tokenManager } from '../services/api';
+import { User, Listing, SavedGuest, Booking, SearchFilters, Review, ReviewAggregate } from '../types';
+import { authAPI, listingsAPI, bookingsAPI, paymentsAPI, tokenManager, verificationAPI, reviewsAPI } from '../services/api';
 
 interface AppState {
   user: User | null;
@@ -10,11 +10,18 @@ interface AppState {
   searchFilters: SearchFilters;
   searchResults: Listing[];
   isAuthenticated: boolean;
-  currentView: 'landing' | 'login' | 'host-dashboard' | 'create-listing' | 'manage-bookings' | 'search' | 'renter-dashboard' | 'results' | 'checkout' | 'success' | 'saved-guests' | 'forgot-password' | 'reset-password';
+  currentView: 'landing' | 'login' | 'host-dashboard' | 'create-listing' | 'manage-bookings' | 'search' | 'renter-dashboard' | 'results' | 'checkout' | 'success' | 'saved-guests' | 'forgot-password' | 'reset-password' | 'verification';
   selectedListing: Listing | null;
   selectedBooking: Booking | null;
   loading: boolean;
   error: string | null;
+  // Verification
+  verificationStatus: User['id_verification_status'] | null;
+  // Reviews
+  hostReviews: Review[];
+  hostReviewAggregate: ReviewAggregate | null;
+  renterReviews: Review[];
+  listingReviews: Review[];
 }
 
 interface AppContextType extends AppState {
@@ -35,8 +42,9 @@ interface AppContextType extends AppState {
   selectBooking: (booking: Booking | null) => void;
   
   // Saved Guests (local only for now)
-  addSavedGuest: (guest: Omit<SavedGuest, 'id' | 'renter_id'>) => Promise<void>;
+  addSavedGuest: (guest: Omit<SavedGuest, 'id' | 'renter_id'>) => Promise<string>;
   removeSavedGuest: (id: string) => Promise<void>;
+  updateSavedGuest: (id: string, guest: Partial<Omit<SavedGuest, 'id' | 'renter_id'>>) => Promise<void>;
   
   // Bookings
   createBooking: (booking: Omit<Booking, 'id' | 'created_at'>) => Promise<void>;
@@ -49,6 +57,18 @@ interface AppContextType extends AppState {
   
   // Account
   deleteAccount: () => Promise<void>;
+  
+  // Verification
+  fetchVerificationStatus: () => Promise<void>;
+  submitVerification: (data: { id_front: File; id_back: File; selfie: File }) => Promise<void>;
+  
+  // Reviews
+  submitReview: (data: { booking_id: string; reviewee_id: string; reviewer_role: 'host' | 'renter'; rating: number; comment?: string; categories?: { communication: number; cleanliness: number; safety: number; accuracy: number }; is_public?: boolean }) => Promise<void>;
+  fetchHostReviews: (hostId: string) => Promise<void>;
+  fetchRenterReviews: (renterId: string) => Promise<void>;
+  fetchListingReviews: (listingId: string) => Promise<void>;
+  getReviewsForListing: (listingId: string) => Promise<Review[]>;
+  submitReviewResponse: (reviewId: string, response: string) => Promise<void>;
   
   // Async fetch functions (load from API)
   fetchListings: () => Promise<void>;
@@ -138,6 +158,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Verification
+  const [verificationStatus, setVerificationStatus] = useState<User['id_verification_status'] | null>(null);
+  // Reviews
+  const [hostReviews, setHostReviews] = useState<Review[]>([]);
+  const [hostReviewAggregate, setHostReviewAggregate] = useState<ReviewAggregate | null>(null);
+  const [renterReviews, setRenterReviews] = useState<Review[]>([]);
+  const [listingReviews, setListingReviews] = useState<Review[]>([]);
 
   // Initialize auth on mount
   useEffect(() => {
@@ -152,6 +179,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             fetchListings(),
             fetchSavedGuests(),
             fetchBookings(),
+            fetchVerificationStatus(),
           ]);
         } catch {
           tokenManager.removeToken();
@@ -168,6 +196,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
+  const fetchVerificationStatus = useCallback(async () => {
+    try {
+      const data = await verificationAPI.getStatus();
+      setVerificationStatus(data.id_verification_status);
+    } catch (err: any) {
+      console.error('Failed to fetch verification status:', err);
+    }
+  }, []);
+
   const login = useCallback(async (email: string, password: string) => {
     setLoading(true);
     setError(null);
@@ -180,6 +217,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         fetchListings(),
         fetchSavedGuests(),
         fetchBookings(),
+        fetchVerificationStatus(),
       ]);
       setLoading(false);
       return { success: true };
@@ -187,7 +225,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setErrorState(err.message || 'Login failed');
       return { success: false, error: err.message };
     }
-  }, []);
+  }, [fetchVerificationStatus]);
 
   const register = useCallback(async (data: { email: string; phone: string; password: string; full_name: string; role: string }) => {
     setLoading(true);
@@ -201,6 +239,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         fetchListings(),
         fetchSavedGuests(),
         fetchBookings(),
+        fetchVerificationStatus(),
       ]);
       setLoading(false);
       return { success: true };
@@ -208,7 +247,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setErrorState(err.message || 'Registration failed');
       return { success: false, error: err.message };
     }
-  }, []);
+  }, [fetchVerificationStatus]);
 
   const logout = useCallback(() => {
     tokenManager.removeToken();
@@ -217,6 +256,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setSavedGuests([]);
     setBookings([]);
     setSearchResults([]);
+    setVerificationStatus(null);
+    setHostReviews([]);
+    setHostReviewAggregate(null);
+    setRenterReviews([]);
+    setListingReviews([]);
     setCurrentView('landing');
   }, []);
 
@@ -349,6 +393,86 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return bookings.filter(b => b.renter_id === (user?.id || ''));
   }, [bookings, user]);
 
+  const submitVerification = useCallback(async (data: { id_front: File; id_back: File; selfie: File }) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await verificationAPI.submit(data);
+      await fetchVerificationStatus();
+    } catch (err: any) {
+      setErrorState(err.message || 'Verification submission failed');
+    }
+    setLoading(false);
+  }, [fetchVerificationStatus]);
+
+  const submitReview = useCallback(async (data: { 
+    booking_id: string; 
+    reviewee_id: string; 
+    reviewer_role: 'host' | 'renter'; 
+    rating: number; 
+    comment?: string; 
+    categories?: { communication: number; cleanliness: number; safety: number; accuracy: number }; 
+    is_public?: boolean 
+  }) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await reviewsAPI.submit(data);
+    } catch (err: any) {
+      setErrorState(err.message || 'Failed to submit review');
+    }
+    setLoading(false);
+  }, []);
+
+  const fetchHostReviews = useCallback(async (hostId: string) => {
+    try {
+      const data = await reviewsAPI.getHostReviews(hostId);
+      setHostReviews(data.reviews);
+      setHostReviewAggregate(data.aggregate);
+    } catch (err: any) {
+      console.error('Failed to fetch host reviews:', err);
+    }
+  }, []);
+
+  const fetchRenterReviews = useCallback(async (renterId: string) => {
+    try {
+      const data = await reviewsAPI.getRenterReviews(renterId);
+      setRenterReviews(data);
+    } catch (err: any) {
+      console.error('Failed to fetch renter reviews:', err);
+    }
+  }, []);
+
+  const fetchListingReviews = useCallback(async (listingId: string) => {
+    try {
+      const data = await reviewsAPI.getListingReviews(listingId);
+      setListingReviews(data);
+    } catch (err: any) {
+      console.error('Failed to fetch listing reviews:', err);
+    }
+  }, []);
+
+  const getReviewsForListing = useCallback(async (listingId: string) => {
+    try {
+      const data = await reviewsAPI.getListingReviews(listingId);
+      return data;
+    } catch (err: any) {
+      console.error('Failed to fetch listing reviews:', err);
+      return [];
+    }
+  }, []);
+
+  const submitReviewResponse = useCallback(async (reviewId: string, response: string) => {
+    try {
+      await reviewsAPI.respond(reviewId, response);
+      // Refresh reviews after responding
+      await fetchHostReviews(user?.id || '');
+    } catch (err: any) {
+      console.error('Failed to submit review response:', err);
+      setError(err.message || 'Failed to submit response');
+    }
+  }, [user, fetchHostReviews]);
+
   const selectListing = useCallback((listing: Listing | null) => {
     setSelectedListing(listing);
   }, []);
@@ -373,6 +497,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const removeSavedGuest = useCallback(async (id: string) => {
     const updated = savedGuests.filter(g => g.id !== id);
+    setSavedGuests(updated);
+    localStorage.setItem('savedGuests', JSON.stringify(updated));
+  }, [savedGuests]);
+
+  const updateSavedGuest = useCallback(async (id: string, guest: Partial<Omit<SavedGuest, 'id' | 'renter_id'>>) => {
+    const updated = savedGuests.map(g => g.id === id ? { ...g, ...guest } : g);
     setSavedGuests(updated);
     localStorage.setItem('savedGuests', JSON.stringify(updated));
   }, [savedGuests]);
@@ -453,10 +583,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
       user, listings, savedGuests, bookings, searchFilters, searchResults,
       isAuthenticated: !!user, currentView, selectedListing, selectedBooking,
       loading, error,
+      // Verification
+      verificationStatus,
+      // Reviews
+      hostReviews, hostReviewAggregate, renterReviews, listingReviews,
       login, register, logout, setView, updateSearchFilters, performSearch,
-      selectListing, selectBooking, addSavedGuest, removeSavedGuest,
+      selectListing, selectBooking, addSavedGuest, removeSavedGuest, updateSavedGuest,
       createBooking, addListing, updateBookingStatus, updateBookingAccessCode,
       cancelBooking, deleteAccount, 
+      // Verification
+      fetchVerificationStatus, submitVerification,
+      // Reviews
+      submitReview, fetchHostReviews, fetchRenterReviews, fetchListingReviews,
+      getReviewsForListing, submitReviewResponse,
       // Async fetch functions
       fetchListings, fetchSavedGuests, fetchBookings,
       fetchHostListings, fetchHostBookings, fetchHostEarnings, fetchHostEarningsHistory, fetchRenterBookings,

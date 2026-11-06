@@ -22,6 +22,12 @@ export default function SearchPage() {
   const selectEstateFromMap = (estateName: string) => {
     updateSearchFilters({ estate: estateName });
     setShowMapSelector(false);
+    // Navigate to results with map view
+    const params = new URLSearchParams();
+    params.set('view', 'map');
+    // The performSearch will navigate to results, we need to pass the view param
+    // We'll handle this by setting a flag
+    (window as any).__mapViewRequested = true;
     performSearch();
   };
 
@@ -37,14 +43,17 @@ export default function SearchPage() {
             <span className="text-xl font-bold text-gray-900">ParkBuddy<span className="text-blue-600">SA</span></span>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => setView('renter-dashboard')} className="p-2 hover:bg-gray-100 rounded-lg transition" title="My Dashboard">
+            <button onClick={() => setView('renter-dashboard')} className="flex flex-col items-center gap-1 p-2 hover:bg-gray-100 rounded-lg transition" title="My Dashboard">
               <LayoutDashboard className="w-5 h-5 text-gray-600" />
+              <span className="text-xs text-gray-500">Dashboard</span>
             </button>
-            <button onClick={() => setView('saved-guests')} className="p-2 hover:bg-gray-100 rounded-lg transition" title="Saved Guests">
+            <button onClick={() => setView('saved-guests')} className="flex flex-col items-center gap-1 p-2 hover:bg-gray-100 rounded-lg transition" title="Saved Guests">
               <Users className="w-5 h-5 text-gray-600" />
+              <span className="text-xs text-gray-500">Guests</span>
             </button>
-            <button onClick={() => setView('host-dashboard')} className="p-2 hover:bg-gray-100 rounded-lg transition" title="Host Dashboard">
+            <button onClick={() => setView('host-dashboard')} className="flex flex-col items-center gap-1 p-2 hover:bg-gray-100 rounded-lg transition" title="Host Dashboard">
               <LayoutDashboard className="w-5 h-5 text-gray-600" />
+              <span className="text-xs text-gray-500">Host</span>
             </button>
             <div className="relative">
               <button onClick={() => setShowUserMenu(!showUserMenu)} className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center hover:bg-blue-200 transition">
