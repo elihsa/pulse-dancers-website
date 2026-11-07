@@ -134,13 +134,15 @@ router.get('/host/:hostId', async (req, res) => {
     if (error) throw error;
 
     // Calculate aggregate stats
-    const { data: stats } = await supabase
+    const { data: stats, error: statsError } = await supabase
       .from('reviews')
       .select('rating, categories')
       .eq('reviewee_id', hostId)
       .eq('is_public', true);
 
-    const aggregate = stats?.length > 0 ? {
+    if (statsError) throw statsError;
+
+    const aggregate = stats && stats.length > 0 ? {
       average_rating: stats.reduce((sum, r) => sum + r.rating, 0) / stats.length,
       total_reviews: stats.length,
       categories: stats.reduce((acc, r) => {
@@ -203,6 +205,14 @@ router.get('/listing/:listingId', async (req, res) => {
     const { listingId } = req.params;
     const { limit = 20, offset = 0 } = req.query;
 
+    // First get booking IDs for this listing
+    const { data: bookingIds, error: bookingError } = await supabase
+      .from('bookings')
+      .select('id')
+      .eq('listing_id', listingId);
+
+    if (bookingError) throw bookingError;
+
     const { data: reviews, error } = await supabase
       .from('reviews')
       .select(`
@@ -215,11 +225,7 @@ router.get('/listing/:listingId', async (req, res) => {
         booking:booking_id (id, start_date, end_date)
       `)
       .eq('is_public', true)
-      .in('booking_id', supabase
-        .from('bookings')
-        .select('id')
-        .eq('listing_id', listingId)
-      )
+      .in('booking_id', bookingIds?.map(b => b.id) || [])
       .order('created_at', { ascending: false })
       .range(Number(offset), Number(offset) + Number(limit) - 1);
 

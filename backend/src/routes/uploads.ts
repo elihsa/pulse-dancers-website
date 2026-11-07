@@ -1,14 +1,22 @@
 import express from 'express';
-import multer from 'multer';
 import { authenticate } from '../middleware/auth';
+import { upload } from '../services/cloudinary';
 
 const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/id-document', authenticate, upload.single('document'), async (req: any, res) => {
   try {
-    res.json({ message: 'Upload successful', filename: req.file?.originalname });
+    const file = req.file;
+    if (!file || !file.path) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    res.json({ 
+      message: 'Upload successful', 
+      url: file.path,
+      publicId: file.filename 
+    });
   } catch (error) {
+    console.error('Upload error:', error);
     res.status(400).json({ error: 'Upload failed' });
   }
 });

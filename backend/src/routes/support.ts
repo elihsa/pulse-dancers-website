@@ -193,7 +193,7 @@ router.post('/chats/:id/messages', authenticate, async (req: any, res) => {
     // Verify chat exists and user is participant
     const { data: chat } = await supabase
       .from('support_chats')
-      .select('id, user_id, booking_id')
+      .select('id, user_id, booking_id, status')
       .eq('id', chatId)
       .single();
 
