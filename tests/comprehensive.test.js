@@ -140,11 +140,17 @@ test.describe('Pulse Dancers Website - Comprehensive Functional Tests', () => {
     await page.fill('#bf-email', bookingData.email);
     await page.fill('#bf-phone', bookingData.phone);
     
-    // Event type is a custom option grid, not a select - click the option
-    await page.click(`#bf-event-type input[value="${bookingData.eventType}"]`);
-    await page.check(`input[value="${bookingData.services[0]}"]`);
+    // Event type is a custom option grid, not a select - click the option label (input has opacity: 0)
+    await page.click('#bf-event-type label:has(input[value="${bookingData.eventType}"])');
+    await page.click('label:has(input[value="${bookingData.services[0]}"])');
+    // Select managing: "Yes, I'm managing it" (value="No")
+    await page.click('label:has(input[name="managing"][value="No"])');
+    
+    // Select location type: "area" to show bf-area-fields
+    await page.click('label:has(input[name="locType"][value="area"])');
+    
     await page.fill('#bf-area', bookingData.area);
-    await page.fill('#bf-event-date', bookingData.eventDate);
+    await page.fill('#bf-date', bookingData.eventDate);
     
     // Submit and wait for response
     const responsePromise = page.waitForResponse(response => 
@@ -191,11 +197,12 @@ test.describe('Pulse Dancers Website - Comprehensive Functional Tests', () => {
     await page.fill('#w-time', '20:00');
     await page.click('[data-next="3"]');
     
-    // Step 3: Services
-    await page.check(`input[value="${bookingData.services[0]}"]`);
+    // Step 3: Services - click label (input has opacity: 0)
+    await page.click('label:has(input[value="${bookingData.services[0]}"])');
     await page.click('[data-next="4"]');
     
-    // Step 4: Location
+    // Step 4: Location - select "area" to show w-area-fields
+    await page.click('label:has(input[name="locType"][value="area"])');
     await page.fill('#w-area', bookingData.area);
     await page.click('[data-next="5"]');
     

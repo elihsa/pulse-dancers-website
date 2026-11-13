@@ -7,7 +7,7 @@
 # Test info
 
 - Name: comprehensive.test.js >> Pulse Dancers Website - Comprehensive Functional Tests >> Join form submits with file uploads and writes to JOIN_APPLICATIONS sheet
-- Location: tests/comprehensive.test.js:310:3
+- Location: tests/comprehensive.test.js:317:3
 
 # Error details
 
@@ -76,7 +76,7 @@ Call log:
               - textbox "First Name *" [ref=e39]: Test
             - generic [ref=e40]:
               - generic [ref=e41]: Last Name *
-              - textbox "Last Name *" [ref=e42]: User 1794568784149
+              - textbox "Last Name *" [ref=e42]: User 1794583991905
           - generic [ref=e44]:
             - generic [ref=e45]: Date of Birth *
             - generic [ref=e46]:
@@ -167,7 +167,7 @@ Call log:
           - generic [ref=e57]:
             - generic [ref=e58]:
               - generic [ref=e59]: Email *
-              - textbox "Email *" [ref=e60]: join-1794568784149@example.com
+              - textbox "Email *" [ref=e60]: join-1794583991905@example.com
             - generic [ref=e61]:
               - generic [ref=e62]: Phone Number *
               - textbox "Phone Number *" [active] [ref=e63]:
@@ -335,206 +335,206 @@ Call log:
 # Test source
 
 ```ts
-  221 |   // ============================================
-  222 |   // TEST 2: TESTIMONIAL FORM (index.html)
-  223 |   // ============================================
-  224 |   test('Testimonial form submits and writes to TESTIMONIALS sheet', async ({ page }) => {
-  225 |     const testimonialData = generateTestimonialData();
-  226 |     
-  227 |     await page.goto(`${BASE_URL}/`);
-  228 |     await page.waitForLoadState('networkidle');
-  229 |     
-  230 |     // Scroll to testimonial form
-  231 |     await page.locator('#review-form').scrollIntoViewIfNeeded();
-  232 |     
-  233 |     // Fill form
-  234 |     await page.fill('#review-name', testimonialData.name);
-  235 |     await page.fill('#review-area', testimonialData.area);
-  236 |     await page.selectOption('#review-rating', testimonialData.rating);
-  237 |     await page.fill('#review-message', testimonialData.message);
-  238 |     await page.fill('#review-email', testimonialData.email);
+  228 |   // ============================================
+  229 |   // TEST 2: TESTIMONIAL FORM (index.html)
+  230 |   // ============================================
+  231 |   test('Testimonial form submits and writes to TESTIMONIALS sheet', async ({ page }) => {
+  232 |     const testimonialData = generateTestimonialData();
+  233 |     
+  234 |     await page.goto(`${BASE_URL}/`);
+  235 |     await page.waitForLoadState('networkidle');
+  236 |     
+  237 |     // Scroll to testimonial form
+  238 |     await page.locator('#review-form').scrollIntoViewIfNeeded();
   239 |     
-  240 |     // Submit and wait
-  241 |     const responsePromise = page.waitForResponse(response => 
-  242 |       response.url().includes('/api/submit-testimonial') && response.status() === 200
-  243 |     );
-  244 |     await page.click('#review-form button[type="submit"]');
-  245 |     const response = await responsePromise;
-  246 |     const result = await response.json();
-  247 |     
-  248 |     expect(result.success).toBe(true);
-  249 |     expect(result.message).toContain('testimonial');
-  250 |     
-  251 |     // Verify status message appears
-  252 |     await expect(page.locator('#review-status')).toBeVisible();
-  253 |     await expect(page.locator('#review-status')).toContainText('Thank you for your testimonial');
+  240 |     // Fill form
+  241 |     await page.fill('#review-name', testimonialData.name);
+  242 |     await page.fill('#review-area', testimonialData.area);
+  243 |     await page.selectOption('#review-rating', testimonialData.rating);
+  244 |     await page.fill('#review-message', testimonialData.message);
+  245 |     await page.fill('#review-email', testimonialData.email);
+  246 |     
+  247 |     // Submit and wait
+  248 |     const responsePromise = page.waitForResponse(response => 
+  249 |       response.url().includes('/api/submit-testimonial') && response.status() === 200
+  250 |     );
+  251 |     await page.click('#review-form button[type="submit"]');
+  252 |     const response = await responsePromise;
+  253 |     const result = await response.json();
   254 |     
-  255 |     // Verify sheet entry (TESTIMONIALS sheet) - skip if no API key
-  256 |     const sheetResult = await waitForSheetEntry('TESTIMONIALS', testimonialData.name, 0);
-  257 |     console.log('DEBUG sheetResult:', JSON.stringify(sheetResult));
-  258 |     console.log('DEBUG API key in test:', process.env.GOOGLE_SHEETS_API_KEY ? 'SET' : 'NOT SET');
-  259 |     if (sheetResult.reason !== 'No API key') {
-  260 |       expect(sheetResult.verified).toBe(true);
-  261 |       console.log('✅ Testimonial verified in Google Sheets');
-  262 |     } else {
-  263 |       console.log('⚠️ Sheet verification skipped (no API key)');
-  264 |     }
-  265 |   });
-  266 | 
-  267 |   // ============================================
-  268 |   // TEST 3: CONTACT FORM (contact.html)
-  269 |   // ============================================
-  270 |   test('Contact form submits and writes to CONTACT_MESSAGES sheet', async ({ page }) => {
-  271 |     const contactData = generateContactData();
-  272 |     
-  273 |     await page.goto(`${BASE_URL}/contact.html`);
-  274 |     await page.waitForLoadState('networkidle');
-  275 |     
-  276 |     // Verify form
-  277 |     await expect(page.locator('#contactForm')).toBeVisible();
-  278 |     
-  279 |     // Fill form
-  280 |     await page.fill('#contact-name', contactData.name);
-  281 |     await page.fill('#contact-email', contactData.email);
-  282 |     await page.fill('#contact-phone', contactData.phone);
-  283 |     await page.fill('#contact-subject', contactData.subject);
-  284 |     await page.fill('#contact-message', contactData.message);
+  255 |     expect(result.success).toBe(true);
+  256 |     expect(result.message).toContain('testimonial');
+  257 |     
+  258 |     // Verify status message appears
+  259 |     await expect(page.locator('#review-status')).toBeVisible();
+  260 |     await expect(page.locator('#review-status')).toContainText('Thank you for your testimonial');
+  261 |     
+  262 |     // Verify sheet entry (TESTIMONIALS sheet) - skip if no API key
+  263 |     const sheetResult = await waitForSheetEntry('TESTIMONIALS', testimonialData.name, 0);
+  264 |     console.log('DEBUG sheetResult:', JSON.stringify(sheetResult));
+  265 |     console.log('DEBUG API key in test:', process.env.GOOGLE_SHEETS_API_KEY ? 'SET' : 'NOT SET');
+  266 |     if (sheetResult.reason !== 'No API key') {
+  267 |       expect(sheetResult.verified).toBe(true);
+  268 |       console.log('✅ Testimonial verified in Google Sheets');
+  269 |     } else {
+  270 |       console.log('⚠️ Sheet verification skipped (no API key)');
+  271 |     }
+  272 |   });
+  273 | 
+  274 |   // ============================================
+  275 |   // TEST 3: CONTACT FORM (contact.html)
+  276 |   // ============================================
+  277 |   test('Contact form submits and writes to CONTACT_MESSAGES sheet', async ({ page }) => {
+  278 |     const contactData = generateContactData();
+  279 |     
+  280 |     await page.goto(`${BASE_URL}/contact.html`);
+  281 |     await page.waitForLoadState('networkidle');
+  282 |     
+  283 |     // Verify form
+  284 |     await expect(page.locator('#contactForm')).toBeVisible();
   285 |     
-  286 |     // Submit
-  287 |     const responsePromise = page.waitForResponse(response => 
-  288 |       response.url().includes('/api/submit-contact') && response.status() === 200
-  289 |     );
-  290 |     await page.click('#contactForm button[type="submit"]');
-  291 |     const response = await responsePromise;
-  292 |     const result = await response.json();
-  293 |     
-  294 |     expect(result.success).toBe(true);
-  295 |     
-  296 |     // Verify sheet entry - skip if no API key
-  297 |     const sheetResult = await waitForSheetEntry('CONTACT_MESSAGES', contactData.name, 1);
-  298 |     if (sheetResult.reason !== 'No API key') {
-  299 |       expect(sheetResult.verified).toBe(true);
-  300 |       console.log('✅ Contact form verified in Google Sheets');
-  301 |     } else {
-  302 |       console.log('⚠️ Sheet verification skipped (no API key)');
-  303 |     }
-  304 |   });
-  305 |     
-  306 | 
-  307 |   // ============================================
-  308 |   // TEST 4: JOIN FORM (join.html)
-  309 |   // ============================================
-  310 |   test('Join form submits with file uploads and writes to JOIN_APPLICATIONS sheet', async ({ page }) => {
-  311 |     const joinData = generateJoinData();
+  286 |     // Fill form
+  287 |     await page.fill('#contact-name', contactData.name);
+  288 |     await page.fill('#contact-email', contactData.email);
+  289 |     await page.fill('#contact-phone', contactData.phone);
+  290 |     await page.fill('#contact-subject', contactData.subject);
+  291 |     await page.fill('#contact-message', contactData.message);
+  292 |     
+  293 |     // Submit
+  294 |     const responsePromise = page.waitForResponse(response => 
+  295 |       response.url().includes('/api/submit-contact') && response.status() === 200
+  296 |     );
+  297 |     await page.click('#contactForm button[type="submit"]');
+  298 |     const response = await responsePromise;
+  299 |     const result = await response.json();
+  300 |     
+  301 |     expect(result.success).toBe(true);
+  302 |     
+  303 |     // Verify sheet entry - skip if no API key
+  304 |     const sheetResult = await waitForSheetEntry('CONTACT_MESSAGES', contactData.name, 1);
+  305 |     if (sheetResult.reason !== 'No API key') {
+  306 |       expect(sheetResult.verified).toBe(true);
+  307 |       console.log('✅ Contact form verified in Google Sheets');
+  308 |     } else {
+  309 |       console.log('⚠️ Sheet verification skipped (no API key)');
+  310 |     }
+  311 |   });
   312 |     
-  313 |     await page.goto(`${BASE_URL}/join.html`);
-  314 |     await page.waitForLoadState('networkidle');
-  315 |     
-  316 |     // Fill all required fields
-  317 |     await page.fill('#firstName', joinData.firstName);
-  318 |     await page.fill('#lastName', joinData.lastName);
-  319 |     await page.fill('#email', joinData.email);
-  320 |     await page.fill('#phone', joinData.phone);
-> 321 |     await page.fill('#birthMonth', joinData.birthMonth);
+  313 | 
+  314 |   // ============================================
+  315 |   // TEST 4: JOIN FORM (join.html)
+  316 |   // ============================================
+  317 |   test('Join form submits with file uploads and writes to JOIN_APPLICATIONS sheet', async ({ page }) => {
+  318 |     const joinData = generateJoinData();
+  319 |     
+  320 |     await page.goto(`${BASE_URL}/join.html`);
+  321 |     await page.waitForLoadState('networkidle');
+  322 |     
+  323 |     // Fill all required fields
+  324 |     await page.fill('#firstName', joinData.firstName);
+  325 |     await page.fill('#lastName', joinData.lastName);
+  326 |     await page.fill('#email', joinData.email);
+  327 |     await page.fill('#phone', joinData.phone);
+> 328 |     await page.fill('#birthMonth', joinData.birthMonth);
       |                ^ Error: page.fill: Error: Element is not an <input>, <textarea> or [contenteditable] element
-  322 |     await page.fill('#birthDay', joinData.birthDay);
-  323 |     await page.fill('#birthYear', joinData.birthYear);
-  324 |     await page.fill('#streetAddress', joinData.streetAddress);
-  325 |     await page.fill('#city', joinData.city);
-  326 |     await page.selectOption('#preference', joinData.preference);
-  327 |     await page.fill('#danceExperience', joinData.danceExperience);
-  328 |     await page.fill('#promoExperience', joinData.promoExperience);
-  329 |     await page.selectOption('#transport', joinData.transport);
-  330 |     await page.fill('#gymLocation', joinData.gymLocation);
-  331 |     await page.fill('#otherWork', joinData.otherWork);
-  332 |     await page.fill('#skills', joinData.skills);
-  333 |     
-  334 |     // Create dummy image files for upload
-  335 |     const dummyImage = Buffer.from('fake-image-data');
-  336 |     
-  337 |     // Submit with file uploads
-  338 |     const responsePromise = page.waitForResponse(response => 
-  339 |       response.url().includes('/api/submit-join-form') && response.status() === 200
-  340 |     );
-  341 |     
-  342 |     // Use file chooser for file inputs
-  343 |     const [fileChooser1] = await Promise.all([
-  344 |       page.waitForEvent('filechooser'),
-  345 |       page.click('#fullBodyShot')
-  346 |     ]);
-  347 |     await fileChooser1.setFiles({
-  348 |       name: 'body.jpg',
-  349 |       mimeType: 'image/jpeg',
-  350 |       buffer: dummyImage
-  351 |     });
-  352 |     
-  353 |     const [fileChooser2] = await Promise.all([
-  354 |       page.waitForEvent('filechooser'),
-  355 |       page.click('#fullFacePhoto')
-  356 |     ]);
-  357 |     await fileChooser2.setFiles({
-  358 |       name: 'face.jpg',
-  359 |       mimeType: 'image/jpeg',
-  360 |       buffer: dummyImage
-  361 |     });
-  362 |     
-  363 |     await page.click('#joinForm button[type="submit"]');
-  364 |     const response = await responsePromise;
-  365 |     const result = await response.json();
-  366 |     
-  367 |     expect(result.success).toBe(true);
-  368 |     expect(result.message).toContain('Application submitted');
+  329 |     await page.fill('#birthDay', joinData.birthDay);
+  330 |     await page.fill('#birthYear', joinData.birthYear);
+  331 |     await page.fill('#streetAddress', joinData.streetAddress);
+  332 |     await page.fill('#city', joinData.city);
+  333 |     await page.selectOption('#preference', joinData.preference);
+  334 |     await page.fill('#danceExperience', joinData.danceExperience);
+  335 |     await page.fill('#promoExperience', joinData.promoExperience);
+  336 |     await page.selectOption('#transport', joinData.transport);
+  337 |     await page.fill('#gymLocation', joinData.gymLocation);
+  338 |     await page.fill('#otherWork', joinData.otherWork);
+  339 |     await page.fill('#skills', joinData.skills);
+  340 |     
+  341 |     // Create dummy image files for upload
+  342 |     const dummyImage = Buffer.from('fake-image-data');
+  343 |     
+  344 |     // Submit with file uploads
+  345 |     const responsePromise = page.waitForResponse(response => 
+  346 |       response.url().includes('/api/submit-join-form') && response.status() === 200
+  347 |     );
+  348 |     
+  349 |     // Use file chooser for file inputs
+  350 |     const [fileChooser1] = await Promise.all([
+  351 |       page.waitForEvent('filechooser'),
+  352 |       page.click('#fullBodyShot')
+  353 |     ]);
+  354 |     await fileChooser1.setFiles({
+  355 |       name: 'body.jpg',
+  356 |       mimeType: 'image/jpeg',
+  357 |       buffer: dummyImage
+  358 |     });
+  359 |     
+  360 |     const [fileChooser2] = await Promise.all([
+  361 |       page.waitForEvent('filechooser'),
+  362 |       page.click('#fullFacePhoto')
+  363 |     ]);
+  364 |     await fileChooser2.setFiles({
+  365 |       name: 'face.jpg',
+  366 |       mimeType: 'image/jpeg',
+  367 |       buffer: dummyImage
+  368 |     });
   369 |     
-  370 |     // Verify sheet entry (skip if no API key)
-  371 |     const sheetResult = await waitForSheetEntry('JOIN_APPLICATIONS', joinData.firstName, 1);
-  372 |     if (sheetResult.reason !== 'No API key') {
-  373 |       expect(sheetResult.verified).toBe(true);
-  374 |       console.log('✅ Join application verified in Google Sheets');
-  375 |     } else {
-  376 |       console.log('⚠️ Sheet verification skipped (no API key)');
-  377 |     }
-  378 |   });
-  379 | 
-  380 |   // ============================================
-  381 |   // TEST 5: API ENDPOINTS HEALTH CHECKS
-  382 |   // ============================================
-  383 |   test.describe('API Endpoint Health', () => {
-  384 |     test('GET /api/sheets?sheetName=BOOKINGS returns 200', async ({ request }) => {
-  385 |       const response = await request.get(`${BASE_URL}/api/sheets?sheetName=BOOKINGS`);
-  386 |       expect(response.ok()).toBeTruthy();
-  387 |       const data = await response.json();
-  388 |       expect(data.values).toBeDefined();
-  389 |       expect(Array.isArray(data.values)).toBeTruthy();
-  390 |     });
-  391 | 
-  392 |     test('GET /api/sheets?sheetName=TESTIMONIALS returns 200', async ({ request }) => {
-  393 |       const response = await request.get(`${BASE_URL}/api/sheets?sheetName=TESTIMONIALS`);
-  394 |       expect(response.ok()).toBeTruthy();
-  395 |     });
-  396 | 
-  397 |     test('GET /api/sheets?sheetName=DANCERS returns 200 with performer data', async ({ request }) => {
-  398 |       const response = await request.get(`${BASE_URL}/api/sheets?sheetName=DANCERS`);
-  399 |       expect(response.ok()).toBeTruthy();
-  400 |       const data = await response.json();
-  401 |       expect(data.values).toBeDefined();
-  402 |       expect(data.values.length).toBeGreaterThan(1); // Header + data
-  403 |     });
-  404 | 
-  405 |     test('POST /api/submit-booking returns 400 for invalid data', async ({ request }) => {
-  406 |       const response = await request.post(`${BASE_URL}/api/submit-booking`, {
-  407 |         data: { name: 'Test' }, // Missing required fields
-  408 |         headers: { 'Content-Type': 'application/json' }
-  409 |       });
-  410 |       expect(response.status()).toBe(400);
-  411 |       const data = await response.json();
-  412 |       expect(data.error).toBeDefined();
-  413 |     });
-  414 | 
-  415 |     test('POST /api/submit-testimonial returns 400 for missing fields', async ({ request }) => {
-  416 |       const response = await request.post(`${BASE_URL}/api/submit-testimonial`, {
-  417 |         data: { name: 'Test' },
-  418 |         headers: { 'Content-Type': 'application/json' }
-  419 |       });
-  420 |       expect(response.status()).toBe(400);
-  421 |     });
+  370 |     await page.click('#joinForm button[type="submit"]');
+  371 |     const response = await responsePromise;
+  372 |     const result = await response.json();
+  373 |     
+  374 |     expect(result.success).toBe(true);
+  375 |     expect(result.message).toContain('Application submitted');
+  376 |     
+  377 |     // Verify sheet entry (skip if no API key)
+  378 |     const sheetResult = await waitForSheetEntry('JOIN_APPLICATIONS', joinData.firstName, 1);
+  379 |     if (sheetResult.reason !== 'No API key') {
+  380 |       expect(sheetResult.verified).toBe(true);
+  381 |       console.log('✅ Join application verified in Google Sheets');
+  382 |     } else {
+  383 |       console.log('⚠️ Sheet verification skipped (no API key)');
+  384 |     }
+  385 |   });
+  386 | 
+  387 |   // ============================================
+  388 |   // TEST 5: API ENDPOINTS HEALTH CHECKS
+  389 |   // ============================================
+  390 |   test.describe('API Endpoint Health', () => {
+  391 |     test('GET /api/sheets?sheetName=BOOKINGS returns 200', async ({ request }) => {
+  392 |       const response = await request.get(`${BASE_URL}/api/sheets?sheetName=BOOKINGS`);
+  393 |       expect(response.ok()).toBeTruthy();
+  394 |       const data = await response.json();
+  395 |       expect(data.values).toBeDefined();
+  396 |       expect(Array.isArray(data.values)).toBeTruthy();
+  397 |     });
+  398 | 
+  399 |     test('GET /api/sheets?sheetName=TESTIMONIALS returns 200', async ({ request }) => {
+  400 |       const response = await request.get(`${BASE_URL}/api/sheets?sheetName=TESTIMONIALS`);
+  401 |       expect(response.ok()).toBeTruthy();
+  402 |     });
+  403 | 
+  404 |     test('GET /api/sheets?sheetName=DANCERS returns 200 with performer data', async ({ request }) => {
+  405 |       const response = await request.get(`${BASE_URL}/api/sheets?sheetName=DANCERS`);
+  406 |       expect(response.ok()).toBeTruthy();
+  407 |       const data = await response.json();
+  408 |       expect(data.values).toBeDefined();
+  409 |       expect(data.values.length).toBeGreaterThan(1); // Header + data
+  410 |     });
+  411 | 
+  412 |     test('POST /api/submit-booking returns 400 for invalid data', async ({ request }) => {
+  413 |       const response = await request.post(`${BASE_URL}/api/submit-booking`, {
+  414 |         data: { name: 'Test' }, // Missing required fields
+  415 |         headers: { 'Content-Type': 'application/json' }
+  416 |       });
+  417 |       expect(response.status()).toBe(400);
+  418 |       const data = await response.json();
+  419 |       expect(data.error).toBeDefined();
+  420 |     });
+  421 | 
+  422 |     test('POST /api/submit-testimonial returns 400 for missing fields', async ({ request }) => {
+  423 |       const response = await request.post(`${BASE_URL}/api/submit-testimonial`, {
+  424 |         data: { name: 'Test' },
+  425 |         headers: { 'Content-Type': 'application/json' }
+  426 |       });
+  427 |       expect(response.status()).toBe(400);
+  428 |     });
 ```

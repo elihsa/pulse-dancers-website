@@ -7,7 +7,7 @@
 # Test info
 
 - Name: comprehensive.test.js >> Pulse Dancers Website - Comprehensive Functional Tests >> Form Validation >> Contact form validates email format
-- Location: tests/comprehensive.test.js:557:5
+- Location: tests/comprehensive.test.js:564:5
 
 # Error details
 
@@ -105,206 +105,206 @@ Call log:
 # Test source
 
 ```ts
-  468 |       const items = page.locator('.accordion-item, .faq-item');
-  469 |       const count = await items.count();
-  470 |       expect(count).toBeGreaterThanOrEqual(0);
-  471 |     });
-  472 | 
-  473 |     test('Meet the guys page loads performers with photos', async ({ page }) => {
-  474 |       await page.goto(`${BASE_URL}/meet-the-guys.html`);
-  475 |       await page.waitForLoadState('networkidle');
-  476 |       
-  477 |       const grid = page.locator('#performers-grid');
-  478 |       await expect(grid).toBeVisible();
-  479 |       
-  480 |       await page.waitForTimeout(3000);
-  481 |       
-  482 |       const cards = grid.locator('.performer-card');
-  483 |       const count = await cards.count();
-  484 |       expect(count).toBeGreaterThan(0);
-  485 |       
-  486 |       // Check that photos are loaded
-  487 |       const photos = grid.locator('.performer-photo');
-  488 |       const photoCount = await photos.count();
-  489 |       expect(photoCount).toBeGreaterThan(0);
-  490 |       
-  491 |       // Check gallery thumbnails
-  492 |       const thumbs = grid.locator('.performer-thumb');
-  493 |       const thumbCount = await thumbs.count();
-  494 |       // At least some performers should have multiple photos
-  495 |       expect(thumbCount).toBeGreaterThanOrEqual(count);
-  496 |     });
-  497 | 
-  498 |     test('Events page loads events from CMS', async ({ page }) => {
-  499 |       await page.goto(`${BASE_URL}/events.html`);
-  500 |       await page.waitForLoadState('networkidle');
-  501 |       
-  502 |       const container = page.locator('#events-container');
-  503 |       await expect(container).toBeVisible();
-  504 |       
-  505 |       await page.waitForTimeout(3000);
-  506 |       
-  507 |       const events = container.locator('.event-card, .event-item');
-  508 |       const count = await events.count();
-  509 |       expect(count).toBeGreaterThanOrEqual(0);
-  510 |     });
-  511 | 
-  512 |     test('Home page loads social links from CMS', async ({ page }) => {
-  513 |       await page.goto(`${BASE_URL}/`);
-  514 |       await page.waitForLoadState('networkidle');
-  515 |       
-  516 |       // Check social links section
-  517 |       const socialSection = page.locator('#social-links, .social-links');
-  518 |       await expect(socialSection).toBeVisible();
-  519 |       
-  520 |       await page.waitForTimeout(2000);
-  521 |       
-  522 |       const links = socialSection.locator('a');
-  523 |       const count = await links.count();
-  524 |       expect(count).toBeGreaterThan(0);
-  525 |     });
-  526 |   });
-  527 | 
-  528 |   // ============================================
-  529 |   // TEST 7: FORM VALIDATION
-  530 |   // ============================================
-  531 |   test.describe('Form Validation', () => {
-  532 |     test('Booking form rejects empty required fields', async ({ page }) => {
-  533 |       await page.goto(`${BASE_URL}/book.html`);
-  534 |       await page.waitForLoadState('networkidle');
-  535 |       
-  536 |       // Try to submit empty form
-  537 |       await page.click('button[type="submit"]');
-  538 |       
-  539 |       // Should show validation errors
-  540 |       const errors = page.locator('.form-error, [aria-invalid="true"], .error-message');
-  541 |       await expect(errors.first()).toBeVisible({ timeout: 5000 });
-  542 |     });
-  543 | 
-  544 |     test('Testimonial form requires name, area, rating, message', async ({ page }) => {
-  545 |       await page.goto(`${BASE_URL}/`);
-  546 |       await page.waitForLoadState('networkidle');
-  547 |       
-  548 |       await page.locator('#review-form').scrollIntoViewIfNeeded();
-  549 |       await page.click('#review-form button[type="submit"]');
-  550 |       
-  551 |       // Should show alert or validation
-  552 |       await page.waitForTimeout(1000);
-  553 |       // The form uses alert() for validation - check page didn't crash
-  554 |       await expect(page.locator('#review-form')).toBeVisible();
-  555 |     });
-  556 | 
-  557 |     test('Contact form validates email format', async ({ page }) => {
-  558 |       await page.goto(`${BASE_URL}/contact.html`);
-  559 |       await page.waitForLoadState('networkidle');
-  560 |       
-  561 |       await page.fill('#contact-email', 'invalid-email');
-  562 |       await page.fill('#contact-name', 'Test');
-  563 |       await page.fill('#contact-subject', 'Test');
-  564 |       await page.fill('#contact-message', 'Test');
-  565 |       await page.click('#contactForm button[type="submit"]');
-  566 |       
-  567 |       // Should show validation error
-> 568 |       await expect(page.locator('.form-error, [aria-invalid="true"]')).toBeVisible({ timeout: 5000 });
+  475 |       const items = page.locator('.accordion-item, .faq-item');
+  476 |       const count = await items.count();
+  477 |       expect(count).toBeGreaterThanOrEqual(0);
+  478 |     });
+  479 | 
+  480 |     test('Meet the guys page loads performers with photos', async ({ page }) => {
+  481 |       await page.goto(`${BASE_URL}/meet-the-guys.html`);
+  482 |       await page.waitForLoadState('networkidle');
+  483 |       
+  484 |       const grid = page.locator('#performers-grid');
+  485 |       await expect(grid).toBeVisible();
+  486 |       
+  487 |       await page.waitForTimeout(3000);
+  488 |       
+  489 |       const cards = grid.locator('.performer-card');
+  490 |       const count = await cards.count();
+  491 |       expect(count).toBeGreaterThan(0);
+  492 |       
+  493 |       // Check that photos are loaded
+  494 |       const photos = grid.locator('.performer-photo');
+  495 |       const photoCount = await photos.count();
+  496 |       expect(photoCount).toBeGreaterThan(0);
+  497 |       
+  498 |       // Check gallery thumbnails
+  499 |       const thumbs = grid.locator('.performer-thumb');
+  500 |       const thumbCount = await thumbs.count();
+  501 |       // At least some performers should have multiple photos
+  502 |       expect(thumbCount).toBeGreaterThanOrEqual(count);
+  503 |     });
+  504 | 
+  505 |     test('Events page loads events from CMS', async ({ page }) => {
+  506 |       await page.goto(`${BASE_URL}/events.html`);
+  507 |       await page.waitForLoadState('networkidle');
+  508 |       
+  509 |       const container = page.locator('#events-container');
+  510 |       await expect(container).toBeVisible();
+  511 |       
+  512 |       await page.waitForTimeout(3000);
+  513 |       
+  514 |       const events = container.locator('.event-card, .event-item');
+  515 |       const count = await events.count();
+  516 |       expect(count).toBeGreaterThanOrEqual(0);
+  517 |     });
+  518 | 
+  519 |     test('Home page loads social links from CMS', async ({ page }) => {
+  520 |       await page.goto(`${BASE_URL}/`);
+  521 |       await page.waitForLoadState('networkidle');
+  522 |       
+  523 |       // Check social links section
+  524 |       const socialSection = page.locator('#social-links, .social-links');
+  525 |       await expect(socialSection).toBeVisible();
+  526 |       
+  527 |       await page.waitForTimeout(2000);
+  528 |       
+  529 |       const links = socialSection.locator('a');
+  530 |       const count = await links.count();
+  531 |       expect(count).toBeGreaterThan(0);
+  532 |     });
+  533 |   });
+  534 | 
+  535 |   // ============================================
+  536 |   // TEST 7: FORM VALIDATION
+  537 |   // ============================================
+  538 |   test.describe('Form Validation', () => {
+  539 |     test('Booking form rejects empty required fields', async ({ page }) => {
+  540 |       await page.goto(`${BASE_URL}/book.html`);
+  541 |       await page.waitForLoadState('networkidle');
+  542 |       
+  543 |       // Try to submit empty form
+  544 |       await page.click('button[type="submit"]');
+  545 |       
+  546 |       // Should show validation errors
+  547 |       const errors = page.locator('.form-error, [aria-invalid="true"], .error-message');
+  548 |       await expect(errors.first()).toBeVisible({ timeout: 5000 });
+  549 |     });
+  550 | 
+  551 |     test('Testimonial form requires name, area, rating, message', async ({ page }) => {
+  552 |       await page.goto(`${BASE_URL}/`);
+  553 |       await page.waitForLoadState('networkidle');
+  554 |       
+  555 |       await page.locator('#review-form').scrollIntoViewIfNeeded();
+  556 |       await page.click('#review-form button[type="submit"]');
+  557 |       
+  558 |       // Should show alert or validation
+  559 |       await page.waitForTimeout(1000);
+  560 |       // The form uses alert() for validation - check page didn't crash
+  561 |       await expect(page.locator('#review-form')).toBeVisible();
+  562 |     });
+  563 | 
+  564 |     test('Contact form validates email format', async ({ page }) => {
+  565 |       await page.goto(`${BASE_URL}/contact.html`);
+  566 |       await page.waitForLoadState('networkidle');
+  567 |       
+  568 |       await page.fill('#contact-email', 'invalid-email');
+  569 |       await page.fill('#contact-name', 'Test');
+  570 |       await page.fill('#contact-subject', 'Test');
+  571 |       await page.fill('#contact-message', 'Test');
+  572 |       await page.click('#contactForm button[type="submit"]');
+  573 |       
+  574 |       // Should show validation error
+> 575 |       await expect(page.locator('.form-error, [aria-invalid="true"]')).toBeVisible({ timeout: 5000 });
       |                                                                        ^ Error: expect(locator).toBeVisible() failed
-  569 |     });
-  570 |   });
-  571 | 
-  572 |   // ============================================
-  573 |   // TEST 8: EMAIL NOTIFICATION SYSTEM
-  574 |   // ============================================
-  575 |   test.describe('Email Notification System', () => {
-  576 |     test('FormSubmit integration is configured', async ({ request }) => {
-  577 |       // Test that FormSubmit endpoint is reachable
-  578 |       const response = await request.post('https://formsubmit.co/ajax/info@pulsedancers.com', {
-  579 |         data: {
-  580 |           _subject: 'Test from Playwright',
-  581 |           _template: 'table',
-  582 |           _captcha: 'false',
-  583 |           'Test Field': 'Test Value'
-  584 |         },
-  585 |         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
-  586 |       });
-  587 |       // FormSubmit returns 200 even for test submissions
-  588 |       expect([200, 400, 422]).toContain(response.status());
-  589 |     });
-  590 | 
-  591 |     test('Booking form triggers admin email', async ({ page }) => {
-  592 |       // This is verified by the booking form submission test
-  593 |       // which already checks the API returns success
-  594 |       // The email sending is fire-and-forget in the API
-  595 |       const bookingData = generateBookingData();
-  596 |       
-  597 |       const response = await request.post(`${BASE_URL}/api/submit-booking`, {
-  598 |         data: bookingData,
-  599 |         headers: { 'Content-Type': 'application/json' }
-  600 |       });
-  601 |       
-  602 |       expect(response.ok()).toBeTruthy();
-  603 |       const data = await response.json();
-  604 |       expect(data.success).toBe(true);
-  605 |     });
-  606 |   });
-  607 | 
-  608 |   // ============================================
-  609 |   // TEST 9: WHATSAPP NOTIFICATION SYSTEM
-  610 |   // ============================================
-  611 |   test.describe('WhatsApp Notification System', () => {
-  612 |     test('CallMeBot API endpoint is reachable', async ({ request }) => {
-  613 |       const apiKey = process.env.WHATSAPP_API_KEY;
-  614 |       const phone = process.env.WHATSAPP_PHONE;
-  615 |       
-  616 |       if (!apiKey || !phone) {
-  617 |         test.skip('WhatsApp credentials not configured');
-  618 |       }
-  619 |       
-  620 |       const response = await request.get(
-  621 |         `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=Test&apikey=${apiKey}`
-  622 |       );
-  623 |       
-  624 |       // CallMeBot returns 200 on success
-  625 |       expect([200, 400, 429]).toContain(response.status());
-  626 |     });
-  627 |   });
-  628 | 
-  629 |   // ============================================
-  630 |   // TEST 10: GOOGLE CALENDAR INTEGRATION
-  631 |   // ============================================
-  632 |   test.describe('Google Calendar Integration', () => {
-  633 |     test('Booking creates tentative calendar event', async ({ page }) => {
-  634 |       // This is implicitly tested by the booking form submission
-  635 |       // The API creates a calendar event after sheet write
-  636 |       // We verify by checking the API response includes success
-  637 |       const bookingData = generateBookingData();
-  638 |       
-  639 |       const response = await request.post(`${BASE_URL}/api/submit-booking`, {
-  640 |         data: bookingData,
-  641 |         headers: { 'Content-Type': 'application/json' }
-  642 |       });
-  643 |       
-  644 |       expect(response.ok()).toBeTruthy();
-  645 |       const data = await response.json();
-  646 |       expect(data.success).toBe(true);
-  647 |       expect(data.message).toContain('24 hours');
-  648 |     });
-  649 |   });
-  650 | 
-  651 |   // ============================================
-  652 |   // TEST 11: PAGE NAVIGATION & UI
-  653 |   // ============================================
-  654 |   test.describe('Navigation & UI', () => {
-  655 |     test('All navigation links work', async ({ page }) => {
-  656 |       const pages = [
-  657 |         { path: '/', title: 'Pulse Male Revue' },
-  658 |         { path: '/events.html', title: 'Events' },
-  659 |         { path: '/prices.html', title: 'Prices' },
-  660 |         { path: '/faq.html', title: 'FAQ' },
-  661 |         { path: '/meet-the-guys.html', title: 'Meet The Guys' },
-  662 |         { path: '/gallery.html', title: 'Gallery' },
-  663 |         { path: '/contact.html', title: 'Contact' },
-  664 |         { path: '/join.html', title: 'Join' },
-  665 |         { path: '/book.html', title: 'Book' },
-  666 |       ];
-  667 |       
-  668 |       for (const p of pages) {
+  576 |     });
+  577 |   });
+  578 | 
+  579 |   // ============================================
+  580 |   // TEST 8: EMAIL NOTIFICATION SYSTEM
+  581 |   // ============================================
+  582 |   test.describe('Email Notification System', () => {
+  583 |     test('FormSubmit integration is configured', async ({ request }) => {
+  584 |       // Test that FormSubmit endpoint is reachable
+  585 |       const response = await request.post('https://formsubmit.co/ajax/info@pulsedancers.com', {
+  586 |         data: {
+  587 |           _subject: 'Test from Playwright',
+  588 |           _template: 'table',
+  589 |           _captcha: 'false',
+  590 |           'Test Field': 'Test Value'
+  591 |         },
+  592 |         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
+  593 |       });
+  594 |       // FormSubmit returns 200 even for test submissions
+  595 |       expect([200, 400, 422]).toContain(response.status());
+  596 |     });
+  597 | 
+  598 |     test('Booking form triggers admin email', async ({ page }) => {
+  599 |       // This is verified by the booking form submission test
+  600 |       // which already checks the API returns success
+  601 |       // The email sending is fire-and-forget in the API
+  602 |       const bookingData = generateBookingData();
+  603 |       
+  604 |       const response = await request.post(`${BASE_URL}/api/submit-booking`, {
+  605 |         data: bookingData,
+  606 |         headers: { 'Content-Type': 'application/json' }
+  607 |       });
+  608 |       
+  609 |       expect(response.ok()).toBeTruthy();
+  610 |       const data = await response.json();
+  611 |       expect(data.success).toBe(true);
+  612 |     });
+  613 |   });
+  614 | 
+  615 |   // ============================================
+  616 |   // TEST 9: WHATSAPP NOTIFICATION SYSTEM
+  617 |   // ============================================
+  618 |   test.describe('WhatsApp Notification System', () => {
+  619 |     test('CallMeBot API endpoint is reachable', async ({ request }) => {
+  620 |       const apiKey = process.env.WHATSAPP_API_KEY;
+  621 |       const phone = process.env.WHATSAPP_PHONE;
+  622 |       
+  623 |       if (!apiKey || !phone) {
+  624 |         test.skip('WhatsApp credentials not configured');
+  625 |       }
+  626 |       
+  627 |       const response = await request.get(
+  628 |         `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=Test&apikey=${apiKey}`
+  629 |       );
+  630 |       
+  631 |       // CallMeBot returns 200 on success
+  632 |       expect([200, 400, 429]).toContain(response.status());
+  633 |     });
+  634 |   });
+  635 | 
+  636 |   // ============================================
+  637 |   // TEST 10: GOOGLE CALENDAR INTEGRATION
+  638 |   // ============================================
+  639 |   test.describe('Google Calendar Integration', () => {
+  640 |     test('Booking creates tentative calendar event', async ({ page }) => {
+  641 |       // This is implicitly tested by the booking form submission
+  642 |       // The API creates a calendar event after sheet write
+  643 |       // We verify by checking the API response includes success
+  644 |       const bookingData = generateBookingData();
+  645 |       
+  646 |       const response = await request.post(`${BASE_URL}/api/submit-booking`, {
+  647 |         data: bookingData,
+  648 |         headers: { 'Content-Type': 'application/json' }
+  649 |       });
+  650 |       
+  651 |       expect(response.ok()).toBeTruthy();
+  652 |       const data = await response.json();
+  653 |       expect(data.success).toBe(true);
+  654 |       expect(data.message).toContain('24 hours');
+  655 |     });
+  656 |   });
+  657 | 
+  658 |   // ============================================
+  659 |   // TEST 11: PAGE NAVIGATION & UI
+  660 |   // ============================================
+  661 |   test.describe('Navigation & UI', () => {
+  662 |     test('All navigation links work', async ({ page }) => {
+  663 |       const pages = [
+  664 |         { path: '/', title: 'Pulse Male Revue' },
+  665 |         { path: '/events.html', title: 'Events' },
+  666 |         { path: '/prices.html', title: 'Prices' },
+  667 |         { path: '/faq.html', title: 'FAQ' },
+  668 |         { path: '/meet-the-guys.html', title: 'Meet The Guys' },
+  669 |         { path: '/gallery.html', title: 'Gallery' },
+  670 |         { path: '/contact.html', title: 'Contact' },
+  671 |         { path: '/join.html', title: 'Join' },
+  672 |         { path: '/book.html', title: 'Book' },
+  673 |       ];
+  674 |       
+  675 |       for (const p of pages) {
 ```
