@@ -141,8 +141,8 @@ test.describe('Pulse Dancers Website - Comprehensive Functional Tests', () => {
     await page.fill('#bf-phone', bookingData.phone);
     
     // Event type is a custom option grid, not a select - click the option label (input has opacity: 0)
-    await page.click('#bf-event-type label:has(input[value="${bookingData.eventType}"])');
-    await page.click('label:has(input[value="${bookingData.services[0]}"])');
+    await page.click(`#bf-event-type label:has(input[value="${bookingData.eventType}"])`);
+    await page.click(`label:has(input[value="${bookingData.services[0]}"])`);
     // Select managing: "Yes, I'm managing it" (value="No")
     await page.click('label:has(input[name="managing"][value="No"])');
     
@@ -198,7 +198,7 @@ test.describe('Pulse Dancers Website - Comprehensive Functional Tests', () => {
     await page.click('[data-next="3"]');
     
     // Step 3: Services - click label (input has opacity: 0)
-    await page.click('label:has(input[value="${bookingData.services[0]}"])');
+    await page.click(`label:has(input[value="${bookingData.services[0]}"])`);
     await page.click('[data-next="4"]');
     
     // Step 4: Location - select "area" to show w-area-fields
@@ -468,13 +468,13 @@ test.describe('Pulse Dancers Website - Comprehensive Functional Tests', () => {
       await page.goto(`${BASE_URL}/faq.html`);
       await page.waitForLoadState('networkidle');
       
-      const faqContainer = page.locator('.accordion, #faq-container, .faq-list');
+      const faqContainer = page.locator('#faq-content, .faq-list');
       await expect(faqContainer.first()).toBeVisible();
       
       await page.waitForTimeout(3000);
-      const items = page.locator('.accordion-item, .faq-item');
+      const items = page.locator('.faq-item, .accordion-item');
       const count = await items.count();
-      expect(count).toBeGreaterThanOrEqual(0);
+      expect(count).toBeGreaterThan(0);
     });
 
     test('Meet the guys page loads performers with photos', async ({ page }) => {
@@ -728,7 +728,7 @@ test.describe('Pulse Dancers Website - Comprehensive Functional Tests', () => {
       console.log(`Home page load time: ${loadTime}ms`);
     });
 
-    test('All images have alt attributes', async ({ page }) => {
+    test('All images have alt attributes (decorative images allowed empty)', async ({ page }) => {
       await page.goto(`${BASE_URL}/`);
       await page.waitForLoadState('networkidle');
       
@@ -738,7 +738,11 @@ test.describe('Pulse Dancers Website - Comprehensive Functional Tests', () => {
       for (let i = 0; i < count; i++) {
         const img = images.nth(i);
         const alt = await img.getAttribute('alt');
-        expect(alt).toBeTruthy();
+        const ariaHidden = await img.getAttribute('aria-hidden');
+        // Decorative images correctly use alt="" + aria-hidden="true" (WCAG 1.1.1)
+        // Informative images MUST have non-empty alt text.
+        if (ariaHidden === 'true' && alt === '') continue;
+        expect(alt, `img #${i} (${await img.getAttribute('src')}) must have alt text`).toBeTruthy();
       }
     });
 

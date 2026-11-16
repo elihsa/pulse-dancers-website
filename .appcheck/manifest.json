@@ -1,0 +1,18 @@
+{
+  "app_dir": "/home/eli/pulse-dancers-website",
+  "type": "web",
+  "framework": ["vercel", "static-html", "google-sheets-cms"],
+  "language": ["javascript", "html", "css"],
+  "entry_points": ["index.html", "api/sheets.js", "api/submit-booking.js", "api/submit-testimonial.js", "api/submit-contact.js", "api/submit-join-form.js"],
+  "features": ["forms", "email", "file_upload", "api_routes", "google_sheets", "cms", "responsive", "whatsapp", "calendar"],
+  "env_vars": ["GOOGLE_SHEETS_API_KEY", "GOOGLE_SHEET_ID", "WHATSAPP_API_KEY", "WHATSAPP_PHONE", "ADMIN_EMAIL"],
+  "dependencies": ["googleapis", "@playwright/test", "playwright"],
+  "tests_existing": [
+    "test-forms.js",
+    "test-cms-complete.js",
+    "tests/failure-verification.test.js",
+    "tests/comprehensive.test.js",
+    "tests/sheets-helper.js"
+  ],
+  "regression_tests": []
+}

@@ -36,3 +36,8 @@ build/
 
 .vercel
 .env*
+
+# Playwright / test artifacts (build outputs - do not track)
+test-results/
+playwright-report/
+.blob-report/

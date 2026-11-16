@@ -1,0 +1,25 @@
+{
+  "app_dir": "/home/eli/pulse-dancers-website",
+  "generated_at": "2025-11-16T21:00:00+02:00",
+  "selected_tests": [
+    "syntax_gate",
+    "dependency_check",
+    "env_validation",
+    "api_routes",
+    "form_e2e",
+    "html_validation",
+    "js_runtime",
+    "browser_launch",
+    "browser_vision",
+    "visual_regression",
+    "security_headers",
+    "email_sending"
+  ],
+  "skipped_tests": ["auth_flow", "db_connections", "port_conflict", "payment_flow"],
+  "skip_reasons": {
+    "auth_flow": "no auth/login flow on public site",
+    "db_connections": "no traditional database, uses Google Sheets via API",
+    "port_conflict": "deployed on Vercel, no local port",
+    "payment_flow": "no payment processing"
+  }
+}
