@@ -217,8 +217,9 @@
   <script src="assets/js/app.js" defer></script>
   
   <script>
-    // HTML escape function to prevent XSS
-    function escapeHtml(text) {
+    // HTML escape function to prevent XSS (local copy, distinct name to avoid
+    // colliding with the global `escapeHtml` declared in sheets-cms.js)
+    function escapeHtmlLocal(text) {
       const div = document.createElement('div');
       div.textContent = text || '';
       return div.innerHTML;
@@ -305,11 +306,11 @@
         
         // Render gallery items
         container.innerHTML = galleryItems.map((item, index) => `
-          <div class="gallery-item" data-image-url="${escapeHtml(item.imageUrl)}" data-item-index="${index}">
-            <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.title)}" loading="lazy">
+          <div class="gallery-item" data-image-url="${escapeHtmlLocal(item.imageUrl)}" data-item-index="${index}">
+            <img src="${escapeHtmlLocal(item.imageUrl)}" alt="${escapeHtmlLocal(item.title)}" loading="lazy">
             <div class="gallery-item-info">
-              <div class="gallery-item-title">${escapeHtml(item.title)}</div>
-              ${item.description ? `<div class="gallery-item-description">${escapeHtml(item.description)}</div>` : ''}
+              <div class="gallery-item-title">${escapeHtmlLocal(item.title)}</div>
+              ${item.description ? `<div class="gallery-item-description">${escapeHtmlLocal(item.description)}</div>` : ''}
             </div>
           </div>
         `).join('');
