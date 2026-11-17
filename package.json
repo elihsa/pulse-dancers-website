@@ -12,17 +12,26 @@
     "test:forms": "playwright test tests/forms.test.js",
     "test:cms": "playwright test tests/cms-loading.test.js",
     "install:playwright": "playwright install chromium",
-    "verify:all": "npm run test:comprehensive && npm run test:api"
+    "verify:all": "npm run test:comprehensive && npm run test:api",
+    "lint": "node --check api/*.js assets/js/*.js",
+    "prepare": "husky install"
   },
   "dependencies": {
-    "googleapis": "^185.0.0"
+    "googleapis": "185.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.45.0",
-    "playwright": "^1.45.0",
-    "googleapis": "^185.0.0"
+    "@playwright/test": "1.45.0",
+    "playwright": "1.45.0",
+    "googleapis": "185.0.0",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.1",
+    "prettier": "3.3.3"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "lint-staged": {
+    "api/*.js": ["node --check", "prettier --write"],
+    "assets/js/*.js": ["node --check", "prettier --write"]
   }
 }
