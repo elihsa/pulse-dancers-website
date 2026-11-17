@@ -23,6 +23,9 @@ export default defineConfig({
     video: 'retain-on-failure',
     actionTimeout: 30000,
     navigationTimeout: 60000,
+    launchOptions: {
+      args: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'],
+    },
   },
 
   projects: [

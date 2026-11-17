@@ -33,7 +33,6 @@ test.describe('Failure Verification: Booking Form', () => {
     await page.click('label:has(input[name="locType"][value="area"])');
     
     await page.fill('#bf-area', 'Sandton');
-    await page.fill('#bf-date', '2026-02-15');
     
     const responsePromise = page.waitForResponse(response => 
       response.url().includes('/api/submit-booking') && response.status() === 200
@@ -310,13 +309,16 @@ test.describe('Failure Verification: End-to-End Booking Workflow', () => {
     
     console.log('✅ API submission works');
     
-    // 2. Verify via API proxy
-    const sheetsResponse = await page.request.get(`${BASE_URL}/api/sheets?sheetName=BOOKINGS`);
-    expect(sheetsResponse.ok()).toBeTruthy();
-    const sheetsData = await sheetsResponse.json();
-    
-    const rows = sheetsData.values || [];
-    const found = rows.some(row => row[1] === bookingData.name);
+    // 2. Verify via API proxy (poll to absorb Google Sheets read-after-write eventual consistency)
+    let found = false;
+    for (let attempt = 0; attempt < 5 && !found; attempt++) {
+      if (attempt > 0) await page.waitForTimeout(1000);
+      const sheetsResponse = await page.request.get(`${BASE_URL}/api/sheets?sheetName=BOOKINGS`);
+      expect(sheetsResponse.ok()).toBeTruthy();
+      const sheetsData = await sheetsResponse.json();
+      const rows = sheetsData.values || [];
+      found = rows.some(row => row[1] === bookingData.name);
+    }
     expect(found).toBe(true);
     
     console.log('✅ Sheet entry verified - calendar/WhatsApp/email are fire-and-forget');

@@ -8,7 +8,7 @@ const API_KEY = process.env.GOOGLE_SHEETS_API_KEY || "AIzaSyA9nqewwfsfb3lC9OBFFc
 const SHEET_ID = process.env.GOOGLE_SHEET_ID || "1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4";
 
 export default async (req, res) => {
-  const { sheetName = 'PRICES', startRow = 1, endRow = 20 } = req.query;
+  const { sheetName = 'PRICES', startRow = 1, endRow = 500 } = req.query;
   
   // Set CORS headers first
   res.setHeader('Access-Control-Allow-Origin', '*');

@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # 03:00 UTC nightly smoke
+    - cron: '0 3 * * *'
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Syntax gate (node --check)
+        run: npm run lint
+        # Fails the build if any api/*.js or assets/js/*.js is invalid JS
+
+      - name: Browser-clean regression (9 pages, 0 console errors)
+        run: npx playwright test tests/browser-clean.spec.js --project=chromium --reporter=line
+        env:
+          BASE_URL: https://pulse-dancers-website.vercel.app
+
+      - name: Failure-verification suite
+        run: npx playwright test tests/failure-verification.test.js --project=chromium --reporter=line
+        env:
+          BASE_URL: https://pulse-dancers-website.vercel.app
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: |
+            test-results/
+            playwright-report/

@@ -62,7 +62,7 @@ function generateBookingData() {
     email: `test-${Date.now()}@example.com`,
     phone: '0821234567',
     eventType: 'Bachelorette',
-    services: ['show2'],
+    services: ['male'],
     area: 'Sandton',
     eventDate: '2026-02-15',
     quote: { performance: 'R4200', travel: 'R0', total: 'R4200' }
@@ -150,7 +150,6 @@ test.describe('Pulse Dancers Website - Comprehensive Functional Tests', () => {
     await page.click('label:has(input[name="locType"][value="area"])');
     
     await page.fill('#bf-area', bookingData.area);
-    await page.fill('#bf-date', bookingData.eventDate);
     
     // Submit and wait for response
     const responsePromise = page.waitForResponse(response => 
@@ -841,7 +840,7 @@ test.describe('Pulse Dancers Website - Comprehensive Functional Tests', () => {
       await page.selectOption('#bf-event-type', bookingData.eventType);
       await page.check(`input[value="${bookingData.services[0]}"]`);
       await page.fill('#bf-area', bookingData.area);
-      await page.fill('#bf-event-date', bookingData.eventDate);
+      // (booking form has no date field; date not collected)
       
       const responsePromise = page.waitForResponse(response => 
         response.url().includes('/api/submit-booking') && response.status() === 200
