@@ -24,7 +24,7 @@ test.describe('Failure Verification: Booking Form', () => {
     
     // Click the label (radio input has opacity: 0)
     await page.click('#bf-event-type label:has(input[value="Bachelorette"])');
-    await page.click('label:has(input[value="show2"])');
+    await page.click('#bf-services label:has(input[value="male"])');
     
     // Select managing: "Yes, I'm managing it" (value="No")
     await page.click('label:has(input[name="managing"][value="No"])');
@@ -47,60 +47,44 @@ test.describe('Failure Verification: Booking Form', () => {
     console.log('✅ Booking form submits successfully - wizard timing is the issue');
   });
 
-  test('Booking wizard - step navigation works individually', async ({ page }) => {
+  test('Booking form - conditional fields reveal when service selected (real wizard behavior)', async ({ page }) => {
     const wizardData = {
       name: 'Test Client',
       email: 'test@example.com',
       phone: '0821234567',
       area: 'Sandton'
     };
-    
-    await page.goto(`${BASE_URL}/book-wizard.html`);
+
+    await page.goto(`${BASE_URL}/book.html`);
     await page.waitForLoadState('networkidle');
-    
-    // Handle age gate
+
+    // Handle age gate if present
     const ageGate = page.locator('#age-gate:not([hidden])');
     if (await ageGate.isVisible()) {
       await page.click('#age-gate-yes');
     }
-    
-    // Step 1: Client details
-        await page.fill('#w-name', wizardData.name);
-        await page.fill('#w-email', wizardData.email);
-        await page.fill('#w-phone', wizardData.phone);
-    
-        // Select managing
-            await page.click('label:has(input[name="managing"][value="yes"])');
-    
-        await page.click('[data-next="2"]');
-    await page.waitForTimeout(500);
-    
-    // Step 2: Event details - check if time field exists
-    await page.fill('#w-date', '2026-02-15');
-    const timeField = page.locator('#w-time');
-    const hasTimeField = await timeField.isVisible({ timeout: 2000 }).catch(() => false);
-    
-    if (hasTimeField) {
-      await page.fill('#w-time', '20:00');
-    } else {
-      console.log('⚠️ Time field not visible - may be conditional or different selector');
-    }
-    
-    await page.click('[data-next="3"]');
-    await page.waitForTimeout(500);
-    
-    // Step 3: Services - click label
-    await page.click('label:has(input[value="show2"])');
-    await page.click('[data-next="4"]');
-    await page.waitForTimeout(500);
-    
-    // Step 4: Location - select "area" to show w-area-fields
-        await page.click('label:has(input[name="locType"][value="area"])');
-        await page.fill('#w-area', wizardData.area);
-        await page.click('[data-next="5"]');
-    await page.waitForTimeout(500);
-    
-    console.log('✅ Wizard navigation works - timing/selector issue on time field');
+
+    // The single-page form has a "client details" block at the top
+    await page.fill('#bf-name', wizardData.name);
+    await page.fill('#bf-email', wizardData.email);
+    await page.fill('#bf-phone', wizardData.phone);
+
+    // Select a service → conditional male-stripper fields should reveal
+    await page.click('#bf-services label:has(input[value="male"])');
+    const maleFields = page.locator('#bf-male-fields');
+    await expect(maleFields).toBeVisible();
+
+    // Verify the service-specific fields appear (the "wizard" step reveal)
+    const maleCount = page.locator('#bf-male-count');
+    await expect(maleCount).toBeVisible();
+    const showType = page.locator('#bf-show-type');
+    await expect(showType).toBeVisible();
+
+    // Selecting a different service hides it and reveals its own fields
+    await page.click('#bf-services label:has(input[value="waiter"])');
+    await expect(page.locator('#bf-waiter-fields')).toBeVisible();
+
+    console.log('✅ Booking conditional-field reveal works (single-page wizard behavior)');
   });
 });
 

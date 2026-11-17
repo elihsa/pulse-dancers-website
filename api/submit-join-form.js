@@ -1,9 +1,9 @@
 // Form submission handler for join.html - with file upload support
 // Uses Google Service Account for write access to Google Sheets
 
-const { google } = require('googleapis');
-const fs = require('fs');
-const path = require('path');
+import { google } from 'googleapis';
+import fs from 'fs';
+import path from 'path';
 
 // Load service account credentials from environment
 const getServiceAccountAuth = () => {
@@ -123,7 +123,7 @@ export default async (req, res) => {
         if (fileData.length > MAX_IMAGE_SIZE) {
           // Resize using Sharp if available, or reject
           try {
-            const sharp = require('sharp');
+            const { default: sharp } = await import('sharp');
             fileData = await sharp(fileData)
               .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
               .jpeg({ quality: 80 })

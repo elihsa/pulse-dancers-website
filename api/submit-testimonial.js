@@ -1,7 +1,7 @@
 // Testimonial submission handler — uses Service Account for write access
 // Adds testimonial to Google Sheets with Pending status
 
-const { google } = require('googleapis');
+import { google } from 'googleapis';
 
 const getServiceAccountAuth = () => {
   const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;

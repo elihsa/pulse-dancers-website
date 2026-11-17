@@ -11,7 +11,7 @@
 // Race | Costume | FemaleCount | WaiterCount | WaiterHours | ButlerCount | ButlerHours |
 // GamesQty | PoleQty | OtherText | Notes | QuotePerformance | QuoteTravel | QuoteTotal | Status
 
-const { google } = require('googleapis');
+import { google } from 'googleapis';
 
 const getServiceAccountAuth = () => {
   const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;

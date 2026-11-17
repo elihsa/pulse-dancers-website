@@ -17,10 +17,13 @@ Ran the appcheck diagnostic cycle (syntax gate → dependency check → env vali
 ---
 
 ## 🔴 Critical Bug Fixed
-### `api/submit-join-form.js` was corrupted
-Every line had a `[0-9]+|` line-number prefix (e.g. `4|const { google } = require('googleapis');`). This made the file **invalid JavaScript** — it would have crashed the join form on the next redeploy (the live build still ran the pre-corruption version, masking the bug).
 
-**Fix:** Stripped all 198 prefixes. Verified with `node --check` and `import()` test. **This is why "test-first, redeploy-later" matters — always run the syntax gate before `vercel --prod`.**
+### `api/submit-booking.js`, `api/submit-join-form.js`, `api/submit-testimonial.js` crashed with `FUNCTION_INVOCATION_FAILED` (HTTP 500)
+**Root cause:** `package.json` has `"type": "module"` (so **every `.js` file is ESM**), but these three API handlers used CommonJS `require('googleapis')`. At runtime Vercel threw `ReferenceError: require is not defined` **before the handler's try/catch ran**, so the live `/api/submit-booking` returned a raw `FUNCTION_INVOCATION_FAILED` 500 with no JSON body — instead of the designed JSON error. `/api/sheets.js` worked only because it already used `import`.
+
+**Symptoms on live:** `POST /api/submit-booking` → HTTP 500 (was the last "unverified" bug).
+
+**Fix:** Converted all three to ESM `import { google } from 'googleapis'` (plus `import fs from 'fs'` / `import path from 'path'` in the join form) and the dynamic `require('sharp')` to `await import('sharp')`. Verified: all handlers now `import()` cleanly and fall through to their designed JSON 500 on missing env — no more crash. **Also fixed the "corrupted file" class of bug at the source (see P0 #1).**
 
 ---
 
@@ -29,6 +32,7 @@ Every line had a `[0-9]+|` line-number prefix (e.g. `4|const { google } = requir
 2. **Alt-attribute test was wrong** — decorative hero `<img alt="" aria-hidden="true">` is *correct* WCAG 1.1.1. Test now skips aria-hidden decorative images (the site's HTML was already compliant).
 3. **FAQ container selector wrong** — test looked for `.accordion/#faq-container/.faq-list`; the real DOM uses `#faq-content` + `.faq-item`. Corrected.
 4. **FormSubmit external probe** — third-party email relay (formsubmit.co) was flaky/timeout; now tolerated (it's not a site dependency — the site emails async via its own path).
+5. **Phantom `show2` service + `book-wizard.html`** — `tests/failure-verification.test.js` referenced a service value (`show2`) and a page (`book-wizard.html`) that **do not exist** (the site uses single-page `book.html` with conditional fields, services `male`/`female`/`waiter`/`butler`/`games`/`pole`/`other`). Rewrote both tests to exercise the real single-page booking flow and its conditional-field reveal (`#bf-male-fields`, `#bf-waiter-fields`).
 
 ---
 
@@ -40,7 +44,7 @@ Every line had a `[0-9]+|` line-number prefix (e.g. `4|const { google } = requir
 
 ---
 
-## 🟡 Remaining 9 comprehensive failures — NOT site bugs (flagged, not fixed)
+## 🟡 Remaining comprehensive failures — NOT site bugs (flagged, not fixed)
 These need **external credentials/keys** or test a **behavior the site deliberately doesn't have**. Each should be run only with the right env/config, or rewritten to test observable behavior:
 
 1. **Booking wizard submit** (`#w-time`) — wizard selector/step-timing assumption in test.
