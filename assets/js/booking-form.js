@@ -194,6 +194,15 @@ const BookingForm = {
       const coords = this.lookupArea(area.value);
       if (coords) this.setDistance(this.haversine(BookingSettings.baseCoords, coords) * 2);
     });
+    // Clear a stale distance as soon as the area text no longer resolves,
+    // so the quote can never keep showing a previous area's travel fee.
+    if (area) area.addEventListener('input', () => {
+      if (!this.lookupArea(area.value) && this.distanceKm !== null) {
+        this.distanceKm = null;
+        this.clearDistanceDisplay();
+        this.updateQuote();
+      }
+    });
     // Any input that affects the quote
     document.querySelectorAll('#booking-form input, #booking-form select').forEach(el =>
       el.addEventListener('input', () => this.updateQuote()));
@@ -311,6 +320,9 @@ const BookingForm = {
     const payload = {
       name, email, phone,
       eventType: eventType[0].value,
+      eventDate: document.getElementById('bf-event-date') ? document.getElementById('bf-event-date').value : '',
+      eventTime: document.getElementById('bf-event-time') ? document.getElementById('bf-event-time').value : '',
+      guestCount: this.val('bf-guest-count') || '',
       managing: managing[0].value,
       managerName: document.getElementById('bf-manager-name').value.trim(),
       managerPhone: document.getElementById('bf-manager-phone').value.trim(),

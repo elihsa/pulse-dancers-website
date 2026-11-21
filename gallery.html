@@ -139,6 +139,7 @@
       }
     }
   </style>
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
 </head>
 <body class="page">
   <img src="assets/images/top.png" alt="Pulse Male Revue Top Banner" class="top-banner" style="width: 50%; display: block; margin: 0 auto;">
@@ -151,6 +152,7 @@
           <!-- Logo removed per user request -->
         </a>
       </div>
+      <button class="nav-toggle" aria-label="Menu" aria-expanded="false">&#9776;</button>
       <ul class="nav-links">
         <li><a href="index.html" class="nav-link">Home</a></li>
         <li><a href="events.html" class="nav-link">Events</a></li>
@@ -169,13 +171,6 @@
     <div class="block">
       <h1 id="gallery-page-title">Photo Gallery</h1>
       <p id="gallery-page-description">Browse through our collection of photos from events, performances, and behind-the-scenes moments.</p>
-
-      <!-- Gallery Upload Section (for admin use) -->
-      <div class="gallery-upload-section">
-        <h3 style="color: #FF2D55; margin-bottom: 1rem;">📸 Gallery Management</h3>
-        <p style="color: #E5E5E5; margin-bottom: 1rem;">To manage gallery photos, add them to the GALLERY tab in your Google Sheets CMS with columns: Title, Description, ImageURL, Category, Date. Photos will automatically appear here once added to the sheet.</p>
-        <p style="color: #E5E5E5;"><strong>Note:</strong> Upload images to your web hosting (e.g., assets/images/gallery/) and reference the URLs in the sheet.</p>
-      </div>
 
       <!-- Gallery Grid -->
       <div id="gallery-container" class="gallery-container">
@@ -360,5 +355,6 @@
       loadGalleryPageContent();
     }
   </script>
+  <script src="assets/js/build.js" defer></script>
 </body>
 </html>

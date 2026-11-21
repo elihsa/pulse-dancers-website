@@ -1265,3 +1265,46 @@ textarea {
     padding-left: 2.25rem !important;
   }
 }
+
+/* ===== MOBILE NAV TOGGLE ===== */
+.nav-toggle {
+  display: none;
+  background: rgba(11, 11, 15, 0.85);
+  border: 2px solid #FF2D55;
+  color: #FFFFFF;
+  font-size: 1.6rem;
+  line-height: 1;
+  padding: 0.45rem 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.nav-toggle:hover,
+.nav-toggle:focus,
+.nav-toggle:active {
+  background: rgba(11, 11, 15, 0.95);
+  color: #FFFFFF;
+}
+
+@media (max-width: 900px) {
+  .nav-inner {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .nav-toggle {
+    display: block;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+}

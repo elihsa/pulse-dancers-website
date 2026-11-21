@@ -1270,4 +1270,25 @@ Owner confirms with customer
 
 ---
 
+### Session: QA fix round (2026-11-21, build 2026-11-21 17:00 SAST)
+
+Fixes from the Nov 21 QA pass of the live site:
+
+1. **Join form photo upload 500 (critical):** every photo is now re-encoded server-side (sharp, new dependency) until its base64 form fits one Sheets cell (50,000 char limit). In the near-impossible case a photo cannot fit, the applicant gets an explicit error asking them to email the photos - no silent loss and no silently incomplete application. Client-side Compressor.js wiring fixed (compressed file now actually replaces the picker file). Error/success messages now scroll into view.
+2. **Submission notifications (critical):** new `api/notify.js`. After a booking, contact, join or testimonial row is saved, Pulse is notified via WhatsApp (CallMeBot) and/or email (Resend), and the customer can get a confirmation email. All channels are env-gated (CALLMEBOT_API_KEY/CALLMEBOT_PHONE_NUMBER, RESEND_API_KEY, ADMIN_EMAIL, NOTIFY_FROM_EMAIL, SEND_CUSTOMER_CONFIRMATION=1) and no-op without keys; failures never break a submission.
+3. **Booking form:** added event date, start time and approximate guest count fields; saved as new BOOKINGS columns (EventDate, EventTime, GuestCount before Status). Quote no longer shows a stale travel fee when the area text stops matching a known area.
+4. **Meet The Guys photos:** local `assets/images/performers/*-400w.webp` copies were generated from the Google Drive originals and committed, and CSP img-src now allows the Drive redirect host (drive.usercontent.google.com). The DANCERS sheet still points at the Drive URLs; switching rows to the local copies happens only together with the deploy, after verifying whether the CSP fix alone makes the Drive images load again.
+5. **Gallery:** internal admin instructions removed from the public page.
+6. **Events page:** null-guarded CMS text updates (console error fixed); Facebook embed re-allowed in CSP frame-src.
+7. **Contact page:** console SyntaxError fixed (app.js globals renamed, no longer collide with the inline script).
+8. **Review form (home):** browser alert() popups replaced with inline messages.
+9. **Phone numbers** are written to the sheet as text so SA leading zeros are kept (contact, booking, join, manager phone).
+10. **Mobile nav (<=900px):** links collapse behind a hamburger toggle instead of a permanent vertical list.
+11. **Housekeeping:** favicon on all pages, robots.txt, sitemap.xml, branded 404.html, visible build stamp in the footer of every page (assets/js/build.js).
+12. **CMS content:** fixed "sneeaky"/"maan" typo in the PRICES tab (1 Man Xpress Show description).
+
+Still open (need Eli's decision): waiter/butler 2-hour minimum enforcement, travel free-radius 30km vs 50km conflict (CMS setting is 30, FAQ text says 50; the spec, booking doc and CMS guide all document 50), xpress tier pricing for 2+ man shows, services missing from the booking form (Fire Dancers, DJ, MC, etc.), the "X" performer name, privacy.html content, exact-date 18+ enforcement on the join form, FAQ refund wording, notification provider choice, GitHub Actions billing lock.
+
+---
+
 END OF SPECIFICATION DOCUMENT

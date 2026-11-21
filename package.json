@@ -17,7 +17,8 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "googleapis": "185.0.0"
+    "googleapis": "185.0.0",
+    "sharp": "0.33.5"
   },
   "devDependencies": {
     "@playwright/test": "1.65.1",

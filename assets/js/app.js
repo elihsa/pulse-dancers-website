@@ -4,17 +4,19 @@
 
 // ===== NAVIGATION TOGGLE =====
 const navToggle = document.querySelector('.nav-toggle');
-const navMenu = document.querySelector('.nav-menu');
+const navMenu = document.querySelector('.nav-links');
 
 if (navToggle && navMenu) {
   navToggle.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
+    const open = navMenu.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
 
-  // Close menu when clicking on a nav link
-  document.querySelectorAll('.nav-menu a').forEach(link => {
+  // Close menu when tapping a nav link
+  navMenu.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', () => {
-      navMenu.classList.remove('active');
+      navMenu.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
     });
   });
 }
@@ -163,18 +165,18 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ===== CONTACT FORM HANDLING =====
-const contactForm = document.getElementById('contact-form');
-const formStatus = document.getElementById('form-status');
+const appContactForm = document.getElementById('contact-form');
+const appFormStatus = document.getElementById('form-status');
 
-if (contactForm) {
-  contactForm.addEventListener('submit', async (e) => {
+if (appContactForm) {
+  appContactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const formData = new FormData(contactForm);
+    const formData = new FormData(appContactForm);
     const data = Object.fromEntries(formData);
     
     // Show loading state
-    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    const submitBtn = appContactForm.querySelector('button[type="submit"]');
     const originalBtnText = submitBtn.textContent;
     submitBtn.textContent = 'Sending...';
     submitBtn.disabled = true;
@@ -191,7 +193,7 @@ if (contactForm) {
       
       if (response.ok) {
         showFormStatus('Message sent successfully! We\'ll get back to you soon.', 'success');
-        contactForm.reset();
+        appContactForm.reset();
       } else {
         throw new Error('Form submission failed');
       }
@@ -206,33 +208,33 @@ if (contactForm) {
 }
 
 function showFormStatus(message, type) {
-  if (formStatus) {
-    formStatus.textContent = message;
-    formStatus.className = `form-status ${type}`;
-    formStatus.style.display = 'block';
+  if (appFormStatus) {
+    appFormStatus.textContent = message;
+    appFormStatus.className = `form-status ${type}`;
+    appFormStatus.style.display = 'block';
     
     setTimeout(() => {
-      formStatus.style.display = 'none';
+      appFormStatus.style.display = 'none';
     }, 5000);
   }
 }
 
 // ===== BOOKING FORM HANDLING =====
-const bookingForm = document.getElementById('booking-form');
-const bookingStatus = document.getElementById('booking-status');
-const totalCostElement = document.getElementById('total-cost');
+const appBookingForm = document.getElementById('booking-form');
+const appBookingStatus = document.getElementById('booking-status');
+const appTotalCostElement = document.getElementById('total-cost');
 
-if (bookingForm) {
+if (appBookingForm) {
   // Update total cost when services are selected
-  const serviceCheckboxes = bookingForm.querySelectorAll('input[name="services"]');
+  const serviceCheckboxes = appBookingForm.querySelectorAll('input[name="services"]');
   serviceCheckboxes.forEach(checkbox => {
     checkbox.addEventListener('change', updateTotalCost);
   });
   
-  bookingForm.addEventListener('submit', async (e) => {
+  appBookingForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const formData = new FormData(bookingForm);
+    const formData = new FormData(appBookingForm);
     const services = Array.from(formData.getAll('services'));
     
     if (services.length === 0) {
@@ -250,7 +252,7 @@ if (bookingForm) {
       message: formData.get('message')
     };
     
-    const submitBtn = bookingForm.querySelector('button[type="submit"]');
+    const submitBtn = appBookingForm.querySelector('button[type="submit"]');
     const originalBtnText = submitBtn.textContent;
     submitBtn.textContent = 'Sending...';
     submitBtn.disabled = true;
@@ -267,7 +269,7 @@ if (bookingForm) {
       
       if (response.ok) {
         showBookingStatus('Booking request sent! We\'ll confirm your booking soon.', 'success');
-        bookingForm.reset();
+        appBookingForm.reset();
         updateTotalCost();
       } else {
         throw new Error('Booking submission failed');
@@ -290,19 +292,19 @@ function updateTotalCost() {
     total += parseFloat(checkbox.value) || 0;
   });
   
-  if (totalCostElement) {
-    totalCostElement.textContent = `R${total.toLocaleString('en-ZA')}`;
+  if (appTotalCostElement) {
+    appTotalCostElement.textContent = `R${total.toLocaleString('en-ZA')}`;
   }
 }
 
 function showBookingStatus(message, type) {
-  if (bookingStatus) {
-    bookingStatus.textContent = message;
-    bookingStatus.className = `form-status ${type}`;
-    bookingStatus.style.display = 'block';
+  if (appBookingStatus) {
+    appBookingStatus.textContent = message;
+    appBookingStatus.className = `form-status ${type}`;
+    appBookingStatus.style.display = 'block';
     
     setTimeout(() => {
-      bookingStatus.style.display = 'none';
+      appBookingStatus.style.display = 'none';
     }, 5000);
   }
 }
@@ -697,14 +699,14 @@ document.querySelectorAll('.cta-button, .btn').forEach(button => {
 });
 
 // Track form submissions
-if (contactForm) {
-  contactForm.addEventListener('submit', () => {
+if (appContactForm) {
+  appContactForm.addEventListener('submit', () => {
     trackEvent('Form', 'Submit', 'Contact Form');
   });
 }
 
-if (bookingForm) {
-  bookingForm.addEventListener('submit', () => {
+if (appBookingForm) {
+  appBookingForm.addEventListener('submit', () => {
     trackEvent('Form', 'Submit', 'Booking Form');
   });
 }

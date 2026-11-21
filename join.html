@@ -28,6 +28,7 @@
   
   <!-- Client-side image resizing -->
   <script src="https://unpkg.com/compressorjs@1.2.1/dist/compressor.min.js"></script>
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
 </head>
 <body class="page">
   <img src="assets/images/top.png" alt="Pulse Male Revue Top Banner" class="top-banner" style="width: 50%; display: block; margin: 0 auto;">
@@ -39,6 +40,7 @@
           <!-- Logo removed per user request -->
         </a>
       </div>
+      <button class="nav-toggle" aria-label="Menu" aria-expanded="false">&#9776;</button>
       <ul class="nav-links">
         <li><a href="index.html" class="nav-link">Home</a></li>
         <li><a href="events.html" class="nav-link">Events</a></li>
@@ -233,7 +235,7 @@
           <!-- Photos Section -->
           <fieldset class="form-section">
             <legend class="form-section-title">Photos</legend>
-            <p class="form-help">Upload clear photos. Max 200KB each - they will be auto-resized if larger.</p>
+            <p class="form-help">Upload clear photos. Large photos are auto-resized.</p>
             
             <div class="form-row">
               <div class="form-group file-upload-group">
@@ -520,7 +522,7 @@
               // Update the file input with compressed version
               const dataTransfer = new DataTransfer();
               dataTransfer.items.add(new File([result], file.name, { type: 'image/jpeg' }));
-              this.files = dataTransfer.files;
+              input.files = dataTransfer.files;
               
               // Show preview
               const reader = new FileReader();
@@ -603,6 +605,9 @@
     messagesDiv.style.display = 'block';
     messagesDiv.className = 'form-messages ' + type;
     messagesDiv.textContent = message;
+    // The message sits below the submit button, off-screen after a long form -
+    // always bring it into view so errors are seen.
+    messagesDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
     
     // Auto-hide success messages after 10 seconds
     if (type === 'success') {
@@ -612,5 +617,6 @@
     }
   }
   </script>
+  <script src="assets/js/build.js" defer></script>
 </body>
 </html>

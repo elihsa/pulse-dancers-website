@@ -3,6 +3,7 @@
 // service account (API keys are read-only; writes require a service account).
 
 import { google } from 'googleapis';
+import { notifyPulse, notifyCustomer } from './notify.js';
 
 const getServiceAccountAuth = () => {
   const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
@@ -58,7 +59,7 @@ export default async (req, res) => {
       timestamp,
       name,
       email,
-      phone || 'Not provided',
+      phone ? "'" + String(phone) : 'Not provided',
       subject,
       message,
       'Unread', // Status column
@@ -76,6 +77,9 @@ export default async (req, res) => {
       insertDataOption: 'INSERT_ROWS',
       requestBody: { values },
     });
+
+    await notifyPulse('contact message', { name, email, phone, subject, message });
+    await notifyCustomer('message', email, name);
 
     res.status(200).json({
       success: true,
