@@ -27,6 +27,7 @@
   <link rel="preload" href="assets/js/app.js" as="script">
   <link rel="preload" href="assets/js/sheets-cms.js" as="script">
   <link rel="preload" href="assets/js/booking-form.js" as="script">
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
 </head>
 <body class="page">
 
@@ -39,6 +40,7 @@
           <!-- Logo removed per user request -->
         </a>
       </div>
+      <button class="nav-toggle" aria-label="Menu" aria-expanded="false">&#9776;</button>
       <ul class="nav-links">
         <li><a href="index.html" class="nav-link">Home</a></li>
         <li><a href="events.html" class="nav-link">Events</a></li>
@@ -92,6 +94,21 @@
             <label class="option-card"><input type="radio" name="eventType" value="Kitchen tea"><span>Kitchen tea</span></label>
             <label class="option-card"><input type="radio" name="eventType" value="Stalk party"><span>Stalk party</span></label>
           </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="bf-event-date">Event date</label>
+            <input type="date" id="bf-event-date" name="eventDate">
+          </div>
+          <div class="form-field">
+            <label for="bf-event-time">Start time</label>
+            <input type="time" id="bf-event-time" name="eventTime">
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="bf-guest-count">Approximate number of guests</label>
+          <input type="number" id="bf-guest-count" name="guestCount" min="1" placeholder="e.g. 20">
         </div>
 
         <div class="form-field">
@@ -343,5 +360,6 @@
       }
     });
   </script>
+  <script src="assets/js/build.js" defer></script>
 </body>
 </html>

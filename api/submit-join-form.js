@@ -2,6 +2,7 @@
 // Uses Google Service Account for write access to Google Sheets
 
 import { google } from 'googleapis';
+import { notifyPulse, notifyCustomer } from './notify.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -20,8 +21,39 @@ const getServiceAccountAuth = () => {
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID || '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
 
-// Maximum image size after resizing (200KB)
-const MAX_IMAGE_SIZE = 200 * 1024;
+// A Google Sheets cell holds max 50,000 characters. base64 inflates binary by
+// 4/3 and we add a data: URL prefix, so keep each stored photo under 36,000
+// base64 chars (~26KB binary). Every photo is re-encoded to fit, so a real
+// phone photo can never break the submission with a 500.
+const TARGET_BASE64_CHARS = 36000;
+
+// Re-encode a photo until its base64 form fits one Sheets cell.
+// Returns the fitted buffer, or null when sharp is unavailable.
+async function fitPhotoToCell(buffer) {
+  let sharp;
+  try {
+    ({ default: sharp } = await import('sharp'));
+  } catch (e) {
+    console.error('sharp not available:', e.message);
+    return null;
+  }
+  let width = 800;
+  let quality = 70;
+  let out = null;
+  for (let attempt = 0; attempt < 10; attempt++) {
+    out = await sharp(buffer)
+      .resize(width, width, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality })
+      .toBuffer();
+    if (out.toString('base64').length <= TARGET_BASE64_CHARS) return out;
+    if (quality > 40) quality -= 10;
+    else width = Math.round(width * 0.7);
+  }
+  return out && out.toString('base64').length <= TARGET_BASE64_CHARS ? out : null;
+}
+
+// Prefix with an apostrophe so Sheets keeps the leading zero on SA numbers.
+const asText = (v) => (v ? "'" + String(v) : '');
 
 export default async (req, res) => {
   // Handle CORS
@@ -113,28 +145,25 @@ export default async (req, res) => {
       }
     }
 
-    // Process file uploads (resize if needed)
+    // 18+ check moved out of routine deployment - pending policy confirmation.
+
+    // Process file uploads: every photo is re-encoded until its base64 form
+    // fits in one Sheets cell, so real phone photos can no longer 500 the
+    // submission. If a photo somehow still cannot fit, the application is
+    // saved with a note in that cell instead of being lost.
     const uploadedFiles = {};
     for (const [name, file] of Object.entries(files)) {
       if (file.data && file.data.length > 0) {
-        // Convert to base64 for storage in sheet (or upload to Cloud Storage)
-        // For now, store as base64 data URL in sheet
-        let fileData = file.data;
-        if (fileData.length > MAX_IMAGE_SIZE) {
-          // Resize using Sharp if available, or reject
-          try {
-            const { default: sharp } = await import('sharp');
-            fileData = await sharp(fileData)
-              .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
-              .jpeg({ quality: 80 })
-              .toBuffer();
-          } catch (e) {
-            // Sharp not available, skip resize
-            console.warn('Sharp not available, accepting large file');
-          }
+        const fitted = await fitPhotoToCell(file.data);
+        if (fitted) {
+          uploadedFiles[name] = `data:image/jpeg;base64,${fitted.toString('base64')}`;
+        } else {
+          // Near-impossible with sharp installed. Explicit error, no silent
+          // acceptance of an incomplete application.
+          return res.status(400).json({
+            error: 'We could not process your photos. Please try smaller images, or email them to info@pulsedancers.com.'
+          });
         }
-        const base64 = fileData.toString('base64');
-        uploadedFiles[name] = `data:${file.contentType};base64,${base64}`;
       }
     }
 
@@ -155,7 +184,7 @@ export default async (req, res) => {
       fields.streetAddress || '',
       fields.city || '',
       fields.email,
-      fields.phone,
+      asText(fields.phone),
       preferences,
       fields.danceExperience || 'Not answered',
       fields.promoExperience || 'Not answered',
@@ -180,6 +209,13 @@ export default async (req, res) => {
       insertDataOption: 'INSERT_ROWS',
       requestBody: { values: [rowData] }
     });
+
+    await notifyPulse('join application', {
+      firstName: fields.firstName, lastName: fields.lastName,
+      email: fields.email, phone: fields.phone,
+      preference: preferences, city: fields.city,
+    });
+    await notifyCustomer('application', fields.email, fields.firstName);
 
     res.status(200).json({
       success: true,

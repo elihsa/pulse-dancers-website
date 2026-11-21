@@ -12,6 +12,7 @@
 // GamesQty | PoleQty | OtherText | Notes | QuotePerformance | QuoteTravel | QuoteTotal | Status
 
 import { google } from 'googleapis';
+import { notifyPulse, notifyCustomer } from './notify.js';
 
 const getServiceAccountAuth = () => {
   const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
@@ -53,15 +54,18 @@ export default async (req, res) => {
     const sheets = google.sheets({ version: 'v4', auth });
 
     const timestamp = new Date().toISOString();
+    // Phone numbers are written as text (leading apostrophe) so Sheets keeps
+    // the leading zero on SA numbers.
+    const asText = (v) => (v ? "'" + String(v) : '');
     const rowData = [
       timestamp,
       b.name,
-      b.phone,
+      asText(b.phone),
       b.email,
       b.eventType || '',
       b.managing || '',
       b.managerName || '',
-      b.managerPhone || '',
+      asText(b.managerPhone),
       b.managerEmail || '',
       b.locType || '',
       b.address || '',
@@ -95,6 +99,14 @@ export default async (req, res) => {
       insertDataOption: 'INSERT_ROWS',
       requestBody: { values: [rowData] },
     });
+
+    await notifyPulse('booking request', {
+      name: b.name, email: b.email, phone: b.phone,
+      eventType: b.eventType, date: b.eventDate, time: b.eventTime,
+      area: b.area || b.address, services: Array.isArray(b.services) ? b.services.join(', ') : b.services,
+      quote: b.quote?.total,
+    });
+    await notifyCustomer('booking request', b.email, b.name);
 
     res.status(200).json({
       success: true,

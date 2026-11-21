@@ -26,6 +26,7 @@
   <link rel="preload" href="assets/css/styles.css?v=2" as="style">
   <link rel="preload" href="assets/js/app.js" as="script">
   <script src="assets/js/banner.js" defer></script>
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
 </head>
 <body class="page">
   <img src="assets/images/top.png" alt="Pulse Male Revue Top Banner" class="top-banner" style="width: 50%; display: block; margin: 0 auto;">
@@ -38,7 +39,8 @@
         <!-- Logo removed per user request -->
       </a>
     </div>
-    <ul class="nav-links">
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">&#9776;</button>
+      <ul class="nav-links">
         <li><a href="index.html" class="nav-link">Home</a></li>
         <li><a href="events.html" class="nav-link active">Events</a></li>
         <li><a href="prices.html" class="nav-link">Prices</a></li>
@@ -103,10 +105,14 @@ async function loadEventsPageContent() {
   try {
     const pageContent = await PulseSheetsCMS.getPageContent('EVENTS');
     
-    if (pageContent.pageTitle) document.getElementById('events-page-title').textContent = pageContent.pageTitle;
-    if (pageContent.pageDescription) document.getElementById('events-page-description').textContent = pageContent.pageDescription;
-    if (pageContent.upcomingTitle) document.getElementById('events-upcoming-title').textContent = pageContent.upcomingTitle;
-    if (pageContent.upcomingDescription) document.getElementById('events-upcoming-description').textContent = pageContent.upcomingDescription;
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el && value) el.textContent = value;
+    };
+    setText('events-page-title', pageContent.pageTitle);
+    setText('events-page-description', pageContent.pageDescription);
+    setText('events-upcoming-title', pageContent.upcomingTitle);
+    setText('events-upcoming-description', pageContent.upcomingDescription);
   } catch (error) {
     console.error('Error loading events page content:', error);
     // Keep default content if CMS fails
@@ -119,5 +125,6 @@ if (document.readyState === 'loading') {
   loadEventsPageContent();
 }
 </script>
+  <script src="assets/js/build.js" defer></script>
 </body>
 </html>
