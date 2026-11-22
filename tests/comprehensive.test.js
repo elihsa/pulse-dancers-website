@@ -350,12 +350,11 @@ test.describe('Pulse Dancers Website - Comprehensive Functional Tests', () => {
   // TEST 5: API ENDPOINTS HEALTH CHECKS
   // ============================================
   test.describe('API Endpoint Health', () => {
-    test('GET /api/sheets?sheetName=BOOKINGS returns 200', async ({ request }) => {
+    test('GET /api/sheets?sheetName=BOOKINGS is refused (private tab containment)', async ({ request }) => {
+      // Nov 22 containment: /api/sheets only serves allowlisted public CMS
+      // tabs; private submission tabs must get a generic 404.
       const response = await request.get(`${BASE_URL}/api/sheets?sheetName=BOOKINGS`);
-      expect(response.ok()).toBeTruthy();
-      const data = await response.json();
-      expect(data.values).toBeDefined();
-      expect(Array.isArray(data.values)).toBeTruthy();
+      expect(response.status()).toBe(404);
     });
 
     test('GET /api/sheets?sheetName=TESTIMONIALS returns 200', async ({ request }) => {
