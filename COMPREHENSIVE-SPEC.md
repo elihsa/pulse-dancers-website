@@ -1291,4 +1291,20 @@ Still open (need Eli's decision): waiter/butler 2-hour minimum enforcement, trav
 
 ---
 
+### Session: Security containment - public sheets proxy (2026-11-22, build 2026-11-22 17:16 SAST)
+
+Approved by Eli on 2026-11-22 as a narrow exception while other changes stay paused.
+
+1. **Public data route contained (critical privacy fix):** `api/sheets.js` previously proxied ANY Google Sheets tab in the CMS workbook - including BOOKINGS, CONTACT_MESSAGES and JOIN_APPLICATIONS - to anyone, unauthenticated. The endpoint now serves only an explicit allowlist of public CMS tabs (HOME, PRICES, FAQS, DANCERS, SERVICES, TESTIMONIALS, SOCIAL, PAGE_CONTENT, FOOTER, GALLERY). Any other tab name gets a generic 404 that does not reveal whether the tab exists. Tab names and row windows are validated/clamped, and only GET/OPTIONS are accepted.
+2. **Testimonial output hardened:** approved-row filtering no longer keeps the first returned row unconditionally (a pending row could previously slip through as a fake header when startRow > 1), and the submitter email column (F) is stripped from all returned rows. The public site only displays name, rating, text and area, which it still receives.
+3. **Tests updated to lock the boundary:** the old health checks that asserted `/api/sheets?sheetName=BOOKINGS` returns 200 now assert it is refused (404). Row-level submission verification requires the service account, not the public proxy.
+
+Form submissions (`api/submit-*`) are unchanged and still write to the workbook via the service account. Public CMS pages read the same tabs as before.
+
+**Known residual risk (needs a separate decision):** the CMS workbook itself is read through a client-side Google API key, which requires the workbook to be shared "Anyone with the link can view". If that sharing setting is still on, the private tabs remain readable by anyone who has the workbook ID (it appears in client-side code and network requests), independent of this proxy fix. Fully closing that path means switching `api/sheets.js` reads to the service account and then restricting the workbook sharing - not done in this change because the live pulsedancer.com site may depend on the current sharing.
+
+Still open (need Eli's decision): unchanged from the 2026-11-21 list - waiter/butler 2-hour minimum, travel free-radius 30km vs 50km, Xpress tier pricing for 2+ man shows, services missing from the booking form, the "X" performer name, privacy.html content, exact-date 18+ enforcement on the join form, FAQ refund wording, notification provider choice, GitHub Actions billing lock.
+
+---
+
 END OF SPECIFICATION DOCUMENT

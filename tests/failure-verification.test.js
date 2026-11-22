@@ -309,19 +309,14 @@ test.describe('Failure Verification: End-to-End Booking Workflow', () => {
     
     console.log('✅ API submission works');
     
-    // 2. Verify via API proxy (poll to absorb Google Sheets read-after-write eventual consistency)
-    let found = false;
-    for (let attempt = 0; attempt < 5 && !found; attempt++) {
-      if (attempt > 0) await page.waitForTimeout(1000);
-      const sheetsResponse = await page.request.get(`${BASE_URL}/api/sheets?sheetName=BOOKINGS`);
-      expect(sheetsResponse.ok()).toBeTruthy();
-      const sheetsData = await sheetsResponse.json();
-      const rows = sheetsData.values || [];
-      found = rows.some(row => row[1] === bookingData.name);
-    }
-    expect(found).toBe(true);
-    
-    console.log('✅ Sheet entry verified - calendar/WhatsApp/email are fire-and-forget');
+    // 2. The public sheets proxy must REFUSE the private BOOKINGS tab.
+    // (Containment fix, Nov 22: /api/sheets only serves allowlisted public CMS
+    // tabs. Row-level submission verification now requires reading the sheet
+    // directly with the service account, which this test suite does not do.)
+    const sheetsResponse = await page.request.get(`${BASE_URL}/api/sheets?sheetName=BOOKINGS`);
+    expect(sheetsResponse.status()).toBe(404);
+
+    console.log('✅ Private BOOKINGS tab is not publicly readable - calendar/WhatsApp/email are fire-and-forget');
   });
 });
 
