@@ -7,6 +7,26 @@
 // service account and must never be readable here. Any tab not on the list is
 // refused with a generic 404 that does not reveal whether the tab exists.
 
+import { google } from 'googleapis';
+
+// Reads go through the same service account the submit-* endpoints use, so the
+// workbook no longer needs to be shared publicly. The API-key path below is a
+// legacy fallback for environments where the service account is not configured.
+const getServiceAccountAuth = () => {
+  const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+  if (!serviceAccountJson) return null;
+  try {
+    const credentials = JSON.parse(serviceAccountJson);
+    return new google.auth.GoogleAuth({
+      credentials,
+      scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+    });
+  } catch (e) {
+    console.error('[Sheets API] Invalid GOOGLE_SERVICE_ACCOUNT_JSON, falling back to API key');
+    return null;
+  }
+};
+
 // NOTE: This API key is intentionally hard-coded for now as it's a CLIENT-SIDE API key
 // that is meant to be publicly visible (it will be in browser requests anyway).
 // The key should be restricted in Google Cloud Console to only allow:
@@ -73,47 +93,32 @@ export default async (req, res) => {
   }
 
   try {
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${sheetName}!A${startRow}:Z${endRow}?key=${API_KEY}`;
+    const range = `${sheetName}!A${startRow}:Z${endRow}`;
+    let data;
 
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`[Sheets API] Error fetching ${sheetName}: ${response.status} - ${errorText}`);
-
-      // Parse error for better messages
-      let helpfulMessage = 'Failed to fetch from Google Sheets';
-      try {
-        const errorData = JSON.parse(errorText);
-        if (errorData.error?.message) {
-          helpfulMessage = errorData.error.message;
-        }
-      } catch (e) {
-        // If we can't parse JSON, use the raw text
-        helpfulMessage = errorText;
-      }
-
-      // Detect if the API key is invalid
-      const isInvalidKey = helpfulMessage.includes('API key not valid') ||
-                          helpfulMessage.includes('API key invalid') ||
-                          response.status === 400 && helpfulMessage.includes('key');
-
-      return res.status(response.status).json({
-        error: 'Failed to fetch from Google Sheets',
-        details: helpfulMessage,
-        sheetName: sheetName,
-        status: response.status,
-        help: isInvalidKey
-          ? '🚨 CRITICAL: The Google Sheets API key is INVALID. See API-KEY-SETUP-GUIDE.md for instructions on getting a valid key. The CMS cannot work without a valid API key.'
-          : response.status === 400
-          ? `The "${sheetName}" tab may not exist or is misspelled. Tab names are case-sensitive.`
-          : response.status === 403
-          ? 'The Google Sheet may not be public. Go to Share > Anyone with the link can view.'
-          : 'Check that the Sheet ID and API key are correct. See API-KEY-SETUP-GUIDE.md for setup instructions.'
+    const auth = getServiceAccountAuth();
+    if (auth) {
+      const sheets = google.sheets({ version: 'v4', auth });
+      const result = await sheets.spreadsheets.values.get({
+        spreadsheetId: SHEET_ID,
+        range,
       });
+      data = result.data;
+    } else {
+      // Fallback: public-sharing + API key path (legacy).
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`[Sheets API] Error fetching ${sheetName}: ${response.status} - ${errorText}`);
+        return res.status(response.status).json({
+          error: 'Failed to fetch from Google Sheets',
+          sheetName: sheetName,
+          status: response.status,
+        });
+      }
+      data = await response.json();
     }
-
-    const data = await response.json();
 
     // TESTIMONIALS: return only approved rows and never expose the submitter
     // email column. A row is kept as the header only when it is the first row
