@@ -14,7 +14,9 @@
 //                            works on Resend's free tier without a domain)
 //     SEND_CUSTOMER_CONFIRMATION=1 - also email the customer a confirmation
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'info@pulsedancers.com';
+// Development email verification is restricted to Eli, including admin mail.
+const TEST_RECIPIENT = 'elihsa@gmail.com';
+const ADMIN_EMAIL = TEST_RECIPIENT;
 const FROM_EMAIL = process.env.NOTIFY_FROM_EMAIL || 'Pulse Website <onboarding@resend.dev>';
 
 function summarize(kind, fields) {
@@ -25,17 +27,14 @@ function summarize(kind, fields) {
 }
 
 async function sendWhatsApp(text) {
-  const phone = process.env.CALLMEBOT_PHONE_NUMBER;
-  const apikey = process.env.CALLMEBOT_API_KEY;
-  if (!phone || !apikey) return false;
-  const url = `https://api.callmebot.com/whatsapp.php?phone=${encodeURIComponent(phone)}&text=${encodeURIComponent(text)}&apikey=${encodeURIComponent(apikey)}`;
-  const res = await fetch(url);
-  return res.ok;
+  // No WhatsApp sends are authorised in this owner-only email test phase.
+  return false;
+
 }
 
 async function sendEmail(to, subject, text) {
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey || !to) return false;
+  if (!apiKey || typeof to !== 'string' || to.trim().toLowerCase() !== TEST_RECIPIENT) return false;
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
@@ -71,7 +70,7 @@ export async function notifyCustomer(kind, toEmail, firstName) {
     if (process.env.SEND_CUSTOMER_CONFIRMATION !== '1' || !toEmail) return;
     const text =
       `Hi ${firstName || 'there'},\n\n` +
-      `Thank you - we received your ${kind} and will get back to you within 24 hours.\n\n` +
+      `This is an owner-only development test confirming receipt of your ${kind}. No real booking or application commitment is made.\n\n` +
       `Pulse Male Revue\ninfo@pulsedancers.com\nWhatsApp: +27 84 019 7733`;
     await sendEmail(toEmail, `We received your ${kind} - Pulse`, text);
   } catch (e) {
