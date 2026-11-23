@@ -141,3 +141,40 @@ test('join failure remains visible and preserves the application for retry', asy
   await expect(page.locator('#firstName')).toHaveValue('Local QA');
   await expect(page.locator('#submitBtn')).toBeEnabled();
 });
+
+test('public CMS deduplicates simultaneous and cross-page content reads for one minute', async ({page}) => {
+  let count = 0;
+  await page.route('**/api/sheets**', route => {
+    count++;
+    return route.fulfill({json:{values:[['field','fixture']]}});
+  });
+  await page.goto(origin + '/contact.html');
+  await page.evaluate(() => sessionStorage.clear());
+  count = 0;
+  await page.evaluate(() => Promise.all(Array.from({length:4},()=>PulseSheetsCMS.fetchSheet('FAQS',1,42))));
+  expect(count).toBe(1);
+  await page.goto(origin + '/faq.html');
+  count = 0;
+  await page.evaluate(() => PulseSheetsCMS.fetchSheet('FAQS',1,42));
+  expect(count).toBe(0);
+  await page.evaluate(() => {
+    const key='pulse-content-v1:FAQS:1:42';
+    const cached=JSON.parse(sessionStorage.getItem(key));
+    cached.savedAt=Date.now()-61000;
+    sessionStorage.setItem(key,JSON.stringify(cached));
+  });
+  await page.evaluate(() => PulseSheetsCMS.fetchSheet('FAQS',1,42));
+  expect(count).toBe(1);
+});
+
+test('public CMS failures are not cached and can recover on the next call', async ({page}) => {
+  await page.goto(origin + '/contact.html');
+  let count=0;
+  await page.route('**/api/sheets**', route => {
+    count++;
+    return count===1 ? route.fulfill({status:500,json:{error:'Local quota fixture'}}) : route.fulfill({json:{values:[['Recovered']]}});
+  });
+  expect(await page.evaluate(()=>PulseSheetsCMS.fetchSheet('FAQS',1,43))).toEqual([]);
+  expect(await page.evaluate(()=>PulseSheetsCMS.fetchSheet('FAQS',1,43))).toEqual([['Recovered']]);
+  expect(count).toBe(2);
+});
