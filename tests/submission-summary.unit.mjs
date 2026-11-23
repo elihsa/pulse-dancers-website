@@ -29,3 +29,5 @@ test('booking omits hidden default service quantities and uses visible labels',(
  assert.match(s,/Services: Male Stripper/);assert.match(s,/Male performers: 1/);assert.match(s,/Show type: Full show \(20 mins\)/);assert.match(s,/No, someone else is managing it/);
  assert.doesNotMatch(s,/Female performers|Waiters:|Butlers:|Games:|Pole shows:/);
 });
+
+test('legacy booking manager and exact-location values match visible choices',()=>{ const s=submissionSummary('booking_confirmation',{managing:'No',locType:'exact'});assert.match(s,/Managing the event: Yes, I.m managing it/);assert.match(s,/Location type: Exact address/);});
