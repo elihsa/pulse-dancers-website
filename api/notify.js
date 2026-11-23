@@ -29,12 +29,7 @@ function summarize(kind, fields) {
 async function sendWhatsApp(text) {
   // No WhatsApp sends are authorised in this owner-only email test phase.
   return false;
-  const phone = process.env.CALLMEBOT_PHONE_NUMBER;
-  const apikey = process.env.CALLMEBOT_API_KEY;
-  if (!phone || !apikey) return false;
-  const url = `https://api.callmebot.com/whatsapp.php?phone=${encodeURIComponent(phone)}&text=${encodeURIComponent(text)}&apikey=${encodeURIComponent(apikey)}`;
-  const res = await fetch(url);
-  return res.ok;
+
 }
 
 async function sendEmail(to, subject, text) {
