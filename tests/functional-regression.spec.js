@@ -93,3 +93,51 @@ test('contact failure preserves message, then success clears the form',async({pa
   await expect(page.locator('#contact-status')).toContainText('Thank you');
   await expect(page.locator('#contact-message')).toHaveValue('');
 });
+
+async function fillJoin(page) {
+  await page.goto(origin + '/join.html');
+  await page.locator('#joinForm input[required]').evaluateAll(inputs => {
+    for (const input of inputs) {
+      if (['file','radio','checkbox'].includes(input.type)) continue;
+      input.value = input.type === 'email' ? 'qa@example.invalid' : input.type === 'number' ? (input.min || '100') : 'Local QA';
+    }
+  });
+  await page.locator('#joinForm select[required]').evaluateAll(selects => {
+    for (const select of selects) {
+      if (select.options[1]) select.value = select.options[1].value;
+      select.dispatchEvent(new Event('change'));
+    }
+  });
+  for (const name of ['danceExperience','promoExperience','transport']) await page.locator(`input[name="${name}"]`).first().check();
+  await page.fill('#tattoos', 'Local fixture');
+  for (const selector of ['#fullBodyShot', '#fullFacePhoto']) {
+    await page.locator(selector).setInputFiles({name:'fixture.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg==','base64')});
+  }
+  await page.locator('input[name="preference"]').nth(0).check();
+  await page.locator('input[name="preference"]').nth(1).check();
+}
+
+test('join success stays visible below the long form and retains both preferences in its request', async ({page}) => {
+  await page.setViewportSize({width:390,height:900});
+  await fillJoin(page);
+  let body = '';
+  await page.route('**/api/submit-join-form', route => {
+    body = route.request().postData() || '';
+    return route.fulfill({json:{success:true,message:'Local application received'}});
+  });
+  await page.click('#submitBtn');
+  await expect(page.locator('#formMessages')).toHaveText('Local application received');
+  await expect(page.locator('#formMessages')).toBeInViewport();
+  expect((body.match(/name="preference"/g) || []).length).toBe(2);
+  await expect(page.locator('#firstName')).toHaveValue('');
+  await page.screenshot({path:'/tmp/pulse-join-success-local.png'});
+});
+
+test('join failure remains visible and preserves the application for retry', async ({page}) => {
+  await fillJoin(page);
+  await page.route('**/api/submit-join-form', route => route.fulfill({status:503,json:{error:'Temporary local failure'}}));
+  await page.click('#submitBtn');
+  await expect(page.locator('#formMessages')).toContainText('Temporary local failure');
+  await expect(page.locator('#firstName')).toHaveValue('Local QA');
+  await expect(page.locator('#submitBtn')).toBeEnabled();
+});

@@ -3,6 +3,7 @@
 
 import { google } from 'googleapis';
 import { notifyPulse, notifyCustomer } from './notify.js';
+import { addFormField } from '../lib/form-fields.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -132,7 +133,7 @@ export default async (req, res) => {
         };
       } else {
         // It's a field
-        fields[name] = content.toString('utf8');
+        addFormField(fields, name, content.toString('utf8'));
       }
       pos = partEnd;
     }

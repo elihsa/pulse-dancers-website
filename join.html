@@ -584,10 +584,9 @@
       
       if (response.ok) {
         showMessage(result.message, 'success');
-        joinForm.reset();
+        this.reset();
         // Clear previews
         document.querySelectorAll('.file-preview').forEach(p => p.innerHTML = '');
-        window.scrollTo(0, 0);
       } else {
         showMessage('Error: ' + (result.error || 'Unknown error'), 'error');
       }
