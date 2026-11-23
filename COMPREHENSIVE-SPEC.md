@@ -1328,3 +1328,11 @@ Still requires a grounded decision or separately scoped follow-through: existing
 Owner clarification: keep the existing development/test CMS and records; do not create a new workbook or purge old entries. New booking rows retain the legacy31-column A:AE contract (Status at AE) and append EventDate at AF, EventTime at AG, GuestCount at AH. This supersedes the earlier note suggesting insertion before Status. No headers are written over existing data; no old row is moved, backfilled or deleted. Other form writers and CMS targets are unchanged.
 
 The row mapping is isolated in lib/booking-row.js with deterministic unit fixtures. All-file syntax checks include lib/. The response reports the Sheets API's exact savedRange for controlled new-row verification. No real notification recipients, price rules or other business policies are changed in this round.
+
+
+### Session: Recruitment submission feedback and preferences (2026-11-23, build 2026-11-23 12:47 SAST)
+
+- Recruitment success now resets the submitting form through its event context, rather than referencing an out-of-scope variable. It no longer scrolls away from success feedback immediately after bringing it into view.
+- Multipart recruitment parsing retains repeated fields in request order, so all selected work preferences reach the existing comma-separated preference column. Single-value fields and the existing 20-column row contract are unchanged. No old rows are read, changed or deleted.
+- Two isolated browser regressions cover recruitment success/reset/visible feedback and failure/retained values; two unit fixtures cover scalar and repeated multipart fields. All submissions in these tests are intercepted locally, including synthetic photo fixtures. These tests do not establish real recruitment persistence or email delivery.
+- An independent deployed read-only page sweep encountered intermittent public CMS HTTP500 responses late in the sweep. A subsequent bounded HOME request recovered to200. Root cause is still unconfirmed; HTML200 is not evidence that dynamic content loaded. No server endpoint behavior is changed in this recruitment patch.
