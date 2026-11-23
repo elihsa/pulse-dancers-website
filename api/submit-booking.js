@@ -73,7 +73,7 @@ export default async (req, res) => {
       area: b.area || b.address, services: Array.isArray(b.services) ? b.services.join(', ') : b.services,
       quote: b.quote?.total,
     });
-    await notifyCustomer('booking request', b.email, b.name);
+    await notifyCustomer('booking_confirmation', b.email, b.name);
 
     res.status(200).json({
       success: true,

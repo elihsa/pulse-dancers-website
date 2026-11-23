@@ -79,7 +79,7 @@ export default async (req, res) => {
     });
 
     await notifyPulse('contact message', { name, email, phone, subject, message });
-    await notifyCustomer('message', email, name);
+    await notifyCustomer('contact_confirmation', email, name);
 
     res.status(200).json({
       success: true,

@@ -193,7 +193,7 @@ export default async (req, res) => {
       email: fields.email, phone: fields.phone,
       preference: preferences, city: fields.city,
     });
-    await notifyCustomer('application', fields.email, fields.firstName);
+    await notifyCustomer('join_confirmation', fields.email, fields.firstName);
 
     res.status(200).json({
       success: true,
