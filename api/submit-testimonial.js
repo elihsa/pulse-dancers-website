@@ -78,7 +78,7 @@ export default async (req, res) => {
 
     await notifyPulse('review (pending approval)', { name, rating: ratingNum, area, message });
     // Email is optional on testimonials; notifyCustomer skips when absent.
-    await notifyCustomer('testimonial_confirmation', email, name);
+    await notifyCustomer('testimonial_confirmation', email, name, { name, email, area, rating: ratingNum, message });
 
     res.status(200).json({
       success: true,
