@@ -231,6 +231,7 @@
 
     // Load home page content from CMS
         async function loadHomeContent() {
+          let hasHomeServicesList = false;
           try {
             const homeData = await PulseSheetsCMS.getHome();
         
@@ -252,6 +253,7 @@
         
             // Update services list if provided (from HOME sheet)
             if (homeData.servicesList) {
+              hasHomeServicesList = true;
               const servicesList = document.getElementById('services-list');
               const services = homeData.servicesList.split('|').map(s => s.trim());
               // Use textContent to prevent XSS
@@ -284,7 +286,7 @@
               const isDefault = currentItems.length === defaultItems.length && 
                 currentItems.every((item, i) => item === defaultItems[i]);
           
-              if (isDefault) {
+              if (!hasHomeServicesList && isDefault) {
                 servicesList.innerHTML = '';
                 services.forEach(serviceText => {
                   const li = document.createElement('li');
