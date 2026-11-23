@@ -1321,3 +1321,10 @@ Eli clarified that this rebuild is a development/test environment and service in
 - These isolated regressions do not prove actual spreadsheet persistence or email delivery. Nine deployed public pages were separately inspected at desktop and phone widths without submitting forms. No private submission data was read.
 
 Still requires a grounded decision or separately scoped follow-through: existing price/travel/minimum-duration conflicts; placeholder performer identity; approved privacy wording; notification provider, sender, recipients and permitted real sends; CI account billing lock if still present. Recruitment age checks and all excluded prior security work remain outside this round.
+
+
+### Session: Booking event-detail persistence (2026-11-23, build2026-11-23 12:22 SAST)
+
+Owner clarification: keep the existing development/test CMS and records; do not create a new workbook or purge old entries. New booking rows retain the legacy31-column A:AE contract (Status at AE) and append EventDate at AF, EventTime at AG, GuestCount at AH. This supersedes the earlier note suggesting insertion before Status. No headers are written over existing data; no old row is moved, backfilled or deleted. Other form writers and CMS targets are unchanged.
+
+The row mapping is isolated in lib/booking-row.js with deterministic unit fixtures. All-file syntax checks include lib/. The response reports the Sheets API's exact savedRange for controlled new-row verification. No real notification recipients, price rules or other business policies are changed in this round.
