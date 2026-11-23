@@ -5,17 +5,19 @@ process.env.ADMIN_EMAIL='unapproved@example.invalid';
 process.env.SEND_CUSTOMER_CONFIRMATION='1';
 process.env.CALLMEBOT_PHONE_NUMBER='000';
 process.env.CALLMEBOT_API_KEY='local-fixture';
-const {notifyPulse,notifyCustomer,templateFromRows,renderTemplate,DEFAULT_AUTO_REPLIES}=await import('../api/notify.js');
+const {notifyPulse,notifyCustomer,templateFromRows,renderTemplate,DEFAULT_AUTO_REPLIES,receiptEmail}=await import('../api/notify.js');
 
-test('owner-only email guard blocks visitors and WhatsApp and ignores alternate admin',async()=>{
+test('new receipts use entered email, admin stays Eli and WhatsApp stays off',async()=>{
  const calls=[];globalThis.fetch=async(url,opts)=>{calls.push({url,body:JSON.parse(opts.body)});return {ok:true}};
  await notifyCustomer('join_confirmation','visitor@example.invalid','Synthetic');
- assert.equal(calls.length,0);
+ assert.equal(calls.length,1);
+ assert.deepEqual(calls[0].body.to,['visitor@example.invalid']);
  await notifyPulse('booking request',{name:'Synthetic'});
  await notifyCustomer('join_confirmation','elihsa@gmail.com','Synthetic');
- assert.equal(calls.length,2);
- for(const call of calls){assert.equal(call.url,'https://api.resend.com/emails');assert.deepEqual(call.body.to,['elihsa@gmail.com'])}
- assert.match(calls[1].body.text,/applying to join the Pulse Male Revue team/);
+ assert.equal(calls.length,3);
+ for(const call of calls.slice(1)){assert.equal(call.url,'https://api.resend.com/emails');assert.deepEqual(call.body.to,['elihsa@gmail.com'])}
+ for(const call of calls){assert.equal(call.body.from,'Pulse Website <info@pulsedancers.com>');assert.equal(call.body.reply_to,'info@pulsedancers.com')}
+ assert.match(calls[2].body.text,/applying to join the Pulse Male Revue team/);
 });
 
 test('each form type gets its own distinct default confirmation',async()=>{
@@ -67,4 +69,19 @@ test('renderTemplate replaces every placeholder and names are sanitised for plai
  assert.match(calls[0].body.text,/^Hi Eli BCC: attacker@example\.invalid,/);
  await notifyCustomer('booking_confirmation','elihsa@gmail.com','   ');
  assert.match(calls[1].body.text,/^Hi there,/);
+});
+
+
+test('receipt recipient is one address only, rejects injected headers and lists',()=>{
+ assert.equal(receiptEmail(' person@example.com '),'person@example.com');
+ for(const v of [null,{},'', 'a@example.com,b@example.com', 'A <a@example.com>', 'a@example.com\r\nBcc:b@example.com','a@b','a@@b.com']) assert.equal(receiptEmail(v),null);
+});
+
+
+test('provider failure is contained without pretending a receipt was sent',async()=>{
+ const errors=[];const old=console.error;console.error=(...args)=>errors.push(args);
+ globalThis.fetch=async()=>({ok:false,status:429,text:async()=>'daily_quota_exceeded'});
+ try { await notifyCustomer('booking_confirmation','synthetic@example.invalid','Synthetic'); }
+ finally { console.error=old; }
+ assert.equal(errors.length,1);assert.equal(errors[0][1],429);
 });
