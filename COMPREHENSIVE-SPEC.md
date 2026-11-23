@@ -1336,3 +1336,12 @@ The row mapping is isolated in lib/booking-row.js with deterministic unit fixtur
 - Multipart recruitment parsing retains repeated fields in request order, so all selected work preferences reach the existing comma-separated preference column. Single-value fields and the existing 20-column row contract are unchanged. No old rows are read, changed or deleted.
 - Two isolated browser regressions cover recruitment success/reset/visible feedback and failure/retained values; two unit fixtures cover scalar and repeated multipart fields. All submissions in these tests are intercepted locally, including synthetic photo fixtures. These tests do not establish real recruitment persistence or email delivery.
 - An independent deployed read-only page sweep encountered intermittent public CMS HTTP500 responses late in the sweep. A subsequent bounded HOME request recovered to200. Root cause is still unconfirmed; HTML200 is not evidence that dynamic content loaded. No server endpoint behavior is changed in this recruitment patch.
+
+
+### Session: Reduce public CMS read bursts (2026-11-23, build 2026-11-23 12:49 SAST)
+
+Vercel runtime logs during the rapid read-only page QA pass confirmed Google Sheets per-user read-quota exhaustion (upstream429), surfaced as HTTP500 to page loaders. Static HTML remained available, but dynamic page content could fall back or fail. A later bounded content request recovered after the quota window.
+
+The browser CMS helper now deduplicates simultaneous identical requests and caches successful named public content-tab ranges in session storage for up to60 seconds across page navigation. Content edits can therefore take up to one minute to appear in the same tab. Failed requests are never cached, and no retry burst is added. An unavailable browser cache falls back to the existing live request. Submission data and server endpoint behavior are unchanged. Gallery's separate loader is unchanged. This reduces repeated reads within one browsing session; it is not a guarantee against aggregate cross-visitor Google quotas.
+
+Two isolated regressions prove request deduplication, cross-page cache reuse, expiration and recovery after an uncached failure. Eleven local mocked browser tests, five unit fixtures and fourteen JavaScript syntax checks pass. No load test was run against the shared live CMS.

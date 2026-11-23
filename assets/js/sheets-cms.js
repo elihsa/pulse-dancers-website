@@ -18,8 +18,28 @@ const escapeHtml = (text) => {
   return div.innerHTML;
 };
 
+// Cache only the named public content tabs, never form submissions.
+const PUBLIC_CONTENT_TABS = new Set([...Object.values(SHEET_NAMES), 'GALLERY']);
+const PUBLIC_CONTENT_TTL = 60000;
+const publicContentPending = new Map();
+
 const PulseSheetsCMS = {
   async fetchSheet(sheetName, startRow = 1, endRow = 1000) {
+    if (!PUBLIC_CONTENT_TABS.has(sheetName)) return this.fetchSheetUncached(sheetName, startRow, endRow);
+    const key = `pulse-content-v1:${sheetName}:${startRow}:${endRow}`;
+    try {
+      const cached = JSON.parse(sessionStorage.getItem(key) || 'null');
+      if (cached && Date.now() - cached.savedAt < PUBLIC_CONTENT_TTL && Array.isArray(cached.values)) return cached.values;
+    } catch { /* Storage may be unavailable. The live request still works. */ }
+    if (publicContentPending.has(key)) return publicContentPending.get(key);
+    const pending = this.fetchSheetUncached(sheetName, startRow, endRow, values => {
+      try { sessionStorage.setItem(key, JSON.stringify({savedAt: Date.now(), values})); } catch { /* Optional cache. */ }
+    }).finally(() => publicContentPending.delete(key));
+    publicContentPending.set(key, pending);
+    return pending;
+  },
+
+  async fetchSheetUncached(sheetName, startRow = 1, endRow = 1000, onSuccess) {
     try {
       // Use the serverless API endpoint instead of direct Google Sheets API
       const url = `/api/sheets?sheetName=${sheetName}&startRow=${startRow}&endRow=${endRow}`;
@@ -49,7 +69,9 @@ const PulseSheetsCMS = {
         console.warn(`[CMS Warning] ${sheetName} sheet is empty. Add content to this tab in Google Sheets.`);
       }
       
-      return data.values || [];
+      const values = data.values || [];
+      if (Array.isArray(values) && onSuccess) onSuccess(values);
+      return values;
     } catch (error) {
       console.error(`[CMS Error] Failed to load ${sheetName}:`, error.message);
       console.info(`[CMS Help] Visit /test-cms.html to diagnose CMS issues or see CMS-TROUBLESHOOTING.md`);
