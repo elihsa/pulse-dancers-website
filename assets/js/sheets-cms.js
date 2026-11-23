@@ -80,7 +80,7 @@ const PulseSheetsCMS = {
   },
 
   async getHome() {
-    const rows = await this.fetchSheet(SHEET_NAMES.HOME, 1, 10);
+    const rows = await this.fetchSheet(SHEET_NAMES.HOME, 1, 100);
     if (rows.length === 0) return {};
     const result = {};
     rows.forEach((row) => {
@@ -240,11 +240,11 @@ const PulseSheetsCMS = {
 
   async getServicesList() {
     const rows = await this.fetchSheet(SHEET_NAMES.SERVICES, 1, 20);
-    const startIdx = rows[0]?.[0]?.toLowerCase() === 'service' ? 1 : 0;
+    const hasHeader = ['service', 'name'].includes(String(rows[0]?.[0] || '').trim().toLowerCase());
     return rows
-      .slice(startIdx)
-      .map((row) => row[0])
-      .filter((s) => s);
+      .slice(hasHeader ? 1 : 0)
+      .filter(row => row[0] && !['false', 'no', '0'].includes(String(row[2] ?? '').trim().toLowerCase()))
+      .map(row => String(row[0]).replace(/_/g, ' '));
   },
 
   async getPageContent(pageName) {
