@@ -1308,3 +1308,16 @@ textarea {
     margin-top: 0.75rem;
   }
 }
+
+/* Contact page: prevent long addresses and grid minimum widths overflowing phones. */
+.contact-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3rem;
+  margin-top: 3rem;
+}
+.contact-layout > div { min-width: 0; }
+.contact-layout a { overflow-wrap: anywhere; }
+@media (max-width: 767px) {
+  .contact-layout { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+}

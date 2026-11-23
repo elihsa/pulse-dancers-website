@@ -13,8 +13,9 @@
     "test:cms": "playwright test tests/cms-loading.test.js",
     "install:playwright": "playwright install chromium",
     "verify:all": "npm run test:comprehensive && npm run test:api",
-    "lint": "node --check api/*.js assets/js/*.js",
-    "prepare": "husky install"
+    "lint": "node scripts/check-syntax.mjs",
+    "prepare": "husky install",
+    "test:regression": "playwright test tests/functional-regression.spec.js --project=chromium"
   },
   "dependencies": {
     "googleapis": "185.0.0",
