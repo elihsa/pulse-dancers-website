@@ -1387,3 +1387,5 @@ Audit found HOME reader stopped at row10, silently omitting about/services/banne
 ### Session: Receipt proof correction (2026-11-23, build21:57 SAST)
 
 Actual owner-only booking proof saved row132 and delivered its summary. The proof revealed the booking frontend sends default quantities for hidden, unselected services. Customer summary now conditions service-specific quantities on selected services and translates service/show/location/manager raw values to visible labels. Original source rows and frontend payload contract preserved. This avoids implying the submitter requested extra performers. Tests cover hidden-count exclusion. CMS templates now carry {submissionSummary}, read back after receipt-capable build21:48 became available. Ownership remains pending; original not deleted.
+
+Legacy choice labels verified against book.html: stored manager No means visible Yes, I am managing it; location exact means Exact address. Corrected summary mappings, test added. Build21:58.
