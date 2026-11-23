@@ -219,95 +219,9 @@ function showFormStatus(message, type) {
   }
 }
 
-// ===== BOOKING FORM HANDLING =====
+// The booking page owns submission and quote updates in booking-form.js.
+// Keep only the analytics reference here, never attach a second submit handler.
 const appBookingForm = document.getElementById('booking-form');
-const appBookingStatus = document.getElementById('booking-status');
-const appTotalCostElement = document.getElementById('total-cost');
-
-if (appBookingForm) {
-  // Update total cost when services are selected
-  const serviceCheckboxes = appBookingForm.querySelectorAll('input[name="services"]');
-  serviceCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', updateTotalCost);
-  });
-  
-  appBookingForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const formData = new FormData(appBookingForm);
-    const services = Array.from(formData.getAll('services'));
-    
-    if (services.length === 0) {
-      showBookingStatus('Please select at least one service.', 'error');
-      return;
-    }
-    
-    const data = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      phone: formData.get('phone'),
-      date: formData.get('date'),
-      time: formData.get('time'),
-      services: services,
-      message: formData.get('message')
-    };
-    
-    const submitBtn = appBookingForm.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn.textContent;
-    submitBtn.textContent = 'Sending...';
-    submitBtn.disabled = true;
-    
-    try {
-      // Replace with your actual booking endpoint
-      const response = await fetch('YOUR_BOOKING_ENDPOINT', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-      });
-      
-      if (response.ok) {
-        showBookingStatus('Booking request sent! We\'ll confirm your booking soon.', 'success');
-        appBookingForm.reset();
-        updateTotalCost();
-      } else {
-        throw new Error('Booking submission failed');
-      }
-    } catch (error) {
-      showBookingStatus('Oops! Something went wrong. Please try again.', 'error');
-      console.error('Booking submission error:', error);
-    } finally {
-      submitBtn.textContent = originalBtnText;
-      submitBtn.disabled = false;
-    }
-  });
-}
-
-function updateTotalCost() {
-  const serviceCheckboxes = document.querySelectorAll('input[name="services"]:checked');
-  let total = 0;
-  
-  serviceCheckboxes.forEach(checkbox => {
-    total += parseFloat(checkbox.value) || 0;
-  });
-  
-  if (appTotalCostElement) {
-    appTotalCostElement.textContent = `R${total.toLocaleString('en-ZA')}`;
-  }
-}
-
-function showBookingStatus(message, type) {
-  if (appBookingStatus) {
-    appBookingStatus.textContent = message;
-    appBookingStatus.className = `form-status ${type}`;
-    appBookingStatus.style.display = 'block';
-    
-    setTimeout(() => {
-      appBookingStatus.style.display = 'none';
-    }, 5000);
-  }
-}
 
 // ===== TESTIMONIALS SLIDER =====
 const testimonials = document.querySelectorAll('.testimonial-card');

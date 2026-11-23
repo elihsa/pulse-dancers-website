@@ -1308,3 +1308,16 @@ Still open (need Eli's decision): unchanged from the 2026-11-21 list - waiter/bu
 ---
 
 END OF SPECIFICATION DOCUMENT
+
+
+### Session: Development functional fixes (2026-11-23, build 2026-11-23 12:02 SAST)
+
+Eli clarified that this rebuild is a development/test environment and service interruption is acceptable. The target remains the Vercel rebuild linked from this repository, not the separate existing business site. Prices, policies, customer messaging and existing data are unchanged.
+
+- Contact page now stacks the form and information panels on phones. Two desktop columns use zero minimum widths, and long contact links wrap instead of forcing horizontal scrolling. Submission feedback has a polite status announcement.
+- Removed the obsolete shared booking submission/quote implementation. The current booking-form.js remains the sole booking submission owner; analytics still records form interactions. Current service/price calculations are unchanged.
+- The syntax gate now checks every JavaScript file in api/ and assets/js/, rather than passing a glob to a command that checks only its first file.
+- CI no longer runs the legacy suite that submits fake entries to the deployed business forms. Seven isolated functional regressions use a local static server and mocked CMS/submission responses, blocking external requests. They check booking and contact success/failure/retry, retained entries after failure, exactly one booking POST, and Contact layouts at 320/390/768/1280px.
+- These isolated regressions do not prove actual spreadsheet persistence or email delivery. Nine deployed public pages were separately inspected at desktop and phone widths without submitting forms. No private submission data was read.
+
+Still requires a grounded decision or separately scoped follow-through: existing price/travel/minimum-duration conflicts; placeholder performer identity; approved privacy wording; notification provider, sender, recipients and permitted real sends; CI account billing lock if still present. Recruitment age checks and all excluded prior security work remain outside this round.

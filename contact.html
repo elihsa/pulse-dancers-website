@@ -58,7 +58,7 @@
       <h1 id="contact-page-title">Contact Us</h1>
       <p id="contact-page-description">Have a question or want to get in touch? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 3rem;">
+      <div class="contact-layout">
         <!-- Send Us a Message Form -->
         <div>
           <h2 id="contact-form-title">Send Us a Message</h2>
@@ -90,7 +90,7 @@
             
             <button type="submit" class="btn-submit" style="padding: 0.75rem 1.5rem; background-color: #FF2D55; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.3s ease;">Send Message</button>
           </form>
-          <div id="contact-status" style="display: none; margin-top: 1rem; padding: 1rem; border-radius: 4px;"></div>
+          <div role="status" aria-live="polite" id="contact-status" style="display: none; margin-top: 1rem; padding: 1rem; border-radius: 4px;"></div>
         </div>
 
         <!-- Contact Information -->
