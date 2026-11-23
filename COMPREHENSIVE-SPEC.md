@@ -1368,3 +1368,8 @@ Eli requested separate readymade automatic replies for booking, join-the-team an
 - Submitter names are sanitised for plain-text mail (newlines collapsed, 80-char cap, blank becomes 'there').
 - The owner-only development guard is unchanged: every email recipient is hard-limited to elihsa@gmail.com, admin mail is forced there, WhatsApp sends stay disabled, and the copy makes no booking, selection or publication commitment.
 - Twelve unit tests (guard, distinct per-form templates, CMS override/fallback, placeholder rendering, name sanitising, unknown-key skip), eleven isolated browser regressions and fifteen syntax checks pass locally.
+
+
+### Session: Tighten auto-reply draft wording (2026-11-23, build 2026-11-23 21:31 SAST)
+
+Review of the seeded AUTO_REPLIES drafts removed claims we cannot stand behind: the testimonial reply no longer asserts a human review/publication process, the join reply no longer asserts team review, and the booking reply no longer describes the confirmation process. All three are plain receipt acknowledgements; the booking reply keeps the note that a booking is only confirmed once we have spoken to the sender directly. CMS rows and built-in fallbacks updated together.

@@ -39,7 +39,7 @@ export const DEFAULT_AUTO_REPLIES = {
     subject: 'We received your booking request - Pulse',
     body:
       'Hi {firstName},\n\n' +
-      "Thank you for your booking request with Pulse Male Revue. We've received your details and will be in touch to confirm availability and finalise your booking.\n\n" +
+      "Thank you for your booking request with Pulse Male Revue. We've received your details and will be in touch about your booking.\n\n" +
       "Please note: your booking is only confirmed once we've spoken to you directly.\n\n" +
       SIGNATURE,
   },
@@ -47,8 +47,8 @@ export const DEFAULT_AUTO_REPLIES = {
     subject: 'We received your application - Pulse',
     body:
       'Hi {firstName},\n\n' +
-      "Thank you for applying to join the Pulse Male Revue team. We've received your application and our team will review it.\n\n" +
-      "If your application is a match, we'll contact you about the next steps. Submitting an application doesn't guarantee selection.\n\n" +
+      "Thank you for applying to join the Pulse Male Revue team. We've received your application.\n\n" +
+      "If your application is a match, we'll be in touch about the next steps. Submitting an application doesn't guarantee selection.\n\n" +
       SIGNATURE,
   },
   contact_confirmation: {
@@ -63,7 +63,6 @@ export const DEFAULT_AUTO_REPLIES = {
     body:
       'Hi {firstName},\n\n' +
       "Thank you for sharing your Pulse Male Revue experience. We've received your testimonial.\n\n" +
-      'Every testimonial is read by our team before anything is published on the site.\n\n' +
       SIGNATURE,
   },
 };
