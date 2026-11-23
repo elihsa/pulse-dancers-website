@@ -4,6 +4,7 @@
 import { google } from 'googleapis';
 import { notifyPulse, notifyCustomer } from './notify.js';
 import { addFormField } from '../lib/form-fields.js';
+import { buildJoinRow } from '../lib/join-row.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -52,9 +53,6 @@ async function fitPhotoToCell(buffer) {
   }
   return out && out.toString('base64').length <= TARGET_BASE64_CHARS ? out : null;
 }
-
-// Prefix with an apostrophe so Sheets keeps the leading zero on SA numbers.
-const asText = (v) => (v ? "'" + String(v) : '');
 
 export default async (req, res) => {
   // Handle CORS
@@ -175,35 +173,14 @@ export default async (req, res) => {
 
     // Prepare row data for JOIN_APPLICATIONS tab
     const timestamp = new Date().toISOString();
-    const rowData = [
-      timestamp,
-      fields.firstName,
-      fields.lastName,
-      fields.birthMonth || '',
-      fields.birthDay || '',
-      fields.birthYear || '',
-      fields.streetAddress || '',
-      fields.city || '',
-      fields.email,
-      asText(fields.phone),
-      preferences,
-      fields.danceExperience || 'Not answered',
-      fields.promoExperience || 'Not answered',
-      fields.transport || 'Not answered',
-      fields.gymLocation || 'Not specified',
-      fields.otherWork || 'Not specified',
-      fields.skills || 'Not specified',
-      uploadedFiles['fullBodyShot'] || '',
-      uploadedFiles['fullFacePhoto'] || '',
-      'Pending' // Status
-    ];
+    const rowData = buildJoinRow(fields, uploadedFiles, timestamp, preferences);
 
     // Append to Google Sheets JOIN_APPLICATIONS tab
     const sheetName = 'JOIN_APPLICATIONS';
     const range = `${sheetName}!A1`;
     const rangeEncoded = encodeURIComponent(range);
 
-    await sheets.spreadsheets.values.append({
+    const saved = await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
       range: rangeEncoded,
       valueInputOption: 'USER_ENTERED',
@@ -220,6 +197,7 @@ export default async (req, res) => {
 
     res.status(200).json({
       success: true,
+      savedRange: saved.data.updates?.updatedRange || null,
       message: 'Application submitted successfully. We will review your submission within 5 business days.'
     });
 
