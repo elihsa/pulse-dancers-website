@@ -24,3 +24,8 @@ test('summary always follows greeting, with legacy and placeholder CMS bodies',(
   assert.equal(out.split('This is the information').length,2);
  }
 });
+test('booking omits hidden default service quantities and uses visible labels',()=>{
+ const s=submissionSummary('booking_confirmation',{services:['male'],maleCount:1,showType:'full',femaleCount:1,waiterCount:1,butlerCount:1,gamesQty:1,poleQty:1,managing:'Yes, but im not managing it.'});
+ assert.match(s,/Services: Male Stripper/);assert.match(s,/Male performers: 1/);assert.match(s,/Show type: Full show \(20 mins\)/);assert.match(s,/No, someone else is managing it/);
+ assert.doesNotMatch(s,/Female performers|Waiters:|Butlers:|Games:|Pole shows:/);
+});
