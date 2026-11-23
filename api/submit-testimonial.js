@@ -2,7 +2,7 @@
 // Adds testimonial to Google Sheets with Pending status
 
 import { google } from 'googleapis';
-import { notifyPulse } from './notify.js';
+import { notifyPulse, notifyCustomer } from './notify.js';
 
 const getServiceAccountAuth = () => {
   const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
@@ -77,6 +77,8 @@ export default async (req, res) => {
     });
 
     await notifyPulse('review (pending approval)', { name, rating: ratingNum, area, message });
+    // Email is optional on testimonials; notifyCustomer skips when absent.
+    await notifyCustomer('testimonial_confirmation', email, name);
 
     res.status(200).json({
       success: true,

@@ -1356,3 +1356,15 @@ Recruitment feedback no longer fades from zero opacity. Success uses solid backg
 
 ### Owner-only email verification (2026-11-23, build 19:49 SAST)
 Eli approved free booking/recruitment notification testing only to elihsa@gmail.com and reuse of saved same-kind credentials across his projects. Email helper restricts every recipient to that exact owner mailbox, routes admin tests there, and disables WhatsApp for this test phase. Customer test copy makes no response-time or booking commitment. Existing Resend sending-only key is reused, not replaced or broadened. No domain/DNS changes, paid sends or visitor delivery. Removing this development restriction requires separate authority.
+
+
+### Session: CMS-editable automatic submission replies (2026-11-23, build 2026-11-23 21:20 SAST)
+
+Eli requested separate readymade automatic replies for booking, join-the-team and testimonial submissions, editable through the existing CMS instead of code.
+
+- New AUTO_REPLIES tab in the Pulse CMS workbook (KEY | SUBJECT | BODY | NOTES). One row per template: booking_confirmation, join_confirmation, testimonial_confirmation, plus contact_confirmation to keep the existing contact-form reply working under the same editable scheme. Supported placeholder: {firstName}. The tab is server-side only: it is NOT in the api/sheets.js public-tab allowlist.
+- api/notify.js loads templates from that tab through the service account (read-only scope), cached for 60 seconds per warm instance. Any read failure, missing row or blank body falls back to the built-in defaults in DEFAULT_AUTO_REPLIES, so email never breaks on a sheet problem. Unknown template keys send nothing.
+- notifyCustomer now takes an explicit template key instead of a free-text kind. Call sites: booking -> booking_confirmation, join -> join_confirmation, testimonial -> testimonial_confirmation (new; testimonials previously sent no submitter reply, and only when the optional email field is filled), contact -> contact_confirmation.
+- Submitter names are sanitised for plain-text mail (newlines collapsed, 80-char cap, blank becomes 'there').
+- The owner-only development guard is unchanged: every email recipient is hard-limited to elihsa@gmail.com, admin mail is forced there, WhatsApp sends stay disabled, and the copy makes no booking, selection or publication commitment.
+- Twelve unit tests (guard, distinct per-form templates, CMS override/fallback, placeholder rendering, name sanitising, unknown-key skip), eleven isolated browser regressions and fifteen syntax checks pass locally.
