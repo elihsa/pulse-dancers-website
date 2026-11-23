@@ -1345,3 +1345,10 @@ Vercel runtime logs during the rapid read-only page QA pass confirmed Google She
 The browser CMS helper now deduplicates simultaneous identical requests and caches successful named public content-tab ranges in session storage for up to60 seconds across page navigation. Content edits can therefore take up to one minute to appear in the same tab. Failed requests are never cached, and no retry burst is added. An unavailable browser cache falls back to the existing live request. Submission data and server endpoint behavior are unchanged. Gallery's separate loader is unchanged. This reduces repeated reads within one browsing session; it is not a guarantee against aggregate cross-visitor Google quotas.
 
 Two isolated regressions prove request deduplication, cross-page cache reuse, expiration and recovery after an uncached failure. Eleven local mocked browser tests, five unit fixtures and fourteen JavaScript syntax checks pass. No load test was run against the shared live CMS.
+
+
+### Session: Preserve already-collected recruitment detail (2026-11-23, build 2026-11-23 12:52 SAST)
+
+The historic Join field list above predates the current form. This patch does not add collection or requiredness: it preserves inputs already present in that form but previously discarded by its writer. Existing A:T positions remain unchanged, including Status at T. Columns U:AF append Instagram, Height, Weight, Waist, Chest, ShoeSize, HairColor, EyeColor, Ethnicity, BodyType, Tattoos, ImageFilter in that order. No header, old row, workbook or policy is changed. An isolated mapping helper and fixtures assert all20 original positions and empty extensions for older callers. Exact savedRange is returned for controlled newly appended-row verification only.
+
+Recruitment feedback no longer fades from zero opacity. Success uses solid background#10291a and text#b7f7cd, calculated contrast12.64:1. Intercepted local browser pixels show readable settled feedback, with no real submission or photos sent. Eleven browser regressions, seven unit fixtures and fifteen syntax checks pass locally. Actual deployed storage and final deployed pixels require separate verification.

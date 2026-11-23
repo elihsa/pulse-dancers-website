@@ -1211,13 +1211,12 @@ textarea {
   border-radius: 8px;
   font-weight: 600;
   text-align: center;
-  animation: slideIn 0.3s ease;
 }
 
 .form-messages.success {
-  background-color: rgba(46, 204, 113, 0.2);
+  background-color: #10291a;
   border: 1px solid #2ecc71;
-  color: #2ecc71;
+  color: #b7f7cd;
 }
 
 .form-messages.error {
