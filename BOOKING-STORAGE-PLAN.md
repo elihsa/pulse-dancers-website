@@ -1,6 +1,6 @@
 # Booking storage extension plan, preparation only
 
-Not deployed. No spreadsheet reads, writes, header insertion, migration or backfill are part of this preparation.
+Prepared for the current existing-sheet test environment. No header insertion, history edits, migration or backfill are included.
 
 ## Grounded source contract
 
@@ -14,17 +14,13 @@ lib/booking-row.js extracts the existing31 expressions without changing their or
 
 This mapping needs no existing-row reads, no header writes and no history edits. It would affect only future rows appended by this handler. The endpoint still uses the existing append behavior and notification behavior, neither enabled nor tested with real sends here.
 
-## Unresolved before deployment
+## Owner clarification and final plan
 
-Source inspection cannot prove that the shared workbook has no external Apps Script, formula, integration or other writer relying on the31-column width or claiming AF:AH. The workbook's current business-use boundary also remains unverified. Therefore do not deploy this preparation merely because the first31 positions are preserved.
+Eli's23 November12:20 authenticated voice clarification says the existing entries are test data, keep the existing setup and make it work as for public use. No isolated workbook will be created, and no current purge is approved. The compatible append-only extension preserves all existing positions and records without relying on header detection. There is no workbook schema mutation or header creation step.
 
-Needed confirmation: AF:AH are available for these optional new values, extending future rows is acceptable for all workbook consumers, and this handler targets the intended development CMS. If that cannot be established without reading submissions, ask Eli or the workbook owner for that narrow layout/integration confirmation, not permission to overwrite existing rows.
-
-## Proposed application after confirmation
-
-1. Revalidate current main/source and the target workbook configuration without printing secrets.
-2. Confirm metadata-only column capacity. If fewer than34 columns exist, append only the necessary empty columns at the right edge after checking compatibility. No row/data deletion or shifts.
-3. Update BOOKING-FORM.md and the active spec with the explicit A:AE + AF:AH contract and no-backfill limitation. Bump visible timestamped build.
-4. Run unit/syntax and isolated browser regressions. Keep CI free of real submissions.
-5. Merge/deploy only this source change under the approved scope. A controlled persistence test needs a separately grounded destination and permission for any resulting notifications; never call a mock success live end-to-end proof.
-6. Rollback is code-only. Existing appended values remain, no data cleanup or backfill is implied.
+1. Keep the existing workbook target, credentials and access unchanged.
+2. Append34 fields for future bookings only, with Status still in AE.
+3. Return the exact savedRange supplied by Sheets for narrowly scoped verification of a new controlled test, not a scan of past submissions.
+4. Keep notification configuration unchanged. Do not send to arbitrary/legacy recipients. Actual controlled test sends remain limited to the owner's approved address.
+5. Local unit tests establish mapping, not actual persistence. Verify a controlled newly written row only within the approved test scope before claiming live persistence.
+6. Rollback is code-only. Already appended values stay in place. No cleanup, backfill or purge is implied.

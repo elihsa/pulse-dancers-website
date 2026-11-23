@@ -15,7 +15,8 @@
     "verify:all": "npm run test:comprehensive && npm run test:api",
     "lint": "node scripts/check-syntax.mjs",
     "prepare": "husky install",
-    "test:regression": "playwright test tests/functional-regression.spec.js --project=chromium"
+    "test:regression": "playwright test tests/functional-regression.spec.js --project=chromium",
+    "test:unit": "node --test tests/*.unit.mjs"
   },
   "dependencies": {
     "googleapis": "185.0.0",

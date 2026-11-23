@@ -10,6 +10,7 @@
 // ManagerEmail | LocType | Address | Area | DistanceKm | Services | MaleCount | ShowType |
 // Race | Costume | FemaleCount | WaiterCount | WaiterHours | ButlerCount | ButlerHours |
 // GamesQty | PoleQty | OtherText | Notes | QuotePerformance | QuoteTravel | QuoteTotal | Status
+// Appended extension only: EventDate (AF) | EventTime (AG) | GuestCount (AH).
 
 import { google } from 'googleapis';
 import { buildBookingRow } from '../lib/booking-row.js';
@@ -58,7 +59,7 @@ export default async (req, res) => {
     const rowData = buildBookingRow(b, timestamp);
 
     const range = encodeURIComponent('BOOKINGS!A1');
-    await sheets.spreadsheets.values.append({
+    const appendResult = await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
       range,
       valueInputOption: 'USER_ENTERED',
@@ -76,6 +77,7 @@ export default async (req, res) => {
 
     res.status(200).json({
       success: true,
+      savedRange: appendResult.data?.updates?.updatedRange || null,
       message: 'Thank you! Your booking request has been sent. We will respond within 24 hours.',
     });
   } catch (error) {

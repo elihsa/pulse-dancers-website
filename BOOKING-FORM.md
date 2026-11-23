@@ -53,7 +53,7 @@ Submissions are written to the **`BOOKINGS`** tab of the Google Sheet (same shee
 **If the tab doesn't exist yet:** create a tab named exactly `BOOKINGS` with these column headers (row 1):
 
 ```
-Timestamp | Name | Phone | Email | EventType | Managing | ManagerName | ManagerPhone | ManagerEmail | LocType | Address | Area | DistanceKm | Services | MaleCount | ShowType | Race | Costume | FemaleCount | WaiterCount | WaiterHours | ButlerCount | ButlerHours | GamesQty | PoleQty | OtherText | Notes | QuotePerformance | QuoteTravel | QuoteTotal | Status
+Timestamp | Name | Phone | Email | EventType | Managing | ManagerName | ManagerPhone | ManagerEmail | LocType | Address | Area | DistanceKm | Services | MaleCount | ShowType | Race | Costume | FemaleCount | WaiterCount | WaiterHours | ButlerCount | ButlerHours | GamesQty | PoleQty | OtherText | Notes | QuotePerformance | QuoteTravel | QuoteTotal | Status | EventDate | EventTime | GuestCount
 ```
 
 Make sure the service account email is shared on the sheet with **Editor** access (same as for the other forms).
@@ -77,3 +77,8 @@ Nothing special — push to `main` on GitHub and Vercel auto-deploys. The endpoi
 - `assets/js/booking-calculator.js` — deleted (standalone calculator for the old JotForm page; contained a broken API key)
 - JotForm embeds on `book.html` — removed
 - `JOTFORM-INTEGRATION.md` — superseded by this document
+
+
+### Existing-sheet compatibility (23 November2026)
+
+For existing BOOKINGS tabs, do not write a header over row1 and do not shift any existing columns. New rows preserve the original31 fields in A:AE, including Status in AE, and append EventDate/Time/GuestCount at AF:AH. This works with or without a header row. Existing records are not migrated, backfilled or deleted. The form API reports the exact savedRange returned by Sheets so a controlled new test can be checked without reading earlier submissions.
