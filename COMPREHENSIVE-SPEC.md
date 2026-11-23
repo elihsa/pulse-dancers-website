@@ -1391,9 +1391,9 @@ Actual owner-only booking proof saved row132 and delivered its summary. The proo
 Legacy choice labels verified against book.html: stored manager No means visible Yes, I am managing it; location exact means Exact address. Corrected summary mappings, test added. Build21:58.
 
 
-### 2026-11-23 entered-address receipt activation (prepared, sender verification pending)
+### 2026-11-23 entered-address receipt activation
 - Eli approved new-form receipts to the entered submitter email and chose visible info@pulsedancers.com. No retroactive/bulk sends; WhatsApp remains off, admin remains elihsa@gmail.com.
 - Receipt transport now validates exactly one entered email and sets From Pulse Website <info@pulsedancers.com>, Reply-To info@pulsedancers.com. Greeting / submitted-details summary / approved acknowledgement order unchanged.
 - Send-only Resend pulsedancers.com identity created in Ireland. Only new resend._domainkey TXT, send CNAME and rsend CNAME added at Afrihost. All existing zone records preserved, apart from host-generated SOA serial. Receiving/tracking remain disabled. No new key, existing sending/all-domains key reused.
 - Live Resend Free allowance verified:100/day,3000/month across account (shared with BayBuddy), no payment method, no paid plan, pay-as-you-go off/disabled. Quota failure rejects with429, no provider queue/retry; submissions still save. No automatic paid upgrade authorized. Usually2 emails per submission. Verify plan/limits before future production-volume changes.
-- Local tests prepare entered-address routing but activation and actual external delivery remain pending verified sender/deployment proof. CMS relocation is separate and held for same-ID ownership acceptance, no copy cutover or deletion.
+- Sender verified by provider23:10, checked23:51. Deployment and actual external delivery proofs tracked below. CMS relocation is separate and held for same-ID ownership acceptance, no copy cutover or deletion.
