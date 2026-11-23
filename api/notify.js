@@ -16,11 +16,12 @@
 //
 // Customer confirmation copy is CMS-editable: the AUTO_REPLIES tab in the Pulse
 // CMS workbook holds one row per template (KEY | SUBJECT | BODY | NOTES), so
-// wording can be changed without a deploy. Supported placeholder: {firstName}.
+// wording can be changed without a deploy. Supported placeholders: {firstName}, {submissionSummary}.
 // The DEFAULT_AUTO_REPLIES below are the fallback when the tab cannot be read
-// or a row is missing/empty, so email never breaks on a sheet problem.
+// or a row is missing/empty, for wording only. Delivery can still fail separately.
 
 import { google } from 'googleapis';
+import { submissionSummary, composeCustomerReceipt } from '../lib/submission-summary.js';
 
 // Development email verification is restricted to Eli, including admin mail.
 const TEST_RECIPIENT = 'elihsa@gmail.com';
@@ -38,7 +39,7 @@ export const DEFAULT_AUTO_REPLIES = {
   booking_confirmation: {
     subject: 'We received your booking request - Pulse',
     body:
-      'Hi {firstName},\n\n' +
+      'Hi {firstName},\n\n{submissionSummary}\n\n' +
       "Thank you for your booking request with Pulse Male Revue. We've received your details and will be in touch about your booking.\n\n" +
       "Please note: your booking is only confirmed once we've spoken to you directly.\n\n" +
       SIGNATURE,
@@ -46,7 +47,7 @@ export const DEFAULT_AUTO_REPLIES = {
   join_confirmation: {
     subject: 'We received your application - Pulse',
     body:
-      'Hi {firstName},\n\n' +
+      'Hi {firstName},\n\n{submissionSummary}\n\n' +
       "Thank you for applying to join the Pulse Male Revue team. We've received your application.\n\n" +
       "If your application is a match, we'll be in touch about the next steps. Submitting an application doesn't guarantee selection.\n\n" +
       SIGNATURE,
@@ -54,14 +55,14 @@ export const DEFAULT_AUTO_REPLIES = {
   contact_confirmation: {
     subject: 'We received your message - Pulse',
     body:
-      'Hi {firstName},\n\n' +
+      'Hi {firstName},\n\n{submissionSummary}\n\n' +
       "Thank you for contacting Pulse Male Revue. We've received your message and will get back to you.\n\n" +
       SIGNATURE,
   },
   testimonial_confirmation: {
     subject: 'Thank you for your feedback - Pulse',
     body:
-      'Hi {firstName},\n\n' +
+      'Hi {firstName},\n\n{submissionSummary}\n\n' +
       "Thank you for sharing your Pulse Male Revue experience. We've received your testimonial.\n\n" +
       SIGNATURE,
   },
@@ -182,7 +183,7 @@ export async function notifyPulse(kind, fields) {
 // templateKey is one of DEFAULT_AUTO_REPLIES keys (booking_confirmation,
 // join_confirmation, testimonial_confirmation); copy comes from the CMS
 // AUTO_REPLIES tab with the defaults as fallback.
-export async function notifyCustomer(templateKey, toEmail, firstName) {
+export async function notifyCustomer(templateKey, toEmail, firstName, fields = {}, uploads = {}) {
   try {
     if (process.env.SEND_CUSTOMER_CONFIRMATION !== '1' || !toEmail) return;
     if (!DEFAULT_AUTO_REPLIES[templateKey]) {
@@ -191,7 +192,10 @@ export async function notifyCustomer(templateKey, toEmail, firstName) {
     }
     const rows = await fetchAutoReplyRows();
     const template = templateFromRows(rows, templateKey);
-    const text = renderTemplate(template.body, { firstName: sanitizeFirstName(firstName) });
+    const name = sanitizeFirstName(firstName);
+    const summary = submissionSummary(templateKey, fields, uploads);
+    const rendered = renderTemplate(template.body, { firstName: name });
+    const text = composeCustomerReceipt(rendered, name, summary);
     await sendEmail(toEmail, template.subject, text);
   } catch (e) {
     console.error('notifyCustomer failed:', e.message);
