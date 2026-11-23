@@ -9,9 +9,8 @@
 //     CALLMEBOT_API_KEY, CALLMEBOT_PHONE_NUMBER  (e.g. +27840197733)
 //   Email via Resend (https://resend.com, free tier):
 //     RESEND_API_KEY
-//     ADMIN_EMAIL          - where lead notifications go (default info@pulsedancers.com)
-//     NOTIFY_FROM_EMAIL    - verified sender (default onboarding@resend.dev,
-//                            works on Resend's free tier without a domain)
+//     Admin mail is fixed to Eli. Sender/Reply-To are info@pulsedancers.com.
+//     Requires verified send-only pulsedancers.com in the existing Resend account.
 //     SEND_CUSTOMER_CONFIRMATION=1 - also email the customer a confirmation
 //
 // Customer confirmation copy is CMS-editable: the AUTO_REPLIES tab in the Pulse
@@ -23,10 +22,10 @@
 import { google } from 'googleapis';
 import { submissionSummary, composeCustomerReceipt } from '../lib/submission-summary.js';
 
-// Development email verification is restricted to Eli, including admin mail.
-const TEST_RECIPIENT = 'elihsa@gmail.com';
-const ADMIN_EMAIL = TEST_RECIPIENT;
-const FROM_EMAIL = process.env.NOTIFY_FROM_EMAIL || 'Pulse Website <onboarding@resend.dev>';
+// Admin notifications remain with Eli. New form receipts use the validated entered email.
+const ADMIN_EMAIL = 'elihsa@gmail.com';
+const FROM_EMAIL = 'Pulse Website <info@pulsedancers.com>';
+const REPLY_TO_EMAIL = 'info@pulsedancers.com';
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID || '1NekTQSIICnUECtreDTXycz_yQlYpg48VMjTIA8uUuu4';
 const AUTO_REPLIES_TAB = 'AUTO_REPLIES';
@@ -142,18 +141,26 @@ function summarize(kind, fields) {
 }
 
 async function sendWhatsApp(text) {
-  // No WhatsApp sends are authorised in this owner-only email test phase.
+  // WhatsApp sends remain disabled. Email receipt approval does not enable this channel.
   return false;
 
 }
 
+export function receiptEmail(value) {
+  if (typeof value !== 'string') return null;
+  const email = value.trim();
+  if (email.length > 254 || /[\s,;<>\r\n]/.test(email)) return null;
+  return /^[^@]+@[^@]+\.[^@]+$/.test(email) ? email : null;
+}
+
 async function sendEmail(to, subject, text) {
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey || typeof to !== 'string' || to.trim().toLowerCase() !== TEST_RECIPIENT) return false;
+  const recipient = receiptEmail(to);
+  if (!apiKey || !recipient) return false;
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: FROM_EMAIL, to: [to], subject, text }),
+    body: JSON.stringify({ from: FROM_EMAIL, to: [recipient], reply_to: REPLY_TO_EMAIL, subject, text }),
   });
   if (!res.ok) {
     console.error('Resend email failed:', res.status, await res.text().catch(() => ''));
