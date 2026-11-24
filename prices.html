@@ -131,11 +131,14 @@
             // the booking form charges (PAGE_CONTENT: travelRatePerKm /
             // freeRadiusKm / baseLocationName) — one source of truth, so the
             // displayed rate can never drift from the quoted rate.
-            const rate = booking.travelRatePerKm ? parseFloat(booking.travelRatePerKm) : 5;
-            const radius = booking.freeRadiusKm ? parseFloat(booking.freeRadiusKm) : 50;
-            const base = booking.baseLocationName || 'Sandton City';
+            const rate = parseFloat(booking.travelRatePerKm);
+            const radius = parseFloat(booking.freeRadiusKm);
+            const base = booking.baseLocationName;
+            // No numeric fallback: if the CMS values are missing, say travel is quoted.
             document.getElementById('pricing-travel-text').textContent =
-              `R${rate} per km outside ${radius}km radius from ${base} (round trip).`;
+              (isNaN(rate) || isNaN(radius) || !base)
+                ? 'Travel is added to your final quote.'
+                : `R${rate} per km outside ${radius}km radius from ${base} (round trip).`;
           } catch (error) {
             console.error('Error loading prices page content:', error);
             // Keep default content if CMS fails
@@ -162,7 +165,7 @@
           </div>
           <div style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
             <h3 style="color: #FF2D55; margin-bottom: 0.75rem;" id="pricing-travel-title">Travel</h3>
-            <p style="color: #E5E5E5;" id="pricing-travel-text">R5 per km outside 50km radius from Sandton City (round trip).</p>
+            <p style="color: #E5E5E5;" id="pricing-travel-text">Travel is added to your final quote.</p>
           </div>
           <div style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
             <h3 style="color: #FF2D55; margin-bottom: 0.75rem;" id="pricing-custom-title">Custom Packages</h3>
