@@ -8,8 +8,8 @@
  * (Page = BOOKING) and drive BOTH the quote math and the displayed sentence:
  *
  * CMS keys (PAGE_CONTENT tab, Page=BOOKING):
- *   travelRatePerKm   - travel fee per km beyond the free radius (default 5)
- *   freeRadiusKm      - free travel radius in km (default 50)
+ *   travelRatePerKm   - travel fee per km beyond the free radius (no default in code)
+ *   freeRadiusKm      - free travel radius in km (no default in code)
  *   baseLocationName  - display name of the base location (default "Sandton City")
  *   googleMapsApiKey  - Google Maps JS API key (enables address autocomplete)
  *
@@ -18,11 +18,14 @@
  *   "Female Stripper", "Topless Waiter", "Bottomless Waiter",
  *   "Fun Games", "Pole Dancer"
  * Missing price -> the item shows as POA (price on application).
+ * If the travel settings cannot be read from the CMS, no travel figure is
+ * shown: the quote says travel is confirmed in the final quote. The code holds
+ * no numeric price or travel rule of its own.
  */
 
 const BookingSettings = {
-  travelRatePerKm: 5,
-  freeRadiusKm: 50,
+  travelRatePerKm: null, // from CMS only; null = unavailable
+  freeRadiusKm: null,    // from CMS only; null = unavailable
   baseLocationName: 'Sandton City',
   baseCoords: { lat: -26.1086, lng: 28.0567 }, // Sandton City
   prices: {}, // Service name -> { price, duration, description } from PRICES tab
@@ -67,18 +70,18 @@ const BookingForm = {
     // Travel settings from the PAGE_CONTENT tab (Page = BOOKING).
     // NOTE: the map is keyed by the Key column. An earlier version keyed it by
     // the Page column, so no CMS setting ever actually loaded — the form always
-    // ran on the hardcoded defaults below.
+    // ran on hardcoded defaults (now removed).
     try {
       const rows = await PulseSheetsCMS.fetchSheet('PAGE_CONTENT', 1, 100);
       const map = {};
       rows.forEach(r => { if (r[0] && String(r[0]).trim() === 'BOOKING' && r[1]) map[String(r[1]).trim()] = r[2]; });
-      const num = (v, d) => { const n = parseFloat(v); return isNaN(n) ? d : n; };
-      if (map.travelRatePerKm) BookingSettings.travelRatePerKm = num(map.travelRatePerKm, 5);
-      if (map.freeRadiusKm) BookingSettings.freeRadiusKm = num(map.freeRadiusKm, 50);
+      const num = (v) => { const n = parseFloat(v); return isNaN(n) || n < 0 ? null : n; };
+      if (map.travelRatePerKm) BookingSettings.travelRatePerKm = num(map.travelRatePerKm);
+      if (map.freeRadiusKm) BookingSettings.freeRadiusKm = num(map.freeRadiusKm);
       if (map.baseLocationName) BookingSettings.baseLocationName = String(map.baseLocationName).trim();
       if (map.googleMapsApiKey) BookingSettings.googleMapsApiKey = String(map.googleMapsApiKey).trim();
     } catch (e) {
-      console.warn('[Booking] Could not load settings from CMS, using defaults:', e.message);
+      console.warn('[Booking] Could not load travel settings from CMS; travel will be confirmed in the final quote:', e.message);
     }
     // Service prices — single source of truth: the PRICES tab (the same table
     // the Prices page renders). Services missing a price quote as POA.
@@ -111,6 +114,12 @@ const BookingForm = {
       if (exact && exact.closest('label')) exact.closest('label').hidden = true;
     }
     this.updateRateNotes();
+  },
+
+  // True only when both travel settings were read from the CMS.
+  travelReady() {
+    const S = BookingSettings;
+    return S.travelRatePerKm !== null && S.freeRadiusKm !== null;
   },
 
   // Look up a service price from the PRICES tab; null -> POA.
@@ -163,9 +172,11 @@ const BookingForm = {
     const note = document.getElementById('bf-travel-note');
     if (disp) disp.style.display = 'block';
     if (kmEl) kmEl.textContent = `${km.toFixed(0)} km (round trip)`;
-    if (note) note.textContent = km <= BookingSettings.freeRadiusKm
-      ? ' — within the free travel radius'
-      : ` — travel fee applies beyond ${BookingSettings.freeRadiusKm}km`;
+    if (note) note.textContent = !this.travelReady()
+      ? ' — travel confirmed in your final quote'
+      : km <= BookingSettings.freeRadiusKm
+        ? ' — within the free travel radius'
+        : ` — travel fee applies beyond ${BookingSettings.freeRadiusKm}km`;
     this.updateQuote();
   },
 
@@ -248,7 +259,7 @@ const BookingForm = {
       const xpress = document.getElementById('bf-show-type').value === 'xpress';
       const price = count === 1
         ? this.priceOf(xpress ? '1 Man Xpress Show' : '1 Man Show')
-        : (this.priceOf(`${count} Man Show`) || count * this.priceOf('1 Man Show'));
+        : this.priceOf(`${count} Man Show`);
       if (price) performance += price; else hasPOA = true;
     }
     // Everything else: per-unit PRICES price x count/hours/qty.
@@ -269,14 +280,15 @@ const BookingForm = {
       line('Pole Dancer', this.val('bf-pole-qty') || 1);
 
     const distance = this.distanceKm || 0;
-    const travel = Math.max(0, distance - S.freeRadiusKm) * S.travelRatePerKm;
+    const travelKnown = this.travelReady();
+    const travel = travelKnown ? Math.max(0, distance - S.freeRadiusKm) * S.travelRatePerKm : 0;
     const total = performance + travel;
 
     const t = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     t('bf-quote-performance', this.fmt(performance));
     t('bf-quote-distance', distance > 0 ? `${distance.toFixed(0)} km` : '—');
-    t('bf-quote-travel', this.fmt(travel));
-    t('bf-quote-total', hasPOA && performance === 0 ? 'POA' : this.fmt(total) + (hasPOA ? ' + POA items' : ''));
+    t('bf-quote-travel', travelKnown ? this.fmt(travel) : 'Confirmed in final quote');
+    t('bf-quote-total', hasPOA && performance === 0 ? 'POA' : this.fmt(total) + (hasPOA ? ' + POA items' : '') + (travelKnown ? '' : ' + travel'));
   },
 
   async onSubmit(e) {
