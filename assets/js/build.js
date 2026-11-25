@@ -1,6 +1,6 @@
 // Visible build stamp. Updated with every site change (standing requirement).
 // One edit here updates every page.
-window.PULSE_BUILD = '2026-11-25 17:27 SAST';
+window.PULSE_BUILD = '2026-11-25 17:52 SAST';
 
 document.addEventListener('DOMContentLoaded', () => {
   const stamp = document.createElement('div');
