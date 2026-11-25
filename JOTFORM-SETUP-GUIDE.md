@@ -58,7 +58,7 @@ Your booking and join forms are powered by JotForm. This guide shows you how to 
 1. Add another calculation widget
 2. Use conditional formula:
 ```
-IF({distance} > 50, ({distance} - 50) * 4, 0)
+IF({distance} > 30, ({distance} - 30) * 5, 0)
 ```
 
 3. Label it: **Travel Fee**
@@ -87,8 +87,8 @@ IF({distance} > 50, ({distance} - 50) * 4, 0)
 - Sandton City, Johannesburg, South Africa
 
 **Formula for travel cost:**
-- First 50km: Free
-- After 50km: R4/km (round trip)
+- First 30km: Free
+- After 30km: R5/km (round trip)
 
 ---
 
