@@ -130,7 +130,7 @@ Home | Prices | FAQ | Meet The Guys | Join | Book Now
 **Live Quote Display:**
 - Performance Fee (calculated from service × performers)
 - Distance (round trip km, from Sandton City)
-- Travel Fee (R5/km beyond 50km free radius)
+- Travel Fee (R5/km beyond 30km free radius)
 - **Estimated Total**
 
 **Additional:**
@@ -142,7 +142,7 @@ Home | Prices | FAQ | Meet The Guys | Join | Book Now
 - Google Maps API: Distance Matrix + Places Autocomplete
 - API Key: AIzaSyDmIhz0iWcB8R-BBXkFFGi36bCQIm7fgA8
 - Base Location: Sandton City, Johannesburg
-- Free Radius: 50km
+- Free Radius: 30km
 - Rate: R5/km (round trip)
 
 **Form Submission:**
@@ -193,7 +193,7 @@ Home | Prices | FAQ | Meet The Guys | Join | Book Now
 - General notes (CMS-editable)
 - "How Pricing Works" section
   - Base Rate
-  - Travel (R5/km outside 50km)
+  - Travel (R5/km outside 30km)
   - Custom Packages
 - "Ready to Book?" CTA section
 
@@ -459,7 +459,7 @@ The following CSV files are ready for import:
 **File:** /data/booking.json
 **Fields:**
 - baseLocationAddress (string): "Sandton City, Johannesburg, South Africa"
-- freeKm (number): 50
+- freeKm (number): 30
 - randPerKm (number): 4
 - currency (string): "R"
 - dancerPerGuests (number): 20
@@ -1072,7 +1072,7 @@ Owner confirms with customer
 
 **Quote Calculation:**
 - Performance Fee = Sum of selected services
-- Travel Fee = (distance - 50km) × R5/km
+- Travel Fee = (distance - 30km) × R5/km
 - Total = Performance Fee + Travel Fee
 
 ### Cost Structure
@@ -1304,6 +1304,13 @@ Form submissions (`api/submit-*`) are unchanged and still write to the workbook 
 **Residual-risk follow-up (same containment approval, build 2026-11-22 17:24 SAST):** verification confirmed the workbook WAS shared "Anyone with the link can view", so the private tabs were also readable directly through the Google Sheets API with the exposed workbook ID. The live pulsedancers.com site was checked and does not reference this workbook, so public sharing served only this rebuild. `api/sheets.js` now reads through the service account (the same one the submit-* endpoints use, read-only scope), with the API-key path kept only as a legacy fallback, and the workbook's "Anyone with the link" permission was removed. Owner (elihsa@gmail.com), pulsesouthafrica@gmail.com and the service account keep their access; CMS editing is unaffected.
 
 Still open (need Eli's decision): unchanged from the 2026-11-21 list - waiter/butler 2-hour minimum, travel free-radius 30km vs 50km, Xpress tier pricing for 2+ man shows, services missing from the booking form, the "X" performer name, privacy.html content, exact-date 18+ enforcement on the join form, FAQ refund wording, notification provider choice, GitHub Actions billing lock.
+
+### 2026-11-25 Travel free radius decided: 30 km (build 2026-11-25 16:30 SAST)
+- Eli (WhatsApp, 2026-11-25 16:23) chose 30 km free before R5/km (round trip from Sandton City applies beyond that) and asked that every reference carry it.
+- Live Pulse CMS: PAGE_CONTENT BOOKING/freeRadiusKm was already 30 (booking form and Prices page read it). FAQS B14 changed from "50 KM free" to "30 KM free".
+- Docs updated to 30: this spec (travel fee, free radius, freeKm, quote formula), BOOKING-FORM.md, CMS-SETUP-GUIDE.md, GOOGLE-SHEETS-TEMPLATE.md. Rate (R5/km) and round-trip method unchanged.
+- Earlier dated entries above that mention 50 km or the 30 vs 50 conflict are history and were left as written. The travel conflict in the "Still open" lists is now closed.
+- Not changed: JOTFORM-SETUP-GUIDE.md and FOOTER-AND-PAGE-CONTENT-TEMPLATE.md (legacy R4/km, 50 km, superseded), SITE-AUDIT-COMPLETE.md (historical audit), the Pulse CMS.xlsx template (binary).
 
 ---
 

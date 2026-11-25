@@ -37,7 +37,7 @@ The quote box at the bottom of the form updates in real time as the customer cha
 | CMS location | Key | Default | Meaning |
 |--------------|-----|---------|---------|
 | `PAGE_CONTENT` (Page=BOOKING) | `travelRatePerKm` | 5 | Travel fee per km beyond free radius (**R5/km**) |
-| `PAGE_CONTENT` (Page=BOOKING) | `freeRadiusKm` | 50 | Free travel radius in km (Sandton City base) |
+| `PAGE_CONTENT` (Page=BOOKING) | `freeRadiusKm` | 30 | Free travel radius in km (Sandton City base) |
 | `PAGE_CONTENT` (Page=BOOKING) | `baseLocationName` | Sandton City | Display name of the base location |
 | `PAGE_CONTENT` (Page=BOOKING) | `googleMapsApiKey` | *(empty)* | Google Maps JS API key — enables address autocomplete + exact distance |
 | **PRICES tab** | *Service name* | *(per row)* | Every service price: "1 Man Xpress Show", "1 Man Show", "2 Man Show"…"6 Man Show", "Female Stripper", "Topless Waiter", "Bottomless Waiter", "Fun Games", "Pole Dancer" |
