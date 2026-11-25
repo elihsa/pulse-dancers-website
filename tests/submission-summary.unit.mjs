@@ -31,3 +31,12 @@ test('booking omits hidden default service quantities and uses visible labels',(
 });
 
 test('legacy booking manager and exact-location values match visible choices',()=>{ const s=submissionSummary('booking_confirmation',{managing:'No',locType:'exact'});assert.match(s,/Managing the event: Yes, I.m managing it/);assert.match(s,/Location type: Exact address/);});
+
+test('multi-man shows get visible names and the performer preference follows them',()=>{
+ const s=submissionSummary('booking_confirmation',{services:['show3'],race:"We don't care as long as he's hot",maleCount:1});
+ assert.match(s,/Services: 3 Man Show/);
+ assert.match(s,/Preferred ethnicity of performer: We don't care as long as he's hot/);
+ assert.doesNotMatch(s,/Male performers/);
+ const none=submissionSummary('booking_confirmation',{services:['games'],race:'White'});
+ assert.doesNotMatch(none,/ethnicity/);
+});
