@@ -1322,6 +1322,16 @@ Still open (need Eli's decision): unchanged from the 2026-11-21 list - waiter/bu
 END OF SPECIFICATION DOCUMENT
 
 
+### 2026-11-25 Testimonial stars, services tiles, booking choices (build 2026-11-25 17:52 SAST)
+- Eli (WhatsApp voice, 2026-11-25 17:33) asked for these website changes. Presentation and form choices only; no price, travel or policy values changed.
+- Testimonials: stars are now gold (unfilled stars dimmed gold) with the rating in words beside them ("Five stars", "Four stars"). The review form is unchanged.
+- Prices page "Our Services" tiles: a tile shows only when the PRICES tab has a price for that service. Prices still come only from the CMS. Tiles removed for lack of a price: Promoters, Sound Light Rental, Strength Acts, Latin Hiphop Dancers. A tile reappears automatically when a price row is added for it. Mapping of tile to PRICES rows lives in prices.html (PRICE_ROWS_FOR).
+- Booking form, Event type: new "Other" choice with a required text box ("Please tell us what type of event"). The entered text is stored as "Other: <text>" in the EventType column and shown in the receipt.
+- Booking form, Services: added 2 Man Show, 3 Man Show, 4 Man Show and 5 Man Show as selectable services (one show each). The quote uses the matching PRICES rows ("2 Man Show" to "5 Man Show"). The 6 Man Show stays in the price list but was not requested as a service choice.
+- Booking form, performer preference: new drop-down "Preferred ethnicity of performer" with White, Black, Coloured and "We don't care as long as he's hot". The last is the default. It shows when Male Stripper or a 2-5 Man Show is selected, and is stored in the existing Race column. The old options (Any, Indian, No preference) are gone from the form.
+- Receipts: booking summary labels the new services and shows the preference line only when a male performer service is chosen. Unit test added (tests/submission-summary.unit.mjs).
+- Automatic replies: unchanged. Each form (booking, contact, join, testimonial) already sends its own customer receipt (AUTO_REPLIES keys booking_confirmation, contact_confirmation, join_confirmation, testimonial_confirmation) with the submitted details and a form-specific message; admin notification goes to Eli.
+
 ### Session: Development functional fixes (2026-11-23, build 2026-11-23 12:02 SAST)
 
 Eli clarified that this rebuild is a development/test environment and service interruption is acceptable. The target remains the Vercel rebuild linked from this repository, not the separate existing business site. Prices, policies, customer messaging and existing data are unchanged.

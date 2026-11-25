@@ -14,7 +14,8 @@
  *   googleMapsApiKey  - Google Maps JS API key (enables address autocomplete)
  *
  * Service prices (PRICES tab, matched by Service name — quote looks these up):
- *   "1 Man Xpress Show", "1 Man Show", "2 Man Show" ... "6 Man Show",
+ *   "1 Man Xpress Show", "1 Man Show", "2 Man Show" ... "6 Man Show"
+ *   (the 2-5 Man Shows are also selectable as their own services),
  *   "Female Stripper", "Topless Waiter", "Bottomless Waiter",
  *   "Fun Games", "Pole Dancer"
  * Missing price -> the item shows as POA (price on application).
@@ -194,9 +195,13 @@ const BookingForm = {
         document.getElementById('bf-area-fields').hidden = exact;
         if (exact) { this.distanceKm = null; this.clearDistanceDisplay(); }
       }));
+    document.querySelectorAll('input[name="eventType"]').forEach(r =>
+      r.addEventListener('change', () => this.syncEventTypeOther()));
     document.querySelectorAll('input[name="service"]').forEach(cb =>
       cb.addEventListener('change', () => {
-        document.getElementById(`bf-${cb.value}-fields`).hidden = !cb.checked;
+        const panel = document.getElementById(`bf-${cb.value}-fields`);
+        if (panel) panel.hidden = !cb.checked;
+        this.syncPerformerFields();
         this.updateQuote();
       }));
     // Area input -> estimate distance
@@ -219,6 +224,21 @@ const BookingForm = {
       el.addEventListener('input', () => this.updateQuote()));
     // Submit
     document.getElementById('booking-form').addEventListener('submit', (e) => this.onSubmit(e));
+  },
+
+  // The "Other" event type shows a free-text box.
+  syncEventTypeOther() {
+    const other = this.checked('input[name="eventType"]').some(r => r.value === 'Other');
+    const box = document.getElementById('bf-event-type-other-field');
+    if (box) box.hidden = !other;
+  },
+
+  // Performer preference applies to the Male Stripper and the 2-5 Man Shows.
+  syncPerformerFields() {
+    const wanted = ['male', 'show2', 'show3', 'show4', 'show5'];
+    const on = this.checked('input[name="service"]').some(c => wanted.includes(c.value));
+    const panel = document.getElementById('bf-performer-fields');
+    if (panel) panel.hidden = !on;
   },
 
   clearDistanceDisplay() {
@@ -268,6 +288,9 @@ const BookingForm = {
       if (!p) { hasPOA = true; return; }
       performance += count * (hours || 1) * p;
     };
+    [2, 3, 4, 5].forEach(n => {
+      if (this.checked(`input[name="service"][value="show${n}"]`).length) line(`${n} Man Show`, 1);
+    });
     if (this.checked('input[name="service"][value="female"]').length)
       line('Female Stripper', this.val('bf-female-count') || 1);
     if (this.checked('input[name="service"][value="waiter"]').length)
@@ -310,6 +333,8 @@ const BookingForm = {
     if (!email) missing.push('your email');
     if (!phone) missing.push('your phone number');
     if (!eventType.length) missing.push('event type');
+    const eventTypeOther = document.getElementById('bf-event-type-other') ? document.getElementById('bf-event-type-other').value.trim() : '';
+    if (eventType[0] && eventType[0].value === 'Other' && !eventTypeOther) missing.push('the type of event');
     if (!managing.length) missing.push('who is managing the event');
     if (!locType.length) missing.push('whether you know the address');
     if (!services.length) missing.push('at least one service');
@@ -331,7 +356,7 @@ const BookingForm = {
 
     const payload = {
       name, email, phone,
-      eventType: eventType[0].value,
+      eventType: eventType[0].value === 'Other' ? `Other: ${eventTypeOther}` : eventType[0].value,
       eventDate: document.getElementById('bf-event-date') ? document.getElementById('bf-event-date').value : '',
       eventTime: document.getElementById('bf-event-time') ? document.getElementById('bf-event-time').value : '',
       guestCount: this.val('bf-guest-count') || '',
@@ -376,7 +401,7 @@ const BookingForm = {
         status.style.color = '#4ade80';
         status.textContent = data.message || 'Thank you! Your booking request has been sent. We will respond within 24 hours.';
         document.getElementById('booking-form').reset();
-        ['bf-manager-fields','bf-exact-fields','bf-area-fields','bf-male-fields','bf-female-fields','bf-waiter-fields','bf-butler-fields','bf-games-fields','bf-pole-fields','bf-other-fields']
+        ['bf-manager-fields','bf-exact-fields','bf-area-fields','bf-performer-fields','bf-event-type-other-field','bf-male-fields','bf-female-fields','bf-waiter-fields','bf-butler-fields','bf-games-fields','bf-pole-fields','bf-other-fields']
           .forEach(id => { const el = document.getElementById(id); if (el) el.hidden = true; });
         this.distanceKm = null;
         this.clearDistanceDisplay();
