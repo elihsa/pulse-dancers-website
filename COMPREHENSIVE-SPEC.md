@@ -1312,6 +1312,11 @@ Still open (need Eli's decision): unchanged from the 2026-11-21 list - waiter/bu
 - Earlier dated entries above that mention 50 km or the 30 vs 50 conflict are history and were left as written. The travel conflict in the "Still open" lists is now closed.
 - Not changed: JOTFORM-SETUP-GUIDE.md and FOOTER-AND-PAGE-CONTENT-TEMPLATE.md (legacy R4/km, 50 km, superseded), SITE-AUDIT-COMPLETE.md (historical audit), the Pulse CMS.xlsx template (binary).
 
+### 2026-11-25 Reusable setup templates aligned to 30 km free, then R5/km (build 2026-11-25 17:27 SAST)
+- JOTFORM-SETUP-GUIDE.md and FOOTER-AND-PAGE-CONTENT-TEMPLATE.md are reusable, not retired, so they now carry the current rule: first 30 km free, then R5/km round trip from Sandton City. JOTFORM's example formula became IF({distance} > 30, ({distance} - 30) * 5, 0); the FOOTER template travelText now matches the live CMS wording.
+- Build stamp corrected: the 2026-11-25 16:30 SAST stamp was written ahead of the actual ~16:25 change; this entry's stamp is the actual time of this change.
+- No policy change: the rule stays Eli's 2026-11-25 16:23 decision (WhatsApp), 30 km free then R5/km on the full round trip from Sandton City. Historical dated entries and backups unchanged.
+
 ---
 
 END OF SPECIFICATION DOCUMENT
