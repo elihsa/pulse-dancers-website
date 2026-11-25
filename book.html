@@ -93,6 +93,11 @@
             <label class="option-card"><input type="radio" name="eventType" value="Hen party"><span>Hen party</span></label>
             <label class="option-card"><input type="radio" name="eventType" value="Kitchen tea"><span>Kitchen tea</span></label>
             <label class="option-card"><input type="radio" name="eventType" value="Stalk party"><span>Stalk party</span></label>
+            <label class="option-card"><input type="radio" name="eventType" value="Other"><span>Other</span></label>
+          </div>
+          <div id="bf-event-type-other-field" hidden style="margin-top:0.75rem;">
+            <label for="bf-event-type-other">Please tell us what type of event *</label>
+            <input type="text" id="bf-event-type-other" name="eventTypeOther" maxlength="120" placeholder="Type of event">
           </div>
         </div>
 
@@ -179,12 +184,29 @@
         <p style="color:#b0b0b0; font-size:0.9rem;">Select the services you want — only the fields for your selected services will appear.</p>
         <div class="option-grid" id="bf-services">
           <label class="option-card"><input type="checkbox" name="service" value="male"><span>Male Stripper</span></label>
+          <label class="option-card"><input type="checkbox" name="service" value="show2"><span>2 Man Show</span></label>
+          <label class="option-card"><input type="checkbox" name="service" value="show3"><span>3 Man Show</span></label>
+          <label class="option-card"><input type="checkbox" name="service" value="show4"><span>4 Man Show</span></label>
+          <label class="option-card"><input type="checkbox" name="service" value="show5"><span>5 Man Show</span></label>
           <label class="option-card"><input type="checkbox" name="service" value="female"><span>Female Stripper</span></label>
           <label class="option-card"><input type="checkbox" name="service" value="waiter"><span>Topless Waiter</span></label>
           <label class="option-card"><input type="checkbox" name="service" value="butler"><span>Bottomless Butler</span></label>
           <label class="option-card"><input type="checkbox" name="service" value="games"><span>Games</span></label>
           <label class="option-card"><input type="checkbox" name="service" value="pole"><span>Pole Dancer</span></label>
           <label class="option-card"><input type="checkbox" name="service" value="other"><span>Something else</span></label>
+        </div>
+
+        <!-- Shared by Male Stripper and the 2-5 Man Shows -->
+        <div id="bf-performer-fields" hidden style="margin-top:1rem; padding:1.25rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px;">
+          <div class="form-field">
+            <label for="bf-race">Preferred ethnicity of performer</label>
+            <select id="bf-race" name="race">
+              <option value="White">White</option>
+              <option value="Black">Black</option>
+              <option value="Coloured">Coloured</option>
+              <option value="We don't care as long as he's hot" selected>We don't care as long as he's hot</option>
+            </select>
+          </div>
         </div>
 
         <!-- Conditional: Male Stripper -->
@@ -204,17 +226,6 @@
             </div>
           </div>
           <div class="form-row">
-            <div class="form-field">
-              <label for="bf-race">Preferred race of performer</label>
-              <select id="bf-race" name="race">
-                <option value="">No preference</option>
-                <option value="Any">Any</option>
-                <option value="Black">Black</option>
-                <option value="Coloured">Coloured</option>
-                <option value="White">White</option>
-                <option value="Indian">Indian</option>
-              </select>
-            </div>
             <div class="form-field">
               <label for="bf-costume">Costume preference</label>
               <select id="bf-costume" name="costume">
