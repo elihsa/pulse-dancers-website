@@ -43,7 +43,7 @@ This tab controls editable text on each page. Copy the tables below into your PA
 | PRICES | baseRateTitle | Base Rate |
 | PRICES | baseRateText | Show or service price above. |
 | PRICES | travelTitle | Travel |
-| PRICES | travelText | R4 per km outside 50km radius from Sandton City (round trip). |
+| PRICES | travelText | R5 per km outside 30km radius from Sandton City (round trip). |
 | PRICES | customTitle | Custom Packages |
 | PRICES | customText | Multi-day events, VIP add-ons, theme packages - contact us for a tailored quote. |
 | PRICES | ctaTitle | Ready to Book? |
