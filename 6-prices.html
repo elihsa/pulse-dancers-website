@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+<title>Prices & Services - Pulse Male Revue</title>  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Competitive pricing for Pulse Male Revue's choreographed shows, topless waiters, bottomless waiters, and entertainment services." />
+  <meta name="keywords" content="male stripper prices, male dancer rates, bachelorette party costs, entertainment pricing south africa">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://pulse-dancers-website.vercel.app/prices.html">
+  
+  <!-- Open Graph (Facebook/Social) -->
+  <meta property="og:title" content="Prices - Pulse Male Revue">
+  <meta property="og:description" content="Transparent pricing for professional male entertainment services">
+  <meta property="og:url" content="https://pulse-dancers-website.vercel.app/prices.html">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Prices - Pulse Male Revue">
+  <meta name="twitter:description" content="View our pricing for male entertainment services">
+  
+  <link rel="stylesheet" href="assets/css/styles.css?v=2" />
+  
+  <!-- Preload critical assets -->
+  <link rel="preload" href="assets/css/styles.css?v=2" as="style">
+  <link rel="preload" href="assets/js/app.js" as="script">
+  <script src="assets/js/banner.js" defer></script>
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
+</head>
+<body class="page">
+  <img src="assets/images/top.png" alt="Pulse Male Revue Top Banner" class="top-banner" style="width: 50%; display: block; margin: 0 auto;">
+  <header>
+    <div class="nav-inner">
+      <div class="logo-wrap">
+        <a href="index.html">
+          <!-- Logo removed per user request -->
+        </a>
+      </div>
+      <button class="nav-toggle" aria-label="Menu" aria-expanded="false">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+		  				<li><a href="events.html" class="nav-link">Events</a></li>
+        <li><a href="prices.html" class="nav-link active">Prices</a></li>
+        <li><a href="faq.html" class="nav-link">FAQ</a></li>
+        <li><a href="meet-the-guys.html" class="nav-link">Meet The Guys</a></li>
+        <li><a href="join.html" class="nav-link">Join</a></li>
+        <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+        <li><a href="book.html" class="btn">Book Now</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="block">
+        <h1 id="prices-page-title">Pricing</h1>
+        <p id="pricing-notes">All prices are excl. travel and sustenance. Contact us for custom packages.</p>
+
+        <table class="pricing-table">
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th>Duration</th>
+              <th>Price (R)</th>
+                              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody id="pricing-table-body">
+            <!-- Prices will be loaded dynamically from CMS -->
+            <tr>
+              <td colspan="4" style="text-align: center; padding: 2rem; color: #b0b0b0;">Loading prices...</td>
+            </tr>
+          </tbody>
+        </table>
+			      <script>
+        // Load prices from CMS
+        async function loadPrices() {
+          const tbody = document.getElementById('pricing-table-body');
+          if (!tbody) return;
+
+          try {
+            const prices = await PulseSheetsCMS.getPrices();
+            
+            if (!prices || prices.length === 0) {
+              tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #b0b0b0;">No pricing information available. Please contact us.</td></tr>';
+              return;
+            }
+
+            tbody.innerHTML = prices.map(p => `
+              <tr>
+                <td>${p.name || ''}</td>
+                <td>${p.duration || ''}</td>
+                <td>R${p.price ? p.price.toFixed(0) : 'TBD'}</td>
+                <td>${p.description || ''}</td>
+              </tr>
+            `).join('');
+          } catch (error) {
+            console.error('Error loading prices:', error);
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #FF2D55;">Unable to load prices at this time.</td></tr>';
+          }
+        }
+
+        // Load prices when page loads
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadPrices);
+        } else {
+          loadPrices();
+        }
+
+        // Load prices page content from CMS
+        async function loadPricesPageContent() {
+          try {
+            const pageContent = await PulseSheetsCMS.getPageContent('PRICES');
+            const booking = await PulseSheetsCMS.getPageContent('BOOKING');
+            
+            // Update all editable text elements
+            if (pageContent.pageTitle) document.getElementById('prices-page-title').textContent = pageContent.pageTitle;
+            if (pageContent.pricingNotes) document.getElementById('pricing-notes').textContent = pageContent.pricingNotes;
+            if (pageContent.howTitle) document.getElementById('pricing-how-title').textContent = pageContent.howTitle;
+            if (pageContent.baseRateTitle) document.getElementById('pricing-base-title').textContent = pageContent.baseRateTitle;
+            if (pageContent.baseRateText) document.getElementById('pricing-base-text').textContent = pageContent.baseRateText;
+            if (pageContent.travelTitle) document.getElementById('pricing-travel-title').textContent = pageContent.travelTitle;
+            if (pageContent.customTitle) document.getElementById('pricing-custom-title').textContent = pageContent.customTitle;
+            if (pageContent.customText) document.getElementById('pricing-custom-text').textContent = pageContent.customText;
+            if (pageContent.ctaTitle) document.getElementById('pricing-cta-title').textContent = pageContent.ctaTitle;
+            if (pageContent.ctaDescription) document.getElementById('pricing-cta-description').textContent = pageContent.ctaDescription;
+            if (pageContent.ctaButton) document.getElementById('pricing-cta-button').textContent = pageContent.ctaButton;
+
+            // The travel sentence is GENERATED from the same BOOKING variables
+            // the booking form charges (PAGE_CONTENT: travelRatePerKm /
+            // freeRadiusKm / baseLocationName) — one source of truth, so the
+            // displayed rate can never drift from the quoted rate.
+            const rate = parseFloat(booking.travelRatePerKm);
+            const radius = parseFloat(booking.freeRadiusKm);
+            const base = booking.baseLocationName;
+            // No numeric fallback: if the CMS values are missing, say travel is quoted.
+            document.getElementById('pricing-travel-text').textContent =
+              (isNaN(rate) || isNaN(radius) || !base)
+                ? 'Travel is added to your final quote.'
+                : `R${rate} per km outside ${radius}km radius from ${base} (round trip).`;
+          } catch (error) {
+            console.error('Error loading prices page content:', error);
+            // Keep default content if CMS fails
+          }
+        }
+
+        // Load page content
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadPricesPageContent);
+        } else {
+          loadPricesPageContent();
+        }
+      </script>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="block">
+        <h2 id="pricing-how-title">How Pricing Works</h2>
+        <div style="display: grid; gap: 1.5rem; margin-top: 2rem;">
+          <div style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
+            <h3 style="color: #FF2D55; margin-bottom: 0.75rem;" id="pricing-base-title">Base Rate</h3>
+            <p style="color: #E5E5E5;" id="pricing-base-text">Show or service price above.</p>
+          </div>
+          <div style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
+            <h3 style="color: #FF2D55; margin-bottom: 0.75rem;" id="pricing-travel-title">Travel</h3>
+            <p style="color: #E5E5E5;" id="pricing-travel-text">Travel is added to your final quote.</p>
+          </div>
+          <div style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
+            <h3 style="color: #FF2D55; margin-bottom: 0.75rem;" id="pricing-custom-title">Custom Packages</h3>
+            <p style="color: #E5E5E5;" id="pricing-custom-text">Multi-day events, VIP add-ons, theme packages - contact us for a tailored quote.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="block" style="text-align: center; background-color: rgba(255, 45, 85, 0.1); padding: 3rem 2rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.2);">
+        <h2 id="pricing-cta-title">Ready to Book?</h2>
+        <p style="margin-bottom: 2rem;" id="pricing-cta-description">Get a personalized quote based on your event details with automatic distance calculation.</p>
+        <a href="book.html" class="btn" id="pricing-cta-button">Get a Quote</a>
+      </div>
+      
+		<!-- Services Section -->
+		<h2 style="margin-top: 3rem; text-align: center;">Our Services</h2>
+		<div id="services-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem;"></div>
+		
+		<script>
+			// Populate services
+			async function populateServices() {
+				try {
+					const services = await PulseSheetsCMS.getServices();
+					const container = document.getElementById('services-container');
+					
+					if (!services || typeof services !== 'object' || Object.keys(services).length === 0) {
+						container.style.display = 'none';
+						const heading = document.querySelector('h2');
+						if (heading && heading.textContent === 'Our Services') {
+							heading.style.display = 'none';
+						}
+						return;
+					}
+					
+					// Convert services object to array of service items
+					// Only show a service tile when the PRICES tab lists a price for it.
+					// Prices stay in the CMS; this only maps service keys to PRICES rows.
+					const priceRows = await PulseSheetsCMS.fetchSheet('PRICES', 1, 50);
+					const priced = new Set(priceRows
+						.filter(r => r[0] && !String(r[0]).toLowerCase().includes('service') && parseFloat(String(r[1] || '').replace(/[^0-9.]/g, '')) > 0)
+						.map(r => String(r[0]).trim().toLowerCase()));
+					const PRICE_ROWS_FOR = {
+						male_strippers: ['1 man show', '2 man show', '3 man show', '4 man show', '5 man show', '6 man show'],
+						choreographed_shows: ['1 man show', '2 man show', '3 man show', '4 man show', '5 man show', '6 man show'],
+						xpress_shows: ['1 man xpress show'],
+						topless_waiters: ['topless waiter'],
+						bottomless_waiters: ['bottomless waiter'],
+						naughty_games_mc: ['fun games'],
+						female_strippers: ['female stripper'],
+						pole_dancers: ['pole dancer'],
+						fire_dancers: ['fire dancers'],
+						podium_dancers: ['podium dancers'],
+						lingerie_models: ['lingerie models'],
+						topless_female_models: ['topless female models'],
+						dj_services: ['dj'],
+						mc_services: ['mc'],
+						photographers: ['photographers']
+					};
+					const servicesArray = Object.entries(services)
+						.filter(([key]) => (PRICE_ROWS_FOR[key] || []).some(n => priced.has(n)))
+						.map(([key, value]) => ({
+							name: key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+							description: value
+						}));
+					if (!servicesArray.length) {
+						container.style.display = 'none';
+						return;
+					}
+
+					const servicesHTML = servicesArray.map(service => `
+						<div style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.5rem; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+							<h3 style="margin: 0 0 1rem 0; color: #333;">${service.name || 'Service'}</h3>
+							<p style="margin: 0.5rem 0; color: #666; font-size: 0.95rem;">${service.description || ''}</p>
+						</div>
+					`).join('');
+					
+					container.innerHTML = servicesHTML;
+				} catch (error) {
+					console.error('Error loading services:', error);
+					const container = document.getElementById('services-container');
+					if (container) {
+						container.style.display = 'none';
+					}
+				}
+			}
+			
+			// Populate services when page loads
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', populateServices);
+			} else {
+				populateServices();
+			}
+		</script>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div id="footer-copyright">© 2025 Pulse Male Revue - South Africa.</div>
+      <div class="footer-links">
+        <a href="mailto:info@pulsedancers.com" id="footer-email">info@pulsedancers.com</a>
+        <span>·</span>
+        <a href="https://www.facebook.com/pulseSouthAfrica" target="_blank" rel="noopener" id="footer-facebook">Facebook</a>
+        <span>·</span>
+        <a href="https://www.instagram.com/pulsesouthafrica" target="_blank" rel="noopener" id="footer-instagram">Instagram</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script src="assets/js/sheets-cms.js" defer></script>
+<script src="assets/js/cms-loader.js" defer></script>
+<script src="assets/js/app.js" defer></script>
+  <script src="assets/js/build.js" defer></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
