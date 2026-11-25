@@ -214,10 +214,10 @@
 
         container.innerHTML = testimonials.map(t => {
           // Ensure rating is between 0 and 5
-          const rating = Math.max(0, Math.min(5, t.rating ?? 5));
+          const rating = Math.max(0, Math.min(5, Math.round(Number(t.rating ?? 5)) || 0));
           return `
           <div style="background-color: #1a1a1f; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255, 45, 85, 0.1);">
-            <div style="color: #FF2D55; margin-bottom: 0.5rem;">${'★'.repeat(rating)}${'☆'.repeat(5 - rating)}</div>
+            <div class="testimonial-rating" style="margin-bottom: 0.5rem;"><span class="testimonial-stars" aria-hidden="true" style="color: #FFC107; letter-spacing: 0.1em;">${'★'.repeat(rating)}<span style="color: rgba(255, 193, 7, 0.35);">${'★'.repeat(5 - rating)}</span></span> <span class="testimonial-rating-text" style="color: #E5E5E5; font-size: 0.9rem; margin-left: 0.4rem;">${['Zero', 'One', 'Two', 'Three', 'Four', 'Five'][rating]} ${rating === 1 ? 'star' : 'stars'}</span></div>
             <p style="font-style: italic; margin-bottom: 1rem; color: #E5E5E5;">"${t.text || ''}"</p>
             <p style="color: #FF2D55; font-weight: 600;">— ${t.name || 'Anonymous'}${t.area ? ', ' + t.area : ''}</p>
           </div>
